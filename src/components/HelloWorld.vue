@@ -1,6 +1,14 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <div id="app">
+      <Timeline
+        ref="timeline"
+        :items="items"
+        :groups="groups"
+        :options="options"
+      />
+    </div>
     <p>
       For a guide and recipes on how to configure / customize this project,<br />
       check out the
@@ -111,10 +119,36 @@
 </template>
 
 <script>
+import { Timeline } from "vue3-visjs";
+
 export default {
   name: "HelloWorld",
   props: {
     msg: String,
+  },
+  components: {
+    Timeline,
+  },
+  data() {
+    return {
+      groups: [
+        {
+          id: 0,
+          content: "Group 1",
+        },
+      ],
+      items: [
+        {
+          id: 0,
+          group: 0,
+          start: new Date(),
+          content: "Item 1",
+        },
+      ],
+      options: {
+        editable: true,
+      },
+    };
   },
 };
 </script>

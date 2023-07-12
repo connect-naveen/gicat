@@ -16,6 +16,30 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
   },
+  {
+    path: "/extractor",
+    name: "extractor",
+    component: () =>
+      import(/* webpackChunkName: "extractor" */ "../views/ExtractorView.vue"),
+  },
+  {
+    path: "/filters",
+    name: "filters",
+    component: () =>
+      import(/* webpackChunkName: "filters" */ "../views/FilterView.vue"),
+  },
+  {
+    path: "/guide",
+    name: "guide",
+    component: () =>
+      import(/* webpackChunkName: "guide" */ "../views/GuideView.vue"),
+  },
+  {
+    path: "/license",
+    name: "license",
+    component: () =>
+      import(/* webpackChunkName: "license" */ "../views/LicenseView.vue"),
+  },
 ];
 
 const router = createRouter({

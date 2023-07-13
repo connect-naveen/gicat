@@ -4,3 +4,8 @@
     <v-icon icon="mdi-check-circle"></v-icon>
   </div>
 </template>
+
+<script>
+console.log(window);
+console.log(window.preloaded.test);
+</script>

@@ -18,6 +18,8 @@
     "@mdi/font": "^7.2.96",
     "@mdi/js": "^7.2.96",
     "core-js": "^3.8.3",
+    "directory-tree": "^3.5.1",
+    "string.prototype.matchall": "^4.0.8",
     "vue": "^3.2.13",
     "vue-router": "^4.0.3",
     "vue3-visjs": "^0.7.2",

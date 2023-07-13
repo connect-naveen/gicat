@@ -1,0 +1,6 @@
+[submodule "public/csslab-filter-library"]
+	path = public/csslab-filter-library
+	url = git@git.rwth-aachen.de:HumTec_CodeStudies/csslab-filter-library.git
+[submodule "public/codeextractor"]
+	path = public/codeextractor
+	url = git@git.rwth-aachen.de:HumTec_CodeStudies/codeextractor.git

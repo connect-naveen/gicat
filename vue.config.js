@@ -3,6 +3,8 @@ module.exports = defineConfig({
   transpileDependencies: true,
   pluginOptions: {
     electronBuilder: {
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: "public/preload.js",
     }
   }

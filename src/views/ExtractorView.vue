@@ -7,5 +7,8 @@
 
 <script>
 console.log(window);
-console.log(window.preloaded.test);
+console.log(window.testPreload);
+window.testPreload;
+console.log(window.ce);
+// console.log(window.versions.node);
 </script>

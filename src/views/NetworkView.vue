@@ -1,5 +1,12 @@
 <template>
   <div class="network">
+    <div class="network-nav">
+      <li v-for="filterID in this.getFilters" v-bind:key="filterID">
+        <button class="button" v-on:click="toggleFilter(filterID)">
+          {{ filterID }}
+        </button>
+      </li>
+    </div>
     <Network
       ref="network"
       class="net"
@@ -20,7 +27,6 @@ import { Network } from "vue3-visjs";
 export default {
   mounted() {
     this.initGraph();
-    console.log(this.$store);
   },
   data() {
     return {
@@ -60,6 +66,7 @@ export default {
     initGraph() {
       this.nodes = JSON.parse(JSON.stringify(this.getNodes));
       this.edges = JSON.parse(JSON.stringify(this.getEdges));
+      console.log(this.getFilters);
     },
     back() {
       this.$router.push("/extractor");
@@ -152,7 +159,13 @@ export default {
 <style>
 .network {
   height: 100%;
+  width: 100%;
 }
+
+.network-nav {
+  height: 20%;
+}
+
 .net {
   height: 100%;
   width: 100%;

@@ -3,11 +3,11 @@
     <Network
       ref="network"
       class="net"
-      :nodes="getNodes"
-      :edges="getEdges"
+      :nodes="this.nodes"
+      :edges="this.edges"
       :options="options"
       :events="['doubleClick']"
-      @double-click="toggleChildren"
+      @double-click="doubleClick"
     >
     </Network>
   </div>
@@ -18,6 +18,10 @@ import { mapActions, mapGetters } from "vuex";
 import { Network } from "vue3-visjs";
 
 export default {
+  mounted() {
+    this.initGraph();
+    console.log(this.$store);
+  },
   data() {
     return {
       nodes: [],
@@ -52,49 +56,85 @@ export default {
     // store
     ...mapActions(["setNodes", "setEdges", "setGraph"]),
 
-    // functins
+    // functions
+    initGraph() {
+      this.nodes = JSON.parse(JSON.stringify(this.getNodes));
+      this.edges = JSON.parse(JSON.stringify(this.getEdges));
+    },
     back() {
       this.$router.push("/extractor");
     },
-    toggleChildren(params) {
-      // rework needed, edges will end here
-      if (params.nodes.length === 0) {
+    doubleClick(params) {
+      console.log("clicked");
+
+      let isNode = params.nodes.length > 0;
+      if (!isNode) {
         return;
       }
 
-      // debug
-      console.log("Toggling Children!");
-      console.log("Event Params:");
-      console.log(params);
-      console.log("Node found:");
-      console.log(params.nodes[0]);
+      let hitNodeIndex = this.getNodes.findIndex(
+        (el) => el.id == params.nodes[0]
+      );
+      let hitNode = this.getNodes.find((el) => el.id == params.nodes[0]);
 
-      // ?
-      let temp = this.getNodes.find((el) => el.id == params.nodes[0]);
-      console.log(temp);
-
-      // actual code
-      let isFile =
-        this.getNodes.find((el) => el.id == params.nodes[0]).meta.file === true;
-      let isFolder =
-        !isFile &&
-        this.getNodes.find((el) => el.id == params.nodes[0]).meta.filterID ==
-          null;
+      let isFile = this.isFile(hitNode);
+      let isFolder = this.isFolder(hitNode);
       console.log(
         `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
       );
 
-      /*
-      Folder:
-        check all adjacent nodes
-        if adjacent nodes id startes with folder id
-          collapse all recursively into the folder node
-      File:
-        collapse all group members into the file
-      */
-      if (isFile) {
-        console.log(this.$refs.network.getNode(params.nodes[0]));
+      this.collapseChildren(hitNode, hitNodeIndex);
+    },
+    // collapseChildren(hitNode, hitNodeIndex) {
+    collapseChildren(hitNode) {
+      if (hitNode.childrenCollapsed) {
+        hitNode.childrenCollapsed = false;
+      } else {
+        hitNode.childrenCollapsed = true;
       }
+      let nodes = this.nodes;
+      let condition = (e) => e.id.startsWith(hitNode.id) && e.id != hitNode.id;
+      // let children = this.getNodes.filter(e => e.id.startsWith(hitNode.id) && e.id != hitNode.id)
+      let children = nodes.filter((e) => condition(e));
+      children.forEach((element) => {
+        if (hitNode.childrenCollapsed) {
+          this.hideNode(element);
+        } else {
+          this.showNode(element);
+        }
+      });
+    },
+    hideNode(node) {
+      node.hidden = true;
+      node.label += "-hidden";
+    },
+    showNode(node) {
+      if (node.label.slice(-7) === "-hidden") {
+        node.label = node.label.slice(0, -7);
+      }
+      if (node.label.slice(-7) != "-hidden") {
+        node.hidden = false;
+      }
+    },
+    isFolder(node) {
+      return !this.isFile(node) && node.meta.filterID == null;
+    },
+    isFile(node) {
+      return node.meta.file === true;
+    },
+    toggleFilter(filterID) {
+      let nodes = this.nodes.filter((el) => el.meta.filterID == filterID);
+      let isHidden = this.filtersHidden.includes(filterID);
+
+      nodes.forEach((el) => {
+        if (!isHidden) {
+          this.hideNode(el);
+          this.filtersHidden.push(filterID);
+        } else {
+          this.showNode(el);
+          this.filtersHidden = this.filtersHidden.filter((v) => v !== filterID);
+        }
+      });
     },
   },
   computed: {

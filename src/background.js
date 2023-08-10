@@ -5,6 +5,8 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
 
+require("@electron/remote/main").initialize();
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 // Scheme must be registered before the app is ready
@@ -66,6 +68,10 @@ app.on("ready", async () => {
   }
   createWindow();
 });
+
+app.on('browser-window-created', (_, window) => {
+  require("@electron/remote/main").enable(window.webContents)
+})
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

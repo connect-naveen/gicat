@@ -1,5 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
+import AboutView from "../views/AboutView.vue";
+import ExtractorView from "../views/ExtractorView.vue";
+import FilterView from "../views/FilterView.vue";
+import NetworkView from "../views/NetworkView.vue";
+import GuideView from "../views/GuideView.vue";
+import LicenseView from "../views/LicenseView.vue";
 
 const routes = [
   {
@@ -13,32 +19,40 @@ const routes = [
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    component: AboutView,
   },
   {
     path: "/extractor",
     name: "extractor",
-    component: () =>
-      import(/* webpackChunkName: "extractor" */ "../views/ExtractorView.vue"),
+    component: ExtractorView,
+    // TODO add network and extractor as subroutes
+    // children: [
+    //   {
+    //     path: "network",
+    //     name: "network",
+    //     component: NetworkView,
+    //   },
+    // ],
+  },
+  {
+    path: "/extractor/network",
+    name: "network",
+    component: NetworkView,
   },
   {
     path: "/filters",
     name: "filters",
-    component: () =>
-      import(/* webpackChunkName: "filters" */ "../views/FilterView.vue"),
+    component: FilterView,
   },
   {
     path: "/guide",
     name: "guide",
-    component: () =>
-      import(/* webpackChunkName: "guide" */ "../views/GuideView.vue"),
+    component: GuideView,
   },
   {
     path: "/license",
     name: "license",
-    component: () =>
-      import(/* webpackChunkName: "license" */ "../views/LicenseView.vue"),
+    component: LicenseView,
   },
 ];
 

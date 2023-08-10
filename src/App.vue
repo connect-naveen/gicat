@@ -7,7 +7,7 @@
     <router-link to="/guide">Guide</router-link> |
     <router-link to="/license">License</router-link>
   </nav>
-  <router-view />
+  <RouterView />
 </template>
 
 <style lang="scss">
@@ -26,7 +26,7 @@ nav {
     font-weight: bold;
     color: #2c3e50;
 
-    &.router-link-exact-active {
+    &.router-link-active {
       color: #42b983;
     }
   }

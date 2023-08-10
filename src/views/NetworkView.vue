@@ -7,26 +7,20 @@
       :edges="getEdges"
       :options="options"
       :events="['doubleClick']"
+      @double-click="toggleChildren"
     >
     </Network>
   </div>
 </template>
 
 <script>
-//       @double-click="toggleChildren"
 import { mapActions, mapGetters } from "vuex";
 import { Network } from "vue3-visjs";
 
 export default {
   data() {
     return {
-      nodes: [
-        { id: 1, label: "Node 1" },
-        { id: 2, label: "Node 2" },
-        { id: 3, label: "Node 3" },
-        { id: 4, label: "Node 4" },
-        { id: 5, label: "Node 5" },
-      ],
+      nodes: [],
       edges: [],
       options: {
         nodes: {
@@ -61,6 +55,46 @@ export default {
     // functins
     back() {
       this.$router.push("/extractor");
+    },
+    toggleChildren(params) {
+      // rework needed, edges will end here
+      if (params.nodes.length === 0) {
+        return;
+      }
+
+      // debug
+      console.log("Toggling Children!");
+      console.log("Event Params:");
+      console.log(params);
+      console.log("Node found:");
+      console.log(params.nodes[0]);
+
+      // ?
+      let temp = this.getNodes.find((el) => el.id == params.nodes[0]);
+      console.log(temp);
+
+      // actual code
+      let isFile =
+        this.getNodes.find((el) => el.id == params.nodes[0]).meta.file === true;
+      let isFolder =
+        !isFile &&
+        this.getNodes.find((el) => el.id == params.nodes[0]).meta.filterID ==
+          null;
+      console.log(
+        `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
+      );
+
+      /*
+      Folder:
+        check all adjacent nodes
+        if adjacent nodes id startes with folder id
+          collapse all recursively into the folder node
+      File:
+        collapse all group members into the file
+      */
+      if (isFile) {
+        console.log(this.$refs.network.getNode(params.nodes[0]));
+      }
     },
   },
   computed: {

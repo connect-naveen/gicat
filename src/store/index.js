@@ -63,16 +63,16 @@ export default createStore({
       commit("mutateEdges", payload);
     },
     // filters
-    addNodeFilter({ commit }, nodeFilter) {
-      commit("mutateAddNodeFilter", nodeFilter);
+    addNodeFilter({ commit }, payload) {
+      commit("mutateAddNodeFilter", payload);
     },
-    addEdgeFilter({ commit }, edgeFilter) {
-      commit("mutateAddEdgeFilter", edgeFilter);
+    addEdgeFilter({ commit }, payload) {
+      commit("mutateAddEdgeFilter", payload);
     },
-    addFilter({ commit }, filter) {
+    addFilter({ commit }, payload) {
       console.log(commit);
       console.log("TODO!!! check what filter type and commit");
-      console.log(filter);
+      console.log(payload.filter);
     },
   },
   modules: {},

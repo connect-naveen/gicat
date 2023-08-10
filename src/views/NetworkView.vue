@@ -60,7 +60,14 @@ export default {
   },
   methods: {
     // store
-    ...mapActions(["setNodes", "setEdges", "setGraph"]),
+    ...mapActions([
+      "setNodes",
+      "setEdges",
+      "setGraph",
+      "addNodeFilter",
+      "addEdgeFilter",
+      "addFilter",
+    ]),
 
     // functions
     initGraph() {
@@ -146,7 +153,14 @@ export default {
   },
   computed: {
     // store
-    ...mapGetters(["getNodes", "getEdges", "getGraph"]),
+    ...mapGetters([
+      "getNodes",
+      "getEdges",
+      "getGraph",
+      "getNodeFilters",
+      "getEdgeFilters",
+      "getFilters",
+    ]),
 
     // functions
     getFilters() {

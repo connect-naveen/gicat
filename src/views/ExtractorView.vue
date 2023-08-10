@@ -41,7 +41,14 @@ export default {
   components: {},
   methods: {
     // store
-    ...mapActions(["setNodes", "setEdges", "setGraph"]),
+    ...mapActions([
+      "setNodes",
+      "setEdges",
+      "setGraph",
+      "addNodeFilter",
+      "addEdgeFilter",
+      "addFilter",
+    ]),
 
     // functions
     async openDir() {
@@ -86,8 +93,15 @@ export default {
           console.log(this.filters);
           let nodeFilters = await this.filters.filter((e) => e.spec === "node");
           console.log(nodeFilters);
+          // TODO fix filters
+          nodeFilters.map((e) => {
+            console.log(e);
+            console.log(JSON.parse(JSON.stringify(e)));
+            this.addNodeFilter(e);
+          });
           let edgeFilters = await this.filters.filter((e) => e.spec === "edge");
           console.log(edgeFilters);
+          edgeFilters.map((e) => this.addEdgeFilter(e));
 
           // TODO WORK WITH PROMISES
           if (nodeFilters.length > 0) {
@@ -129,12 +143,14 @@ export default {
   },
   computed: {
     // store
-    ...mapGetters(["getNodes", "getEdges", "getGraph"]),
-
-    // functions
-    getFilters() {
-      return this.filters;
-    },
+    ...mapGetters([
+      "getNodes",
+      "getEdges",
+      "getGraph",
+      "getNodeFilters",
+      "getEdgeFilters",
+      "getFilters",
+    ]),
   },
 };
 </script>

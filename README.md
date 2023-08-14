@@ -1,6 +1,11 @@
 # vue3gicat
 
 ## Project setup
+you need yarn:
+```
+npm install -g yarn
+```
+
 ```
 yarn
 ```

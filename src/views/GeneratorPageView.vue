@@ -61,34 +61,10 @@
 <style scoped>
 
 /* App-Page */
-.landing-page{
-  font-family: 'Roboto', sans-serif;
 
-}
 
 /* version */
-#version{
-position: absolute;
-width: 75px;
-height: 30px;
-right: 7px;
-top: 7px;
-
-font-style: normal;
-font-weight: bold;
-font-size: 16px;
-line-height: 21px;
-
-color: #6B6B6B;
-}
 
 /* footer */
-#footer img{
-position:absolute;
-width:100%;
-bottom: 0px;
-left: 0px;
-right: 0px;
-}
 
 </style>

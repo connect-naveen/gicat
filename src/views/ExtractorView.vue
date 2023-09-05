@@ -8,7 +8,7 @@
       <div>{{ repoPath }}</div>
       <br />
       <button color="primary" @click="loadFilters()">Load Filters</button>
-      <button color="primary" @click="resetFilters()">Reset</button>
+      <button color="primary" @click="resetFiltersButton()">Reset</button>
       <br />
       <div>Current filters:</div>
       <ul>
@@ -48,6 +48,7 @@ export default {
       "addNodeFilter",
       "addEdgeFilter",
       "addFilter",
+      "resetFilters",
     ]),
 
     // functions
@@ -68,13 +69,15 @@ export default {
       });
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
-          this.filters.push(ce.loadNodeFilter(el));
+          let filter = ce.loadNodeFilter(el);
+          // this.filters.push(filter);
+          this.addNodeFilter(filter);
         }
       }
-      console.log("filters:");
-      console.log(this.filters);
+      console.log(this.getFilters);
     },
-    resetFilters() {
+    resetFiltersButton() {
+      this.resetFilters();
       this.filters = [];
     },
     startVisualisation() {
@@ -102,6 +105,9 @@ export default {
           let edgeFilters = await this.filters.filter((e) => e.spec === "edge");
           console.log(edgeFilters);
           edgeFilters.map((e) => this.addEdgeFilter(e));
+
+          console.warn(this.$store.state.nodeFilters);
+          console.warn(this.getFilters);
 
           // TODO WORK WITH PROMISES
           if (nodeFilters.length > 0) {

@@ -25,13 +25,13 @@ export default createStore({
     },
     // filters
     getNodeFilters: (state) => {
-      return state.nodeFilters;
+      return state.nodeFilters || [];
     },
     getEdgeFilters: (state) => {
-      return state.edgeFilters;
+      return state.edgeFilters || [];
     },
-    getFilters: (getters) => {
-      return [...getters.getNodeFilters, ...getters.getEdgeFilters];
+    getFilters: (state) => {
+      return [].concat(state.nodeFilters).concat(state.edgeFilters);
     },
   },
   mutations: {
@@ -44,10 +44,14 @@ export default createStore({
     },
     // filters
     mutateAddNodeFilter(state, payload) {
-      state.nodeFilters.push(payload.nodeFilter);
+      state.nodeFilters.push(payload);
     },
     mutateAddEdgeFilter(state, payload) {
-      state.edgeFilters.push(payload.edgeFilter);
+      state.edgeFilters.push(payload);
+    },
+    mutateResetFilters(state) {
+      state.nodeFilters = [];
+      state.edgeFilters = [];
     },
   },
   actions: {
@@ -73,6 +77,9 @@ export default createStore({
       console.log(commit);
       console.log("TODO!!! check what filter type and commit");
       console.log(payload.filter);
+    },
+    resetFilters({ commit }) {
+      commit("mutateResetFilters");
     },
   },
   modules: {},

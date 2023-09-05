@@ -24,7 +24,7 @@
                     <ul><strong>from</strong> {{ edge.from['nodeFilterID'] }}<strong> to </strong> {{ edge.to['nodeFilterID']}}</ul>
             </li>
         </div>
-        <div class="section">
+        <div id="section">
             <h2>Package information</h2>
             <br>
             <!--<p>Specify the type of your filter:</p>
@@ -50,7 +50,7 @@
                     @input="setPackageAuthor"
                 />
                 <br><br>
-                <label for = "description">Additional package description:</label>
+                <label for = "description">description:</label>
                 <input
                     type="text"
                     id="description"
@@ -151,7 +151,7 @@
                 @input="setCaptureGroups"
             />
             <br><br>
-            <label for="colorpicker">node color:</label>
+            <label for="nodeColorpicker">node color:</label>
             <input 
                 type="color" 
                 id="nodeColorpicker" 
@@ -169,10 +169,25 @@
             <button @click="addNodeFilter">add filter</button>
             <h2>Edge Filter</h2>
             <br><br>
+                <label for="edgeName">Edge name:</label> 
+                <input 
+                    type="text"
+                    id="edgeName"
+                    :value="edgeName"
+                    @input="setEdgeName"
+                />
+                <br><br>
+            <label for="loopSelection">allow loops:</label>
+                <select v-model="loopSelection">
+                    <option>true</option>
+                    <option>false</option>
+                </select>
+            <br><br>
             <label for="modeSelection">Choose mode:</label>
                 <select v-model="modeSelection">
                     <option disabled value="">please select</option>
                     <option>contains</option>
+                    <option>equals</option>
                 </select>
             <br><br>
             <label for="fromSelection">from:</label>
@@ -187,6 +202,7 @@
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.name" :key="node.name">{{ node.name }}</option>
                 </select>
             <br><br>
+
             <label for="edgeLabel">edge label:</label>
             <input
                 type="text"
@@ -195,13 +211,12 @@
                 @input="setEdgeLabel"
             />
             <br><br>
-            <label for="colorpicker">edge color:</label>
+            <label for="edgeColorpicker">edge color:</label>
             <input 
                 type="color" 
-                id="colorpicker" 
+                id="edgeColorpicker" 
                 value="#0000ff"
-
-                @input="setColor"
+                @input="setEdgeColor"
             />
             <br><br>
             <button @click="addEdgeFilter">add filter</button>
@@ -244,101 +259,28 @@
             filterName: '',
             userRegex: '',
             regexOutput: '',
-            codeInput: ''
+            codeInput: '',
+            edgeName: ''
             }
         },
         props: {
-            /*codeInput:{
-                type: String,
-                default: ""
-            },
-            /*regexOutput:{
-                type: String,
-                default: ""
-            },
-            /*userRegex:{
-                type: String,
-                default: ""
-            },
-            /*filterName:{
-                type: String,
-                default:""
-            },
-            /*userRegexInput:{
-                type: String,
-                default: ""
-            },
-            /*packageNameInput:{
-                type: String,
-                default: ""
-            },
-            /*packageAuthorInput:{
-                type: String,
-                default: ''
-            },
-            /*regexNameInput:{
-                type: String,
-                default: ''
-            },
-            /*regex:{
-                type: String,
-                default: ''
-            },
-            /*spec:{
-                type: String,
-                default: 'node'
-            },*/
-            /*fileExtension:{
-                type: String,
-                default: ''
-            },
-            /*description:{
-                type: String,
-                default: ''
-            },
-            /*mode:{
-                type: String,
-                default: "contains"
-            },
-            /*excludes:{
-                type: String,
-                default: ""
-            },
-            /*nodeLabel:{
-                type: String,
-                default: ""
-            },*/
-            /*edgeLabel:{
-                type: String,
-                default: ""
-            },
-            /*attributes:{
-                type: String,
-                default: ""
-            },*/
-            /*captureGroups:{
-                type: String,
-                default: ""
-            }*/
         },
         methods:{
-            /*toggle(){
-                var t = document.getElementById("toggleSpec");
-                if(t.value=="Node filter"){
-                    t.value="Edge filter",
-                    this.spec = "edge"
-                }
-                else
-                    t.value="Node filter",
-                    this.spec = "node"
-            },*/
+            setEdgeName(event){
+                this.edgeName = event.target.value;
+                this.$emit('edgeNameChanged', this.edgeName)
+            },
             setCount(event){
                 this.cnt = event.target.value;
                 this.$emit('captureCountChanged', this.cnt)
             },
-            setColor(event){
-                this.colorpicker = event.target.value;
-                this.$emit('colorChanged', this.colorpicker)
+            /*setColor(event){
+                this.nodeColorpicker = event.target.value;
+                this.$emit('nodeColorChanged', this.nodeColorpicker)
+            },*/
+            setEdgeColor(event){
+                this.edgeColorpicker = event.target.value;
+                this.$emit('edgeColorChanged', this.edgeColorpicker)
             },
             setNodeColor(event){
                 this.nodeColorpicker = event.target.value;
@@ -430,11 +372,11 @@
             },
             addNodeFilter(){
                 this.json['nodeFilterList'].push({"name": this.regexName, "regex": this.regex, "id": (this.packageName + this.filterName).replace(/\s/g, ""), "spec": "node", "attributes": [this.attributes], "exclude": [this.excludes], "failures": [""], "label": this.nodeLabel, "labelAttribute": this.attributeSelection, "extension": this.fileExtension, "style": {"color": this.nodeColorpicker}});
-                alert('Your filter ' + this.regexName + ' got attached to your node filter list!')
+                //alert('Your filter ' + this.regexName + ' got attached to your node filter list!')
             },
             addEdgeFilter(){
-                this.json['edgeFilterList'].push({"allow-loop": true, "from":{"nodeFilterID": this.fromSelection, "attribute": ""}, "to": {"nodeFilterID": this.toSelection, "attribute": ""}, "label": this.edgeLabel, "style": {"color": this.colorpicker}, "spec": "edge"});
-                alert('Your edges ' + this.edgeLabel + ' got attached to your edge filter list!')
+                this.json['edgeFilterList'].push({"name": this.edgeName ,"allow-loop": this.loopSelection, "mode": this.modeSelection, "id": (this.packageName + this.edgeName).replace(/\s/g, "") , "from":{"nodeFilterID": this.fromSelection, "attribute": ""}, "to": {"nodeFilterID": this.toSelection, "attribute": ""}, "label": this.edgeLabel, "style": {"color": this.edgeColorpicker}, "spec": "edge"});
+                //alert('Your edges ' + this.edgeLabel + ' got attached to your edge filter list!')
             },
             generateRegex(){
                 let selection = window.getSelection();
@@ -478,12 +420,12 @@
                         "edgeFilterList": []
                     };
                     //this.json['nodeFilterList'].push({"name": this.regexName, "regex": this.regex});
-                    alert('Your package ' + this.json.packageName + ' was created!');
+                    //alert('Your package ' + this.json.packageName + ' was created!');
                     this.regexName = '';
                     this.regex = ''                  
                 }
                 else {
-                    alert('Your are already working on a filter package!')
+                    //alert('Your are already working on a filter package!')
                 }
             },
             exportFilter(){
@@ -512,6 +454,7 @@ input, button, select {
     color: #000000;
     border:1px solid #000000;
     box-shadow:0 0 2px #000000;
+    margin-right: 2px
 }
 
 input:focus,textarea:focus,select:focus{
@@ -521,4 +464,13 @@ input:focus,textarea:focus,select:focus{
     box-shadow:0 0 5px #42b983;
 }
 
+#section{
+    margin-left: auto;
+    margin-right: 0;
+    text-align: center
+}
+
+h2{
+    text-align: center
+}
 </style>

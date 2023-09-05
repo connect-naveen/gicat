@@ -11,10 +11,11 @@
       v-model:excludes="data.excludes" @excludeRegexChanged="data.excludes = $event"
       v-model:nodeLabel="data.nodeLabel" @nodeLabelChanged="data.nodeLabel = $event"
       v-model:edgeLabel="data.edgeLabel" @edgeLabelChanged="data.edgeLabel = $event"
-      v-model:colorpicker="data.colorpicker" @colorChanged="data.colorpicker = $event"
       v-model:nodeColorpicker="data.nodeColorpicker" @nodeColorChanged="data.nodeColorpicker = $event"
+      v-model:edgeColorpicker="data.edgeColorpicker" @edgeColorChanged="data.edgeColorpicker = $event"
       v-model:captureGroups="data.captureGroups" @captureGroupsChanged="data.captureGroups = $event"
       v-model:attributes="data.attributes" @attributesChanged="data.attributes = $event"
+      v-model:edgeName="data.edgeName" @edgeNameChanged="data.edgeName = $event"
     />
   </div>
   
@@ -45,10 +46,12 @@
         excludes: "",
         nodeLabel: "",
         edgeLabel: "",
-        colorpicker: "",
+        //colorpicker: "",
         nodeColorpicker: "",
+        edgeColorpicker: "",
         captureGroups: "",
-        attributes: ""
+        attributes: "",
+        edgeName: ""
 
       });
       return{

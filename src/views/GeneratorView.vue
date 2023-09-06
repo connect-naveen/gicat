@@ -58,7 +58,7 @@
                     @input="setPackageDescription"
                 />  
                 <br><br>
-                <button @click="generateFilter">generate package</button>
+                <button @click="generatePackage">generate package</button>
                 <button @click="exportFilter">export</button>
                 <br>
                 <br>
@@ -80,7 +80,7 @@
                 <option>force whitespace</option>
                 <option>exclude</option>
             </select>
-            <label for="captureGroup">add capture group:</label>
+            <label for="captureGroup">assign capture group:</label>
             <input
                 type="checkbox"
                 id="captureGroup"
@@ -140,16 +140,17 @@
             <input
                 type="text"
                 id="setAttributes"
-                :value="attributes"
-                @input="setAttributes"
+                :value="NodeAttributes"
+                @input="setNodeAttributes"
             />
-            <label for="setCaptureGrout">set capture groups:</label>
+            <label for="setCaptureGroup">set capture groups:</label>
             <input
                 type="text"
                 id="setCaptureGroups"
-                :value="captureGroups"
-                @input="setCaptureGroups"
+                :value="NodeCaptureGroups"
+                @input="setNodeCaptureGroups"
             />
+            <button @click="addNodeAttributes">add</button>
             <br><br>
             <label for="nodeColorpicker">node color:</label>
             <input 
@@ -161,15 +162,16 @@
             />
             <br><br>
             <label for="attributeSelection">label attribute:</label>
-                <select v-model="attributeSelection" v-if="this.json !== null">
+                <select v-model="attributeSelection">
                     <option disabled value="">please select</option>
-                    <option v-for="att in this.json['attributes']" v-bind:value="att.name" :key="att.name">{{ att.name }}</option>
+                    <option>null</option>
+                    <option v-for="(value, propertyName) in this.attributes" :key="propertyName">{{ propertyName}}</option>
                 </select>
             <br><br>
             <button @click="addNodeFilter">add filter</button>
             <h2>Edge Filter</h2>
             <br><br>
-                <label for="edgeName">Edge name:</label> 
+                <label for="edgeName">Edge filter name:</label> 
                 <input 
                     type="text"
                     id="edgeName"
@@ -195,14 +197,25 @@
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.name" :key="node.name">{{ node.name }}</option>
                 </select>
+            <label for="fromAttributeSelection">attribute:</label>
+                <select v-model="fromAttributeSelection" v-if="this.json !== null">
+                    <option disabled value="">please select</option>
+                    <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.attributes" :key="node.name">{{ node.attributes.propertyName }}</option>
+                </select>
+            
             <br><br>
             <label for="toSelection">to:</label>
                 <select v-model="toSelection" v-if="this.json !== null">
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.name" :key="node.name">{{ node.name }}</option>
                 </select>
+            <label for="toAttributeSelection">attribute:</label>
+                <select v-model="toAttributeSelection" v-if="this.json !== null">
+                    <option disabled value="">please select</option>
+                    <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.attributes" :key="node.name">{{ node.attributes.propertyName }}</option>
+                </select>
             <br><br>
-
+            
             <label for="edgeLabel">edge label:</label>
             <input
                 type="text"
@@ -233,39 +246,89 @@
         },
         data(){
             return{
-            mutation: '',
-            json: null,
-            packageName: '',
-            packageAuthor: '',
-            regexName: '',
-            cnt: '',
-            selected: '',
-            fromSelection: '',
-            toSelection: '',
-            colorpicker: '',
-            nodeLabel: '',
-            captureGroups: '',
-            attributes: '',
-            edgeLabel: '',
-            excludes: '',
-            mode: '',
-            description: '',
-            fileExtension: '',
-            regex: '',
-            regexNameInput: '',
-            packageAuthorInput: '',
-            packageNameInput: '',
-            userRegexInput: '',
-            filterName: '',
-            userRegex: '',
-            regexOutput: '',
-            codeInput: '',
-            edgeName: ''
+                filterPackage: {
+                    "packageName": '',
+                    "authors": '',
+                    "desc": '',
+                    "date": '',
+                    "nodeFilterList": [
+
+                    ],
+                    "edgeFilterList": [
+
+                    ]
+                },
+                selected: '',
+                json: null,
+                mutation: '',
+                codeInput: '',
+                cnt: '',
+                regex: '',
+                regexOutput: '',
+                fileExtension: '',
+                excludes: '',
+                regexNameInput: '',
+                regexName: '',
+                nodeLabel: '',
+                //nodeColorpicker: '',
+                edgeName: '',
+                fromSelection: '',
+                toSelection: '',
+                edgeLabel: '',
+                nodeAttributes: '',
+                nodeCaptureGroups: '',
+                attributes: {}
+                /*packageName: '',
+                packageAuthor: '',
+                mutation: '',
+                json: null,
+                regexName: '',
+                cnt: '',
+                selected: '',
+                fromSelection: '',
+                toSelection: '',
+                colorpicker: '',
+                nodeLabel: '',
+                edgeLabel: '',
+                excludes: '',
+                mode: '',
+                description: '',
+                fileExtension: '',
+                regex: '',
+                regexNameInput: '',
+                packageAuthorInput: '',
+                packageNameInput: '',
+                userRegexInput: '',
+                filterName: '',
+                userRegex: '',
+                regexOutput: '',
+                codeInput: '',
+                edgeName: '',
+                nodeAttributes: '',
+                nodeCaptureGroups: '',
+                "attributes": []*/
             }
-        },
+        }, 
         props: {
-        },
+        },  
         methods:{
+            addNodeAttributes(){
+                if (this.attributes == {}){
+                    this.attributes = {
+                        [this.nodeAttributes]: this.nodeCaptureGroups.split(",").map(e=>e.trim()).map(e=>Number(e))
+                    };
+                }else{
+                    this.attributes[this.nodeAttributes]= this.nodeCaptureGroups.split(",").map(e=>e.trim()).map(e=>Number(e))
+                }
+            },  
+            setNodeCaptureGroups(event){
+                this.nodeCaptureGroups = event.target.value;
+                this.$emit('nodeCaptureGroupsChanged', this.nodeCaptureGroups)
+            },
+            setNodeAttributes(event){
+                this.nodeAttributes = event.target.value;
+                this.$emit('nodeAtributeChanged', this.nodeAttributes)
+            },
             setEdgeName(event){
                 this.edgeName = event.target.value;
                 this.$emit('edgeNameChanged', this.edgeName)
@@ -274,10 +337,6 @@
                 this.cnt = event.target.value;
                 this.$emit('captureCountChanged', this.cnt)
             },
-            /*setColor(event){
-                this.nodeColorpicker = event.target.value;
-                this.$emit('nodeColorChanged', this.nodeColorpicker)
-            },*/
             setEdgeColor(event){
                 this.edgeColorpicker = event.target.value;
                 this.$emit('edgeColorChanged', this.edgeColorpicker)
@@ -290,20 +349,12 @@
                 this.nodeLabel = event.target.value;
                 this.$emit('nodeLabelChanged', this.nodeLabel)
             },
-            setAttributes(event){
-                this.attributes = event.target.value;
-                this.$emit('attributesChanged', this.attributes)
-            },
-            setCaptureGroups(event){
-                this.captureGroups = event.target.value;
-                this.$emit('captureGroupsChanged', this.captureGroups)
-            },
             setEdgeLabel(event){
                 this.edgeLabel = event.target.value;
                 this.$emit('edgeLabelChanged', this.edgeLabel)
             },
             setPackageDescription(event){
-                this.description = event.target.value;
+                this.filterPackage.desc = event.target.value;
                 this.$emit('packageDescriptionChanged', this.description)
             },  
             updateRegexOutput(event){
@@ -331,12 +382,12 @@
             },
             setPackageName(event){
                 this.packageNameInput = event.target.value;
-                this.packageName = this.packageNameInput;
+                this.filterPackage.packageName = this.packageNameInput;
                 this.$emit('packageNameChanged', this.packageNameInput)
             },
             setPackageAuthor(event){
                 this.packageAuthorInput = event.target.value;
-                this.packageAuthor = this.packageAuthorInput;
+                this.filterPackage.authors = this.packageAuthorInput;
                 this.$emit('packageAuthorChanged', this.packageAuthorInput)
             },
             resetRegex(){
@@ -362,21 +413,56 @@
                 this.codeInput = this.mutation;
                 this.$emit('codeInputChanged', this.mutation)
             },
-            setFilterName(event){
+            /*setFilterName(event){
                 this.filterName = event.target.value;
                 this.$emit('filterNameChanged', this.filterName)
-            },
+            },*/
             setRegex(event){
                 this.regex = event.target.value;
                 this.$emit('regexOutputChanged', this.regex)
             },
             addNodeFilter(){
-                this.json['nodeFilterList'].push({"name": this.regexName, "regex": this.regex, "id": (this.packageName + this.filterName).replace(/\s/g, ""), "spec": "node", "attributes": [this.attributes], "exclude": [this.excludes], "failures": [""], "label": this.nodeLabel, "labelAttribute": this.attributeSelection, "extension": this.fileExtension, "style": {"color": this.nodeColorpicker}});
-                //alert('Your filter ' + this.regexName + ' got attached to your node filter list!')
+                this.json['nodeFilterList'].push(
+                    {
+                            "name": this.regexName,
+                            "regex": this.regex,
+                            "id": (this.json.packageName + this.regexName).replace(/\s/g, ""),
+                            "spec": 'node',
+                            "exclude": [this.excludes],
+                            "extension": this.fileExtension,
+                            "attributes": this.attributes,
+                            "style": {
+                                "color": this.nodeColorpicker
+                            },
+                            "failures": [''],
+                            "label": this.nodeLabel,
+                            "labelAttribute": this.attributeSelection                    
+                        }
+                ),
+                this.attributes = {}
             },
             addEdgeFilter(){
-                this.json['edgeFilterList'].push({"name": this.edgeName ,"allow-loop": this.loopSelection, "mode": this.modeSelection, "id": (this.packageName + this.edgeName).replace(/\s/g, "") , "from":{"nodeFilterID": this.fromSelection, "attribute": ""}, "to": {"nodeFilterID": this.toSelection, "attribute": ""}, "label": this.edgeLabel, "style": {"color": this.edgeColorpicker}, "spec": "edge"});
-                //alert('Your edges ' + this.edgeLabel + ' got attached to your edge filter list!')
+                this.json['edgeFilterList'].push(
+                    {
+                            "allow-loop": this.loopSelection,
+                            "mode": this.modeSelection, 
+                            "label": this.edgeLabel,
+                            "spec": 'edge',
+                            "id": (this.json.packageName + this.edgeName).replace(/\s/g, ""),
+                            "name": this.edgeName,
+                            "from":{
+                                "nodeFilterID": (this.json.packageName + this.fromSelection).replace(/\s/g, ""),
+                                "attribute": this.fromAttributeSelection, 
+                            },
+                            "to":{
+                                "nodeFilterID": (this.json.packageName + this.toSelection).replace(/\s/g, ""),
+                                "attribute": this.toAttributeSelection,   
+                            },
+                            "style": {
+                                "color": this.edgeColorpicker
+                            }
+                        }
+                )
             },
             generateRegex(){
                 let selection = window.getSelection();
@@ -406,10 +492,12 @@
                 this.regex = this.regex + re;
                 this.regexOutput = this.regex;
             },
-            generateFilter(){
+            generatePackage(){
                 if(this.json == null){
                     const date = new Date()
-                    this.json = {
+                    this.filterPackage.date = date;
+                    this.json = this.filterPackage;
+                    /*this.json = {
                         //general package information
                         "packageName": this.packageName,
                         "authors": this.packageAuthor,  
@@ -422,7 +510,7 @@
                     //this.json['nodeFilterList'].push({"name": this.regexName, "regex": this.regex});
                     //alert('Your package ' + this.json.packageName + ' was created!');
                     this.regexName = '';
-                    this.regex = ''                  
+                    this.regex = ''  */                
                 }
                 else {
                     //alert('Your are already working on a filter package!')

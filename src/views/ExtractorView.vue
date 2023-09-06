@@ -7,15 +7,6 @@
       <div>Current path:</div>
       <div>{{ getRepoPath }}</div>
       <br />
-      <button color="primary" @click="loadFilters()">Load Filters</button>
-      <button color="primary" @click="resetFiltersButton()">Reset</button>
-      <br />
-      <div>Current filters:</div>
-      <ul>
-        <li v-for="filter in getFilters" v-bind:key="filter.id">
-          {{ filter.name }}
-        </li>
-      </ul>
       <button color="primary" @click="startVisualisation()">
         Start Visualisation
       </button>
@@ -61,6 +52,7 @@ export default {
       console.log("repo:");
       console.log(this.getRepoPath);
     },
+    // -----
     // TODO always load all available filters
     async loadFilters() {
       let arr = await dialog.showOpenDialog({
@@ -69,6 +61,7 @@ export default {
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
           // TODO check for existing filter id
+          console.log(el);
           let filter = ce.loadNodeFilter(el);
           if (filter.spec === "node") {
             this.addNodeFilter(filter);
@@ -85,6 +78,7 @@ export default {
     resetFiltersButton() {
       this.resetFilters();
     },
+    // -----
     async startVisualisation() {
       if (this.getRepoPath != "") {
         console.log(`The Path of the repository is: ${this.getRepoPath}`);

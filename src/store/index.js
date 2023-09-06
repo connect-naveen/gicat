@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    // general program
+    repoPath: "",
     // graph
     nodes: [],
     edges: [],
@@ -10,6 +12,10 @@ export default createStore({
     edgeFilters: [],
   },
   getters: {
+    // general program
+    getRepoPath: (state) => {
+      return state.repoPath;
+    },
     // graph
     getNodes: (state) => {
       return state.nodes;
@@ -35,6 +41,10 @@ export default createStore({
     },
   },
   mutations: {
+    // general program
+    mutateSetRepoPath(state, payload) {
+      state.repoPath = payload;
+    },
     // graph
     mutateNodes(state, payload) {
       state.nodes = payload.nodes;
@@ -55,6 +65,10 @@ export default createStore({
     },
   },
   actions: {
+    // general program
+    setRepoPath({ commit }, payload) {
+      commit("mutateSetRepoPath", payload);
+    },
     // graph
     setNodes({ commit }, payload) {
       commit("mutateNodes", payload);

@@ -5,14 +5,14 @@
       <button color="primary" @click="openDir()">Open Repository</button>
       <br />
       <div>Current path:</div>
-      <div>{{ repoPath }}</div>
+      <div>{{ getRepoPath }}</div>
       <br />
       <button color="primary" @click="loadFilters()">Load Filters</button>
       <button color="primary" @click="resetFiltersButton()">Reset</button>
       <br />
       <div>Current filters:</div>
       <ul>
-        <li v-for="filter in filters" v-bind:key="filter.id">
+        <li v-for="filter in getFilters" v-bind:key="filter.id">
           {{ filter.name }}
         </li>
       </ul>
@@ -31,15 +31,14 @@ const ce = window.ce;
 
 export default {
   data() {
-    return {
-      repoPath: null,
-    };
+    return {};
   },
   name: "ExtractorView",
   components: {},
   methods: {
     // store
     ...mapActions([
+      "setRepoPath",
       "setNodes",
       "setEdges",
       "setGraph",
@@ -55,10 +54,12 @@ export default {
         properties: ["openDirectory"],
       });
       if (!repoPath.canceled && repoPath.filePaths[0]) {
-        this.repoPath = repoPath.filePaths[0];
+        this.setRepoPath(repoPath.filePaths[0]);
+      } else {
+        this.setRepoPath("");
       }
       console.log("repo:");
-      console.log(this.repoPath);
+      console.log(this.getRepoPath);
     },
     // TODO always load all available filters
     async loadFilters() {
@@ -85,10 +86,10 @@ export default {
       this.resetFilters();
     },
     async startVisualisation() {
-      if (this.repoPath) {
-        console.log(`The Path of the repository is: ${this.repoPath}`);
+      if (this.getRepoPath != "") {
+        console.log(`The Path of the repository is: ${this.getRepoPath}`);
 
-        let graph = await ce.getGraph(this.repoPath);
+        let graph = await ce.getGraph(this.getRepoPath);
         let nodeFilters = this.getNodeFilters;
         let edgeFilters = this.getEdgeFilters;
 
@@ -113,6 +114,7 @@ export default {
   computed: {
     // store
     ...mapGetters([
+      "getRepoPath",
       "getNodes",
       "getEdges",
       "getGraph",

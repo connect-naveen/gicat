@@ -1,9 +1,9 @@
 <template>
   <div class="network">
     <div class="network-nav">
-      <li v-for="filterID in this.getFilters" v-bind:key="filterID">
-        <button class="button" v-on:click="toggleFilter(filterID)">
-          {{ filterID }}
+      <li v-for="filter in this.getFilters" v-bind:key="filter.name">
+        <button class="button" v-on:click="toggleFilter()">
+          {{ filter.name }}
         </button>
       </li>
     </div>
@@ -52,6 +52,7 @@ export default {
           enabled: true,
         },
       },
+      filtersHidden: [],
     };
   },
   name: "NetworkView",
@@ -136,19 +137,20 @@ export default {
     isFile(node) {
       return node.meta.file === true;
     },
-    toggleFilter(filterID) {
-      let nodes = this.nodes.filter((el) => el.meta.filterID == filterID);
-      let isHidden = this.filtersHidden.includes(filterID);
+    toggleFilter() {
+      // param: filterID
 
-      nodes.forEach((el) => {
-        if (!isHidden) {
-          this.hideNode(el);
-          this.filtersHidden.push(filterID);
-        } else {
-          this.showNode(el);
-          this.filtersHidden = this.filtersHidden.filter((v) => v !== filterID);
-        }
-      });
+      // let nodes = this.nodes.filter((el) => el.meta.filterID == filterID);
+      // console.log(this.filtersHidden);
+
+      // let isHidden = this.filtersHidden.includes(filterID);
+      // console.log(isHidden);
+
+      // TODO: Add possibility to hide filters
+      console.warn("TODO: Add possibility to hide filters");
+
+      // console.log(nodes);
+      // console.log(this.nodes);
     },
   },
   computed: {
@@ -161,11 +163,6 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
-
-    // functions
-    getFilters() {
-      return this.filters;
-    },
   },
 };
 </script>

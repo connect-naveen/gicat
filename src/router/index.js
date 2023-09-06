@@ -6,6 +6,7 @@ import FilterView from "../views/FilterView.vue";
 import NetworkView from "../views/NetworkView.vue";
 import GuideView from "../views/GuideView.vue";
 import LicenseView from "../views/LicenseView.vue";
+import Generator from "../views/GeneratorView.vue";
 
 const routes = [
   {
@@ -53,6 +54,11 @@ const routes = [
     path: "/license",
     name: "license",
     component: LicenseView,
+  },
+  {
+    path: "/generator",
+    name: "generator",
+    component: Generator,
   },
 ];
 

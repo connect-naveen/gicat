@@ -5,7 +5,8 @@
     <router-link to="/extractor">Extractor</router-link> |
     <router-link to="/filters">Filter</router-link> |
     <router-link to="/guide">Guide</router-link> |
-    <router-link to="/license">License</router-link>
+    <router-link to="/license">License</router-link>|
+    <router-link to="/generator">Generator</router-link>
   </nav>
   <RouterView />
 </template>

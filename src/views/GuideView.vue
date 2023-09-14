@@ -20,6 +20,8 @@
     <p>
     Once you opened the Generator page, you will see the input field called <b>code snippet</b> in which you can paste a
     piece of code you want to generate a regular expression from. The generator will generate a Regex as follows:<br>
+    From left to right, mark parts of the code snippet with your cursor. You can then decide if that part of the code is mandatory (f.e. key words like <i>class</i> or the beginning of a <i>comment</i>)
+    or arbitrary. You also have the option to exclude certain strings from your Regex in the same fashion. If you want, you can add a <b>capture group</b> to that part of the Regex.
     
     <br>
     </p>

@@ -61,14 +61,14 @@
                 <br>
                 <br>
                 <h2>Node filter</h2>
-            <p>Code Snippet:</p>
+            <p>code snippet:</p>
             <input 
                 type="text"
                 id="codeInput"
                 :value="codeInput"
                 size="50"
                 @input="setCodeInput"
-            />
+                />
             <br>
             <select v-model="selected">
                 <option disabled value="">please select</option>
@@ -89,12 +89,10 @@
                 id="count"
                 size="1"
                 @input="setCount"
-            />
-            
-            <br>
+                />
             <button @click="generateRegex">submit</button>
             <br>
-            <p>(generated) Regex:</p>
+            <label for="regexOutput">(generated) Regex</label>
             <input 
                 type="text"
                 id="regexOutput"
@@ -103,21 +101,23 @@
                 @input="updateRegexOutput"
             />
             <button @click="resetRegex">reset</button>
-            <label for ="fileExtension">File extension:</label>
+            <br>
+            <br>
+            <label for ="fileExtension">file extension:</label>
                 <input
                     type="text"
                     id="fileExtension"
                     :value="fileExtension"
                     @input="setFileExtension"
                 />
-            <label for="exclude">Exclude regex:</label>
+            <label for="exclude">exclude Regex:</label>
             <input
                 type="text"
                 id="excludes"
                 :value="excludes"
                 @input="setExcludeRegex"
             />
-                <label for="regexName">Filter name:</label> 
+                <label for="regexName">filter name:</label> 
                 <input 
                     type="text"
                     id="regexName"
@@ -148,6 +148,8 @@
                 @input="setNodeCaptureGroups"
             />
             <button @click="addNodeAttributes">add</button>
+            <br>
+            <br>
             <label for="nodeColorpicker">node color:</label>
             <input 
                 type="color" 
@@ -165,7 +167,7 @@
             <button @click="addNodeFilter">add filter</button>
             <h2>Edge Filter</h2>
             <br><br>
-                <label for="edgeName">Edge filter name:</label> 
+                <label for="edgeName">edge filter name:</label> 
                 <input 
                     type="text"
                     id="edgeName"
@@ -177,29 +179,29 @@
                     <option>true</option>
                     <option>false</option>
                 </select>
-            <label for="modeSelection">Choose mode:</label>
+            <label for="modeSelection">choose mode:</label>
                 <select v-model="modeSelection">
                     <option disabled value="">please select</option>
                     <option>contains</option>
                     <option>equals</option>
                 </select>
-            <label for="fromSelection">from:</label>
+            <label for="fromSelection" v-if="this.json !== null">from:</label>
                 <select v-model="fromSelection" v-if="this.json !== null">
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.name" :key="node.name">{{ node.name }}</option>
                 </select>
-            <label for="fromAttributeSelection">attribute:</label>
+            <label for="fromAttributeSelection" v-if="this.json !== null">attribute:</label>
                 <select v-model="fromAttributeSelection" v-if="this.json !== null">
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.attributes" :key="node.name">{{ node.attributes.propertyName }}</option>
                 </select>
             
-            <label for="toSelection">to:</label>
+            <label for="toSelection" v-if="this.json !== null">to:</label>
                 <select v-model="toSelection" v-if="this.json !== null">
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.name" :key="node.name">{{ node.name }}</option>
                 </select>
-            <label for="toAttributeSelection">attribute:</label>
+            <label for="toAttributeSelection" v-if="this.json !== null">attribute:</label>
                 <select v-model="toAttributeSelection" v-if="this.json !== null">
                     <option disabled value="">please select</option>
                     <option v-for="node in this.json['nodeFilterList']" v-bind:value="node.attributes" :key="node.name">{{ node.attributes.propertyName }}</option>
@@ -503,21 +505,15 @@
     width: 25%
 }
 
-input,select{
+input,select,button{
     color: #000000;
     border:1px solid #000000;
     box-shadow:0 0 2px #000000;
     margin-left: 5px;
     display:block;
-    margin-left: 0px
-}
-
-button{
-    color: #000000;
-    border:1px solid #000000;
-    box-shadow:0 0 2px #000000;
-    margin-right: 10px;
-    margin-left: 0px
+    margin-left: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px
 }
 
 input:focus,textarea:focus,select:focus{

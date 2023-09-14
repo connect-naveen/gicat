@@ -2,6 +2,8 @@ import { createStore } from "vuex";
 
 export default createStore({
   state: {
+    // general program
+    repoPath: "",
     // graph
     nodes: [],
     edges: [],
@@ -10,6 +12,10 @@ export default createStore({
     edgeFilters: [],
   },
   getters: {
+    // general program
+    getRepoPath: (state) => {
+      return state.repoPath;
+    },
     // graph
     getNodes: (state) => {
       return state.nodes;
@@ -25,16 +31,20 @@ export default createStore({
     },
     // filters
     getNodeFilters: (state) => {
-      return state.nodeFilters;
+      return state.nodeFilters || [];
     },
     getEdgeFilters: (state) => {
-      return state.edgeFilters;
+      return state.edgeFilters || [];
     },
-    getFilters: (getters) => {
-      return [...getters.getNodeFilters, ...getters.getEdgeFilters];
+    getFilters: (state) => {
+      return [].concat(state.nodeFilters).concat(state.edgeFilters);
     },
   },
   mutations: {
+    // general program
+    mutateSetRepoPath(state, payload) {
+      state.repoPath = payload;
+    },
     // graph
     mutateNodes(state, payload) {
       state.nodes = payload.nodes;
@@ -44,13 +54,21 @@ export default createStore({
     },
     // filters
     mutateAddNodeFilter(state, payload) {
-      state.nodeFilters.push(payload.nodeFilter);
+      state.nodeFilters.push(payload);
     },
     mutateAddEdgeFilter(state, payload) {
-      state.edgeFilters.push(payload.edgeFilter);
+      state.edgeFilters.push(payload);
+    },
+    mutateResetFilters(state) {
+      state.nodeFilters = [];
+      state.edgeFilters = [];
     },
   },
   actions: {
+    // general program
+    setRepoPath({ commit }, payload) {
+      commit("mutateSetRepoPath", payload);
+    },
     // graph
     setNodes({ commit }, payload) {
       commit("mutateNodes", payload);
@@ -73,6 +91,9 @@ export default createStore({
       console.log(commit);
       console.log("TODO!!! check what filter type and commit");
       console.log(payload.filter);
+    },
+    resetFilters({ commit }) {
+      commit("mutateResetFilters");
     },
   },
   modules: {},

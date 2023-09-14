@@ -5,17 +5,8 @@
       <button color="primary" @click="openDir()">Open Repository</button>
       <br />
       <div>Current path:</div>
-      <div>{{ repoPath }}</div>
+      <div>{{ getRepoPath }}</div>
       <br />
-      <button color="primary" @click="loadFilters()">Load Filters</button>
-      <button color="primary" @click="resetFilters()">Reset</button>
-      <br />
-      <div>Current filters:</div>
-      <ul>
-        <li v-for="filter in filters" v-bind:key="filter.id">
-          {{ filter.name }}
-        </li>
-      </ul>
       <button color="primary" @click="startVisualisation()">
         Start Visualisation
       </button>
@@ -31,23 +22,21 @@ const ce = window.ce;
 
 export default {
   data() {
-    return {
-      repoPath: null,
-      filters: [],
-      graph: null,
-    };
+    return {};
   },
   name: "ExtractorView",
   components: {},
   methods: {
     // store
     ...mapActions([
+      "setRepoPath",
       "setNodes",
       "setEdges",
       "setGraph",
       "addNodeFilter",
       "addEdgeFilter",
       "addFilter",
+      "resetFilters",
     ]),
 
     // functions
@@ -56,11 +45,14 @@ export default {
         properties: ["openDirectory"],
       });
       if (!repoPath.canceled && repoPath.filePaths[0]) {
-        this.repoPath = repoPath.filePaths[0];
+        this.setRepoPath(repoPath.filePaths[0]);
+      } else {
+        this.setRepoPath("");
       }
       console.log("repo:");
-      console.log(this.repoPath);
+      console.log(this.getRepoPath);
     },
+    // -----
     // TODO always load all available filters
     async loadFilters() {
       let arr = await dialog.showOpenDialog({
@@ -68,71 +60,43 @@ export default {
       });
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
-          this.filters.push(ce.loadNodeFilter(el));
+          // TODO check for existing filter id
+          console.log(el);
+          let filter = ce.loadNodeFilter(el);
+          if (filter.spec === "node") {
+            this.addNodeFilter(filter);
+          } else if (filter.spec === "edge") {
+            this.addEdgeFilter(filter);
+          } else {
+            console.warn("Filter not valid:");
+            console.warn(filter);
+          }
         }
       }
-      console.log("filters:");
-      console.log(this.filters);
+      console.log(this.getFilters);
     },
-    resetFilters() {
-      this.filters = [];
+    resetFiltersButton() {
+      this.resetFilters();
     },
-    startVisualisation() {
-      if (this.repoPath) {
-        console.log(`The Path of the repository is: ${this.repoPath}`);
+    // -----
+    async startVisualisation() {
+      if (this.getRepoPath != "") {
+        console.log(`The Path of the repository is: ${this.getRepoPath}`);
 
-        // let graph = ce.getGraph(this.repoPath)
-        // console.log(graph)
-        let graph;
+        let graph = await ce.getGraph(this.getRepoPath);
+        let nodeFilters = this.getNodeFilters;
+        let edgeFilters = this.getEdgeFilters;
 
-        // ;(async () => {
-        (async () => {
-          // let graph = {}
-          graph = await ce.getGraph(this.repoPath);
-          console.log("creating nodes");
-          console.log(this.filters);
-          let nodeFilters = await this.filters.filter((e) => e.spec === "node");
-          console.log(nodeFilters);
-          // TODO fix filters
-          nodeFilters.map((e) => {
-            console.log(e);
-            console.log(JSON.parse(JSON.stringify(e)));
-            this.addNodeFilter(e);
-          });
-          let edgeFilters = await this.filters.filter((e) => e.spec === "edge");
-          console.log(edgeFilters);
-          edgeFilters.map((e) => this.addEdgeFilter(e));
-
-          // TODO WORK WITH PROMISES
-          if (nodeFilters.length > 0) {
-            for await (const res of nodeFilters.map((e) =>
-              ce.filterNode(graph, e)
-            )) {
-              console.log("---------");
-              console.log("nodeFilter");
-              console.log(res);
-              console.log("---------");
-            }
-          }
-          if (edgeFilters.length > 0) {
-            for await (const res of edgeFilters.map((e) =>
-              ce.filterEdge(graph, e)
-            )) {
-              console.log("---------");
-              console.log("edgeFilter");
-              console.log(res);
-              console.log("---------");
-            }
-          }
-          await this.setGraph(graph);
-        })();
-
-        // TODO delete this
-        return new Promise(() => {
-          setTimeout(() => {
-            this.$router.push({ path: "extractor/network/" });
-          }, 2000);
-        });
+        for (const filter of nodeFilters) {
+          await ce.filterNode(graph, filter);
+          console.log(graph);
+        }
+        for (const filter of edgeFilters) {
+          await ce.filterEdge(graph, filter);
+          console.log(graph);
+        }
+        await this.setGraph(graph);
+        this.$router.push({ path: "extractor/network/" });
       } else {
         dialog.showMessageBox({
           title: "No valid entry",
@@ -144,6 +108,7 @@ export default {
   computed: {
     // store
     ...mapGetters([
+      "getRepoPath",
       "getNodes",
       "getEdges",
       "getGraph",

@@ -1,0 +1,46 @@
+{
+    "packageName": "",
+    "authors": "",
+    "date": "",
+    "desc": "",
+    "nodeFilterList": [
+        {
+            "name": "",
+            "regex": "",
+            "id": "",
+            "spec": "",
+            "exclude": [""],
+            "extension": "",
+            "attributes":{
+                "exampleAttribute": ""
+            },
+            "style": {
+                "color": ""
+            },
+            "failures": [""],
+            "label": "",
+            "labelAttribute": ""
+        }   
+    ],
+    "edgeFilterList": [
+        {
+            "allow-loop": true,
+            "mode": "contains",
+            "label": "",
+            "spec": "",
+            "id": "",
+            "name": "",
+            "from": {                       
+                "nodeFilterID": "",
+                "attribute": ""
+            },
+            "to": {
+                "nodeFilterID": "",
+                "attribute": ""
+            },
+            "style":{
+                "color": ""
+            }
+        }
+    ]
+}

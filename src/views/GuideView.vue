@@ -34,12 +34,31 @@
       follows:<br />
       From left to right, mark parts of the code snippet with your cursor. You
       can then decide if that part of the code is mandatory (f.e. key words like
-      <i>class</i> or the beginning of a <i>comment</i>)or arbitrary. You also
+      <i>class</i> or the beginning of a <i>comment</i>) or arbitrary. You also
       have the option to exclude certain strings from your Regex in the same
-      fashion. If you want, you can add a <b>capture group</b> to that part of
-      the Regex.
+      fashion. If you want to, you can add a <b>capture group</b> to that part
+      of the Regex.
       <br />
     </p>
+    <h3>Quantifier:</h3>
+    <p>
+      A quantifier allows you to set a range of occurrences for the preceded
+      string. Therefore you can choose from (optional) different ranges:<br />
+    </p>
+    <ul>
+      <li>
+        <i>{min,max}</i> for at least <i>min</i> and at most
+        <i>max</i> occurrences
+      </li>
+      <li><i>{n}</i> for exactliy <i>n</i> occurrences</li>
+      <li><i>?</i> for none or one occurrence (equivalent to <i>{0,1}</i>)</li>
+      <li><i>+</i> for at least one occurrence (equivalent to <i>{1,}</i>)</li>
+      <li>
+        <i>*</i> for any number of occurrences (equivalent to <i>{0,}</i>)
+      </li>
+    </ul>
+    Clicking the <b>submit</b> button will generate the associated part of your
+    Regex.
     <h2>Edge filter</h2>
   </div>
 </template>
@@ -48,6 +67,11 @@ p,
 h2 {
   text-align: left;
   margin-left: 5px;
+}
+
+ul {
+  text-align: left;
+  margin-left: 25px;
 }
 
 h3 {

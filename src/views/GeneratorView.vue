@@ -56,6 +56,7 @@
     <button @click="exportFilter">export</button>
     <br /><br />
     <h2>Node filter</h2>
+    <br />
     <p>code snippet:</p>
     <input
       type="text"
@@ -154,8 +155,9 @@
       </option>
     </select>
     <button @click="addNodeFilter">add filter</button>
-    <h2>Edge Filter</h2>
     <br /><br />
+    <h2>Edge Filter</h2>
+    <br />
     <label for="edgeName">edge filter name:</label>
     <input type="text" id="edgeName" :value="edgeName" @input="setEdgeName" />
     <label for="loopSelection">allow loops:</label>
@@ -190,7 +192,7 @@
         v-bind:value="node.attributes"
         :key="node.name"
       >
-        {{ node.attributes.propertyName }}
+        {{ node.attributes }}
       </option>
     </select>
     <label for="toSelection" v-if="this.json !== null">to:</label>
@@ -214,7 +216,7 @@
         v-bind:value="node.attributes"
         :key="node.name"
       >
-        {{ node.attributes.propertyName }}
+        {{ node.attributes }}
       </option>
     </select>
     <label for="edgeLabel">edge label:</label>
@@ -508,7 +510,7 @@ select:focus {
 }
 
 h2 {
-  text-align: center;
+  text-align: left;
 }
 
 h4 {

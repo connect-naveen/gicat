@@ -1,22 +1,11 @@
 <template>
-  <!--<div class = "landing-page">
-  <div id="navbar">
-    <Navbar />
-  </div>
-  <div id ="version">
-    <p>v 0.0.1</p>
-  </div>
-  <div id="footer">
-    <img src="src/renderer/assets/tool-footer.png">
-  </div>-->
   <div id="explorer" v-if="json != null">
-    <h3>{{ json.packageName }}</h3>
+    <h2>{{ json.packageName }}</h2>
     <h4>Description:</h4>
     <p>{{ json.desc }}</p>
     <h4>Node filters:</h4>
     <li v-for="filter in json['nodeFilterList']" :key="filter.name">
-      {{ filter.name + ":" }}
-      <br />
+      {{ filter.name + ":" }}<br />
       <ul>
         {{
           filter.regex
@@ -41,29 +30,20 @@
   <div id="section">
     <h2>Package information</h2>
     <br />
-    <!--<p>Specify the type of your filter:</p>
-    <input
-      type="button"
-      id="toggleSpec"
-      value="Node filter"
-      @click="toggle"
-    />-->
-    <label for="packageName">Name:</label>
+    <label for="packageName">name:</label>
     <input
       type="text"
       id="packageName"
       :value="packageName"
       @input="setPackageName"
     />
-    <br /><br />
-    <label for="packageAuthor">Author:</label>
+    <label for="packageAuthor">author:</label>
     <input
       type="text"
       id="packageAuthor"
       :value="packageAuthor"
       @input="setPackageAuthor"
     />
-    <br /><br />
     <label for="description">description:</label>
     <input
       type="text"
@@ -71,20 +51,18 @@
       :value="description"
       @input="setPackageDescription"
     />
-    <br /><br />
+    <br />
     <button @click="generatePackage">generate package</button>
     <button @click="exportFilter">export</button>
-    <br />
-    <br />
+    <br /><br />
     <h2>Node filter</h2>
-    <p>
-      Insert your code example you want to generate a regular expression from:
-    </p>
+    <br />
+    <p>code snippet:</p>
     <input
       type="text"
       id="codeInput"
       :value="codeInput"
-      size="75"
+      size="50"
       @input="setCodeInput"
     />
     <br />
@@ -98,44 +76,41 @@
     </select>
     <label for="captureGroup">assign capture group:</label>
     <input type="checkbox" id="captureGroup" />
-    <label for="count">count:</label>
+    <label for="count">quantifier:</label>
     <input type="text" id="count" size="1" @input="setCount" />
     <button @click="generateRegex">submit</button>
     <br />
-    <button @click="resetRegex">reset</button>
-    <p>(generated) regex:</p>
+    <label for="regexOutput">(generated) Regex</label>
     <input
       type="text"
       id="regexOutput"
-      size="75"
+      size="50"
       :value="regexOutput"
       @input="updateRegexOutput"
     />
+    <button @click="resetRegex">reset</button>
     <br /><br />
-    <label for="fileExtension">File extension:</label>
+    <label for="fileExtension">file extension:</label>
     <input
       type="text"
       id="fileExtension"
       :value="fileExtension"
       @input="setFileExtension"
     />
-    <br /><br />
-    <label for="exclude">Exclude regex:</label>
+    <label for="exclude">exclude Regex:</label>
     <input
       type="text"
       id="excludes"
       :value="excludes"
       @input="setExcludeRegex"
     />
-    <br /><br />
-    <label for="regexName">Filter name:</label>
+    <label for="regexName">filter name:</label>
     <input
       type="text"
       id="regexName"
       :value="regexName"
       @input="setRegexName"
     />
-    <br /><br />
     <label for="nodeLabel">node label:</label>
     <input
       type="text"
@@ -143,11 +118,11 @@
       :value="nodeLabel"
       @input="setNodeLabel"
     />
-    <br /><br />
     <label for="setAttributes">set attributes:</label>
     <input
       type="text"
       id="setAttributes"
+      size="15"
       :value="NodeAttributes"
       @input="setNodeAttributes"
     />
@@ -155,6 +130,7 @@
     <input
       type="text"
       id="setCaptureGroups"
+      size="15"
       :value="NodeCaptureGroups"
       @input="setNodeCaptureGroups"
     />
@@ -167,7 +143,6 @@
       value="#0000ff"
       @input="setNodeColor"
     />
-    <br /><br />
     <label for="attributeSelection">label attribute:</label>
     <select v-model="attributeSelection">
       <option disabled value="">please select</option>
@@ -179,27 +154,24 @@
         {{ propertyName }}
       </option>
     </select>
-    <br /><br />
     <button @click="addNodeFilter">add filter</button>
+    <br /><br />
     <h2>Edge Filter</h2>
-    <br /><br />
-    <label for="edgeName">Edge filter name:</label>
+    <br />
+    <label for="edgeName">edge filter name:</label>
     <input type="text" id="edgeName" :value="edgeName" @input="setEdgeName" />
-    <br /><br />
     <label for="loopSelection">allow loops:</label>
     <select v-model="loopSelection">
       <option>true</option>
       <option>false</option>
     </select>
-    <br /><br />
-    <label for="modeSelection">Choose mode:</label>
+    <label for="modeSelection">choose mode:</label>
     <select v-model="modeSelection">
       <option disabled value="">please select</option>
       <option>contains</option>
       <option>equals</option>
     </select>
-    <br /><br />
-    <label for="fromSelection">from:</label>
+    <label for="fromSelection" v-if="this.json !== null">from:</label>
     <select v-model="fromSelection" v-if="this.json !== null">
       <option disabled value="">please select</option>
       <option
@@ -210,7 +182,9 @@
         {{ node.name }}
       </option>
     </select>
-    <label for="fromAttributeSelection">attribute:</label>
+    <label for="fromAttributeSelection" v-if="this.json !== null">
+      attribute:
+    </label>
     <select v-model="fromAttributeSelection" v-if="this.json !== null">
       <option disabled value="">please select</option>
       <option
@@ -218,12 +192,10 @@
         v-bind:value="node.attributes"
         :key="node.name"
       >
-        {{ node.attributes.propertyName }}
+        {{ node.attributes }}
       </option>
     </select>
-
-    <br /><br />
-    <label for="toSelection">to:</label>
+    <label for="toSelection" v-if="this.json !== null">to:</label>
     <select v-model="toSelection" v-if="this.json !== null">
       <option disabled value="">please select</option>
       <option
@@ -234,19 +206,19 @@
         {{ node.name }}
       </option>
     </select>
-    <label for="toAttributeSelection">attribute:</label>
+    <label for="toAttributeSelection" v-if="this.json !== null">
+      attribute:
+    </label>
     <select v-model="toAttributeSelection" v-if="this.json !== null">
       <option disabled value="">please select</option>
       <option
         v-for="node in this.json['nodeFilterList']"
         v-bind:value="node.attributes"
-        v-bind:key="node.name"
+        :key="node.name"
       >
-        {{ node.attributes.propertyName }}
+        {{ node.attributes }}
       </option>
     </select>
-    <br /><br />
-
     <label for="edgeLabel">edge label:</label>
     <input
       type="text"
@@ -254,7 +226,6 @@
       :value="edgeLabel"
       @input="setEdgeLabel"
     />
-    <br /><br />
     <label for="edgeColorpicker">edge color:</label>
     <input
       type="color"
@@ -262,19 +233,13 @@
       value="#0000ff"
       @input="setEdgeColor"
     />
-    <br /><br />
     <button @click="addEdgeFilter">add filter</button>
   </div>
 </template>
-
 <script>
-//import Navbar from "./Navbar"
 export default {
   name: "GeneratorView",
-  //methods:{},
-  components: {
-    //Navbar
-  },
+  components: {},
   data() {
     return {
       filterPackage: {
@@ -297,7 +262,6 @@ export default {
       regexNameInput: "",
       regexName: "",
       nodeLabel: "",
-      //nodeColorpicker: "",
       edgeName: "",
       fromSelection: "",
       toSelection: "",
@@ -305,35 +269,6 @@ export default {
       nodeAttributes: "",
       nodeCaptureGroups: "",
       attributes: {},
-      /*packageName: "",
-      packageAuthor: "",
-      mutation: "",
-      json: null,
-      regexName: "",
-      cnt: "",
-      selected: "",
-      fromSelection: "",
-      toSelection: "",
-      colorpicker: "",
-      nodeLabel: "",
-      edgeLabel: "",
-      excludes: "",
-      mode: "",
-      description: "",
-      fileExtension: "",
-      regex: "",
-      regexNameInput: "",
-      packageAuthorInput: "",
-      packageNameInput: "",
-      userRegexInput: "",
-      filterName: "",
-      userRegex: "",
-      regexOutput: "",
-      codeInput: "",
-      edgeName: "",
-      nodeAttributes: "",
-      nodeCaptureGroups: "",
-      "attributes": []*/
     };
   },
   props: {},
@@ -433,17 +368,13 @@ export default {
         return "+";
       } else if (this.cnt == "") {
         return "";
-      } else return "{" + this.cnt + "}";
+      } else return "{}" + this.cnt + "}";
     },
     setCodeInput(event) {
       this.mutation = event.target.value;
       this.codeInput = this.mutation;
       this.$emit("codeInputChanged", this.mutation);
     },
-    /*setFilterName(event){
-      this.filterName = event.target.value;
-      this.$emit("filterNameChanged", this.filterName)
-    },*/
     setRegex(event) {
       this.regex = event.target.value;
       this.$emit("regexOutputChanged", this.regex);
@@ -457,9 +388,7 @@ export default {
         exclude: [this.excludes],
         extension: this.fileExtension,
         attributes: this.attributes,
-        style: {
-          color: this.nodeColorpicker,
-        },
+        style: { color: this.nodeColorpicker },
         failures: [""],
         label: this.nodeLabel,
         labelAttribute: this.attributeSelection,
@@ -516,27 +445,17 @@ export default {
       this.regexOutput = this.regex;
     },
     generatePackage() {
-      if (this.json == null) {
+      if (this.filterPackage.packageName == "") {
+        document.getElementById("packageName").style.border =
+          "1px solid #ff0000";
+        return;
+      } else if (this.json == null) {
         const date = new Date();
         this.filterPackage.date = date;
         this.json = this.filterPackage;
-        /*this.json = {
-          //general package information
-          "packageName": this.packageName,
-          "authors": this.packageAuthor,  
-          "date": date, 
-          "desc": this.description,
-
-          "nodeFilterList": [],
-          "edgeFilterList": []
-        };
-        //this.json["nodeFilterList"].push({"name": this.regexName, "regex": this.regex});
-        //alert("Your package " + this.json.packageName + " was created!");
-        this.regexName = "";
-        this.regex = ""  */
-      } else {
-        //alert("Your are already working on a filter package!")
-      }
+        document.getElementById("packageName").style.border =
+          "1px solid #000000";
+      } else return;
     },
     exportFilter() {
       let fileString = JSON.stringify(this.json, null, "\t");
@@ -551,21 +470,27 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 /* explorer */
 #explorer {
-  margin: auto;
+  text-align: left;
+  margin-right: 15px;
   float: right;
+  height: 100%;
+  width: 25%;
 }
 
 input,
-button,
-select {
+select,
+button {
   color: #000000;
   border: 1px solid #000000;
   box-shadow: 0 0 2px #000000;
-  margin-right: 2px;
+  margin-left: 5px;
+  display: block;
+  margin-left: 0px;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 input:focus,
@@ -578,12 +503,18 @@ select:focus {
 }
 
 #section {
-  margin-left: auto;
-  margin-right: 0;
-  text-align: center;
+  height: 100%;
+  width: 75%;
+  text-align: left;
+  margin-left: 5px;
 }
 
 h2 {
-  text-align: center;
+  text-align: left;
+}
+
+h4 {
+  text-align: left;
+  font-size: 12px;
 }
 </style>

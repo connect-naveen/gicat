@@ -135,7 +135,6 @@
       @input="setNodeCaptureGroups"
     />
     <button @click="addNodeAttributes">add</button>
-    <br /><br />
     <label for="nodeColorpicker">node color:</label>
     <input
       type="color"

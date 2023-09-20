@@ -17,8 +17,13 @@
     </p>
     <h2>Node filter</h2>
     <p>
-      Our tool uses regular expressions(Regex) to extract certain code parts and
-      render those as nodes.<br />
+      Our tool uses
+      <a
+        href="https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts"
+        target="_blank"
+        >regular expressions
+      </a>
+      (Regex) to extract certain code part and render those as nodes.<br />
       Therefore we implemented a <b>Regex generator</b> to assist you generating
       a correct regular expression.<br />
       A regular expression is a string constisting of criterias which, applied
@@ -32,18 +37,17 @@
       <b>code snippet</b> in which you can paste a piece of code you want to
       generate a regular expression from. The generator will generate a Regex as
       follows:<br />
-      From left to right, mark parts of the code snippet with your cursor. You
+      From left to right: mark parts of the code snippet with your cursor. You
       can then decide if that part of the code is mandatory (f.e. key words like
-      <i>class</i> or the beginning of a <i>comment</i>) or arbitrary. You also
-      have the option to exclude certain strings from your Regex in the same
-      fashion. If you want to, you can add a <b>capture group</b> to that part
-      of the Regex.
+      <i>class</i> or the beginning of a <i>comment</i>), arbitrary, etc. If you
+      want to, you can also add a <b>capture group</b> to that part of the
+      Regex.
       <br />
     </p>
     <h3>Quantifier:</h3>
     <p>
       A quantifier allows you to set a range of occurrences for the preceded
-      string. Therefore you can choose from (optional) different ranges:<br />
+      string. Therefore you can choose from (optional) different ranges:<br /><br />
     </p>
     <ul>
       <li>
@@ -57,8 +61,23 @@
         <i>*</i> for any number of occurrences (equivalent to <i>{0,}</i>)
       </li>
     </ul>
+    <br />
     Clicking the <b>submit</b> button will generate the associated part of your
-    Regex.
+    Regex.<br />
+    The following video shows an example by generating a Regex which is supposed
+    to filter all comments in Java. In Java, the characters <i>//</i> mark the
+    beginning of a single line comment:<br /><br />
+    <video
+      width="360"
+      height="300"
+      controls
+      loop
+      autoplay
+      controlsList="nofullscreen"
+    >
+      <source src="..\assets\example.mp4" type="video/mp4" />
+    </video>
+    <br /><br />
     <h2>Edge filter</h2>
   </div>
 </template>
@@ -78,5 +97,9 @@ h3 {
   text-align: left;
   margin-left: 5px;
   font-size: 14px;
+}
+
+a {
+  color: #42b983;
 }
 </style>

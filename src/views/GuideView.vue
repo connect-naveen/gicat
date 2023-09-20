@@ -40,8 +40,8 @@
       From left to right: mark parts of the code snippet with your cursor. You
       can then decide if that part of the code is mandatory (f.e. key words like
       <i>class</i> or the beginning of a <i>comment</i>), arbitrary, etc. If you
-      want to, you can also add a <b>capture group</b> to that part of the
-      Regex.
+      want to, you can also add a <a href="#capture groups">capture group</a> to
+      that part of the Regex.
       <br />
     </p>
     <h3>Quantifier:</h3>
@@ -62,11 +62,17 @@
       </li>
     </ul>
     <br />
-    Clicking the <b>submit</b> button will generate the associated part of your
-    Regex.<br />
-    The following video shows an example by generating a Regex which is supposed
-    to filter all comments in Java. In Java, the characters <i>//</i> mark the
-    beginning of a single line comment:<br /><br />
+    <p>
+      The following video shows an example by generating a Regex which is
+      supposed to filter all comments in Java. In Java, the characters
+      <i>//</i> mark the beginning of a single line comment. Therefore, they
+      will be marked as mandatory characters. Since we want to filter
+      <b>all</b> existing single line comments, we will mark the actual comment
+      as arbitrary. In this case, the <i>*</i> quantifier signals that we will
+      also allow empty comments.<br />
+      Clicking the <b>submit</b> button will generate the associated part of
+      your Regex.<br />
+    </p>
     <video
       width="360"
       height="300"
@@ -78,6 +84,22 @@
       <source src="..\assets\example.mp4" type="video/mp4" />
     </video>
     <br /><br />
+    <p>
+      You will then proceed giving information about the node filter such as
+      file extension, filter name, etc. You can also add a Regex for patterns
+      which shall be ignored by our visualization tool.<br />
+    </p>
+    <br />
+    <section id="capture groups"></section>
+    <h3>Capture groups</h3>
+    <p>
+      Alongside you will find the input fields <i>set attributes</i>,
+      <i>set capture groups</i> and <i>label attribute</i>. First, lets talk
+      about <i>capture groups</i>: as the name suggests, a capture group lets
+      you capture text matching the ruleset inside its parentheses. They can be
+      regarded as a container for similar code patterns.<br />
+    </p>
+    <br /><br /><br />
     <h2>Edge filter</h2>
   </div>
 </template>

@@ -80,7 +80,7 @@
     <input type="text" id="count" size="1" @input="setCount" />
     <button @click="generateRegex">submit</button>
     <br />
-    <label for="regexOutput">(generated) Regex</label>
+    <label for="regexOutput">(generated) Regex:</label>
     <input
       type="text"
       id="regexOutput"
@@ -118,7 +118,8 @@
       :value="nodeLabel"
       @input="setNodeLabel"
     />
-    <label for="setAttributes">set attributes:</label>
+    <br /><br />
+    <label for="setAttributes">set capture group name:</label>
     <input
       type="text"
       id="setAttributes"
@@ -135,6 +136,7 @@
       @input="setNodeCaptureGroups"
     />
     <button @click="addNodeAttributes">add</button>
+    <br /><br />
     <label for="nodeColorpicker">node color:</label>
     <input
       type="color"
@@ -426,11 +428,11 @@ export default {
       let re = "";
       let captureGroup = document.getElementById("captureGroup").checked;
       if (this.selected == "mandatory characters" && captureGroup) {
-        re = re + "(" + selection + ")" + this.getCount();
+        re = re + "(" + selection + this.getCount() + ")";
       } else if (this.selected == "mandatory characters" && !captureGroup) {
         re = re + selection + this.getCount();
       } else if (this.selected == "arbitrary characters" && captureGroup) {
-        re = re + "([A-Za-z])" + this.getCount();
+        re = re + "([A-Za-z]" + this.getCount() + ")";
       } else if (this.selected == "arbitrary characters" && !captureGroup) {
         re = re + "[A-Za-z]" + this.getCount();
       } else if (this.selected == "period") {

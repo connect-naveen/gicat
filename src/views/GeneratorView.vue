@@ -166,12 +166,12 @@
       <option>true</option>
       <option>false</option>
     </select>
-    <label for="modeSelection">choose mode:</label>
+    <!--<label for="modeSelection">choose mode:</label>
     <select v-model="modeSelection">
       <option disabled value="">please select</option>
       <option>contains</option>
       <option>equals</option>
-    </select>
+    </select>-->
     <label for="fromSelection" v-if="this.json !== null">from:</label>
     <select v-model="fromSelection" v-if="this.json !== null">
       <option disabled value="">please select</option>

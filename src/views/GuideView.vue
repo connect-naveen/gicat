@@ -140,7 +140,6 @@
       select <i>null</i> if you would like to show the <i>node label</i> only.
     </p>
     <br /><br />
-    <h2>Edge filter</h2>
   </div>
 </template>
 <style scoped>

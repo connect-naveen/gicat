@@ -474,11 +474,19 @@ export default {
 <style scoped>
 /* explorer */
 #explorer {
-  text-align: left;
-  margin-right: 15px;
   float: right;
-  height: 100%;
   width: 25%;
+  position: -webkit-sticky; /* Safari */
+  position: sticky;
+  align-self: flex-start;
+  border-radius: 8px;
+  border: 2px solid #42b983;
+}
+
+#explorer h2,
+#explorer h4,
+#explorer p {
+  text-align: center;
 }
 
 input,
@@ -511,12 +519,8 @@ select:focus {
 }
 
 button:active {
-  box-shadow: 1px 1px #666;
-  transform: translateX(1px);
-}
-
-checkbox {
-  accent-color: #42b983;
+  box-shadow: 0.33px #9b9999;
+  transform: translateX(0.33px);
 }
 
 #section {

@@ -141,7 +141,18 @@
     </p>
     <br /><br />
     <h1>Code Editor</h1>
-    <p>Test</p>
+    <p>
+      You can also select nodes of our visualization tool and jump to the
+      corresponding line of code inside its associated file. The code will then
+      be opened by your default code editor. To do so, you will need a code
+      editor:<br />
+      If you're running a Windows machine, we suggest using
+      <a href="https://code.visualstudio.com/" target="_blank">VS Code</a>.
+      <br />
+      For a UNIX system or Apple OS X, we suggest
+      <a href="https://www.vim.org/" target="_blank">vim</a> to make use of
+      their built-in syntax highlighting.
+    </p>
   </div>
 </template>
 <style scoped>

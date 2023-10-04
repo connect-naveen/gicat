@@ -16,11 +16,11 @@
     <li v-for="edge in json['edgeFilterList']" :key="edge.name">
       {{ edge.label + ":" }}<br />
       <ul>
-        <strong>from</strong>
+        <strong>From</strong>
         {{
           edge.from["nodeFilterID"]
         }}
-        <strong> to </strong>
+        <strong> To </strong>
         {{
           edge.to["nodeFilterID"]
         }}
@@ -30,21 +30,21 @@
   <div id="section">
     <h2>Package information</h2>
     <br />
-    <label for="packageName">name:</label>
+    <label for="packageName">Name:</label>
     <input
       type="text"
       id="packageName"
       :value="packageName"
       @input="setPackageName"
     />
-    <label for="packageAuthor">author:</label>
+    <label for="packageAuthor">Author:</label>
     <input
       type="text"
       id="packageAuthor"
       :value="packageAuthor"
       @input="setPackageAuthor"
     />
-    <label for="description">description:</label>
+    <label for="description">Description:</label>
     <input
       type="text"
       id="description"
@@ -52,12 +52,12 @@
       @input="setPackageDescription"
     />
     <br />
-    <button @click="generatePackage">generate package</button>
-    <button @click="exportFilter">export</button>
+    <button @click="generatePackage">Generate package</button>
+    <button @click="exportFilter">Export</button>
     <br /><br />
     <h2>Node filter</h2>
     <br />
-    <p>code snippet:</p>
+    <p>Code snippet:</p>
     <input
       type="text"
       id="codeInput"
@@ -67,20 +67,20 @@
     />
     <br />
     <select v-model="selected">
-      <option disabled value="">please select</option>
-      <option>mandatory characters</option>
-      <option>arbitrary characters</option>
-      <option>period</option>
-      <option>force whitespace</option>
-      <option>exclude</option>
+      <option disabled value="">Select...</option>
+      <option>Mandatory characters</option>
+      <option>Arbitrary characters</option>
+      <option>Period</option>
+      <option>Force whitespace</option>
+      <option>Exclude</option>
     </select>
-    <label for="captureGroup">assign capture group:</label>
+    <label for="captureGroup">Assign capture group:</label>
     <input type="checkbox" id="captureGroup" />
-    <label for="count">quantifier:</label>
+    <label for="count">Quantifier:</label>
     <input type="text" id="count" size="1" @input="setCount" />
-    <button @click="generateRegex">submit</button>
+    <button @click="generateRegex">Submit</button>
     <br />
-    <label for="regexOutput">(generated) Regex:</label>
+    <label for="regexOutput">(Generated) Regex:</label>
     <input
       type="text"
       id="regexOutput"
@@ -88,30 +88,30 @@
       :value="regexOutput"
       @input="updateRegexOutput"
     />
-    <button @click="resetRegex">reset</button>
+    <button @click="resetRegex">Reset</button>
     <br /><br />
-    <label for="fileExtension">file extension:</label>
+    <label for="fileExtension">File extension:</label>
     <input
       type="text"
       id="fileExtension"
       :value="fileExtension"
       @input="setFileExtension"
     />
-    <label for="exclude">exclude Regex:</label>
+    <label for="exclude">Exclude Regex:</label>
     <input
       type="text"
       id="excludes"
       :value="excludes"
       @input="setExcludeRegex"
     />
-    <label for="regexName">filter name:</label>
+    <label for="regexName">Filter name:</label>
     <input
       type="text"
       id="regexName"
       :value="regexName"
       @input="setRegexName"
     />
-    <label for="nodeLabel">node label:</label>
+    <label for="nodeLabel">Node label:</label>
     <input
       type="text"
       id="nodeLabel"
@@ -119,7 +119,7 @@
       @input="setNodeLabel"
     />
     <br /><br />
-    <label for="setAttributes">set capture group name:</label>
+    <label for="setAttributes">Set capture group name:</label>
     <input
       type="text"
       id="setAttributes"
@@ -127,7 +127,7 @@
       :value="NodeAttributes"
       @input="setNodeAttributes"
     />
-    <label for="setCaptureGroup">set capture groups:</label>
+    <label for="setCaptureGroup">Set capture groups:</label>
     <input
       type="text"
       id="setCaptureGroups"
@@ -135,19 +135,19 @@
       :value="NodeCaptureGroups"
       @input="setNodeCaptureGroups"
     />
-    <button @click="addNodeAttributes">add</button>
+    <button @click="addNodeAttributes">Add</button>
     <br /><br />
-    <label for="nodeColorpicker">node color:</label>
+    <label for="nodeColorpicker">Node color:</label>
     <input
       type="color"
       id="nodeColorpicker"
-      value="#0000ff"
+      value="#42b983"
       @input="setNodeColor"
     />
-    <label for="attributeSelection">label attribute:</label>
+    <label for="attributeSelection">Label attribute:</label>
     <select v-model="attributeSelection">
-      <option disabled value="">please select</option>
-      <option>null</option>
+      <option disabled value="">Select...</option>
+      <option>Null</option>
       <option
         v-for="(value, propertyName) in this.attributes"
         :key="propertyName"
@@ -155,16 +155,16 @@
         {{ propertyName }}
       </option>
     </select>
-    <button @click="addNodeFilter">add filter</button>
+    <button @click="addNodeFilter">Add filter</button>
     <br /><br />
     <h2>Edge Filter</h2>
     <br />
-    <label for="edgeName">edge filter name:</label>
+    <label for="edgeName">Edge filter name:</label>
     <input type="text" id="edgeName" :value="edgeName" @input="setEdgeName" />
-    <label for="loopSelection">allow loops:</label>
+    <label for="loopSelection">Allow loops:</label>
     <select v-model="loopSelection">
-      <option>true</option>
-      <option>false</option>
+      <option>True</option>
+      <option>False</option>
     </select>
     <!--<label for="modeSelection">choose mode:</label>
     <select v-model="modeSelection">
@@ -172,9 +172,9 @@
       <option>contains</option>
       <option>equals</option>
     </select>-->
-    <label for="fromSelection" v-if="this.json !== null">from:</label>
+    <label for="fromSelection" v-if="this.json !== null">From:</label>
     <select v-model="fromSelection" v-if="this.json !== null">
-      <option disabled value="">please select</option>
+      <option disabled value="">Select...</option>
       <option
         v-for="node in this.json['nodeFilterList']"
         v-bind:value="node.name"
@@ -184,10 +184,10 @@
       </option>
     </select>
     <label for="fromAttributeSelection" v-if="this.json !== null">
-      attribute:
+      Attribute:
     </label>
     <select v-model="fromAttributeSelection" v-if="this.json !== null">
-      <option disabled value="">please select</option>
+      <option disabled value="">Select...</option>
       <option
         v-for="node in this.json['nodeFilterList']"
         v-bind:value="node.attributes"
@@ -196,9 +196,9 @@
         {{ node.attributes }}
       </option>
     </select>
-    <label for="toSelection" v-if="this.json !== null">to:</label>
+    <label for="toSelection" v-if="this.json !== null">To:</label>
     <select v-model="toSelection" v-if="this.json !== null">
-      <option disabled value="">please select</option>
+      <option disabled value="">Select...</option>
       <option
         v-for="node in this.json['nodeFilterList']"
         v-bind:value="node.name"
@@ -208,10 +208,10 @@
       </option>
     </select>
     <label for="toAttributeSelection" v-if="this.json !== null">
-      attribute:
+      Attribute:
     </label>
     <select v-model="toAttributeSelection" v-if="this.json !== null">
-      <option disabled value="">please select</option>
+      <option disabled value="">Select...</option>
       <option
         v-for="node in this.json['nodeFilterList']"
         v-bind:value="node.attributes"
@@ -220,21 +220,21 @@
         {{ node.attributes }}
       </option>
     </select>
-    <label for="edgeLabel">edge label:</label>
+    <label for="edgeLabel">Edge label:</label>
     <input
       type="text"
       id="edgeLabel"
       :value="edgeLabel"
       @input="setEdgeLabel"
     />
-    <label for="edgeColorpicker">edge color:</label>
+    <label for="edgeColorpicker">Edge color:</label>
     <input
       type="color"
       id="edgeColorpicker"
-      value="#0000ff"
+      value="#42b983"
       @input="setEdgeColor"
     />
-    <button @click="addEdgeFilter">add filter</button>
+    <button @click="addEdgeFilter">Add filter</button>
   </div>
 </template>
 <script>
@@ -487,11 +487,18 @@ button {
   color: #000000;
   border: 1px solid #000000;
   box-shadow: 0 0 2px #000000;
-  margin-left: 5px;
   display: block;
-  margin-left: 0px;
   margin-top: 5px;
   margin-bottom: 5px;
+  border-radius: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+button:hover,
+select:hover,
+input:hover {
+  border: 1px solid #42b983;
 }
 
 input:focus,
@@ -501,6 +508,15 @@ select:focus {
   -webkit-box-shadow: 0 0 6px #42b983;
   -moz-box-shadow: 0 0 5px #42b983;
   box-shadow: 0 0 5px #42b983;
+}
+
+button:active {
+  box-shadow: 1px 1px #666;
+  transform: translateX(1px);
+}
+
+checkbox {
+  accent-color: #42b983;
 }
 
 #section {

@@ -89,7 +89,7 @@
       autoplay
       controlsList="nofullscreen"
     >
-      <source src="..\assets\example.mp4" type="video/mp4" />
+      <source src="local-video://example.mp4" type="video/mp4" />
     </video>
     <br /><br />
     <p>
@@ -140,6 +140,8 @@
       select <i>null</i> if you would like to show the <i>node label</i> only.
     </p>
     <br /><br />
+    <h1>Code Editor</h1>
+    <p>Test</p>
   </div>
 </template>
 <style scoped>

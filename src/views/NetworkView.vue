@@ -75,6 +75,7 @@ export default {
       this.nodes = JSON.parse(JSON.stringify(this.getNodes));
       this.edges = JSON.parse(JSON.stringify(this.getEdges));
       console.log(this.getFilters);
+      console.log(this.nodes);
     },
     back() {
       this.$router.push("/extractor");

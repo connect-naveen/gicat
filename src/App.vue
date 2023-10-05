@@ -1,6 +1,6 @@
 <template>
   <a
-    href="https://www.theoryofscience.rwth-aachen.de/go/id/qpmz/"
+    href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
     target="_blank"
   >
     <img alt="TST logo" src="../src/assets/rwth_tst_bild_rgb.png" id="tst" />

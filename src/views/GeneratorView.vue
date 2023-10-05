@@ -1,18 +1,35 @@
 <template>
   <div id="explorer" v-if="json != null">
     <h2>{{ json.packageName }}</h2>
-    <h4>Description:</h4>
+    <b v-if="json.authors">Authors:</b>
+    <p>{{ json.authors }}</p>
+    <b v-if="json.desc">Description:</b>
     <p>{{ json.desc }}</p>
-    <h4>Node filters:</h4>
-    <li v-for="filter in json['nodeFilterList']" :key="filter.name">
-      {{ filter.name + ":" }}<br />
-      <ul>
-        {{
-          filter.regex
-        }}
-      </ul>
-    </li>
-    <h4>Edge filters:</h4>
+    <b>Node filters:</b>
+    <br />
+    <ul
+      v-for="filter in json['nodeFilterList']"
+      :key="filter.name"
+      id="filterElement"
+      v-on:click="nodeListDropdown(filter)"
+    >
+      {{
+        filter.name + ":"
+      }}<br />
+      <li>
+        {{ "Regex: " + filter.regex }}
+      </li>
+      <li v-if="filter.extension">
+        {{ "File extension: " + filter.extension }}
+      </li>
+      <li v-if="filter.exclude != ''">
+        {{ "Excluded Regex: " + filter.exclude }}
+      </li>
+      <li v-if="filter.label">
+        {{ "Node label: " + filter.label }}
+      </li>
+    </ul>
+    <b>Edge filters:</b>
     <li v-for="edge in json['edgeFilterList']" :key="edge.name">
       {{ edge.label + ":" }}<br />
       <ul>
@@ -236,6 +253,7 @@
     />
     <button @click="addEdgeFilter">Add filter</button>
   </div>
+  <br />
 </template>
 <script>
 export default {
@@ -274,6 +292,13 @@ export default {
   },
   props: {},
   methods: {
+    nodeListDropdown() {
+      if (document.getElementById("filterElement").style.display == "none") {
+        document.getElementById("filterElement").style.display = "block";
+      } else {
+        document.getElementById("filterElement").style.display = "none";
+      }
+    },
     addNodeAttributes() {
       if (this.attributes == {}) {
         this.attributes = {
@@ -485,12 +510,15 @@ export default {
 
 #explorer h2,
 #explorer h4,
+#explorer ul,
 #explorer p {
   text-align: center;
 }
 
-input,
-select,
+#explorer ul {
+  display: block;
+}
+
 button {
   color: #000000;
   border: 1px solid #000000;
@@ -499,6 +527,18 @@ button {
   margin-top: 5px;
   margin-bottom: 5px;
   border-radius: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+select,
+input {
+  color: #000000;
+  border: 1px solid #000000;
+  box-shadow: 0 0 2px #000000;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
   padding-left: 5px;
   padding-right: 5px;
 }
@@ -520,7 +560,7 @@ select:focus {
 
 button:active {
   box-shadow: 0.33px #9b9999;
-  transform: translateX(0.33px);
+  transform: translateX(0.4px);
 }
 
 #section {
@@ -530,12 +570,11 @@ button:active {
   margin-left: 5px;
 }
 
-h2 {
-  text-align: left;
-}
-
-h4 {
-  text-align: left;
+li {
   font-size: 12px;
+  display: block;
+  text-align: left;
+  list-style-position: inside;
+  margin-left: 2px;
 }
 </style>

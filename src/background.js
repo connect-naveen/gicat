@@ -14,6 +14,22 @@ protocol.registerSchemesAsPrivileged([
   { scheme: "app", privileges: { secure: true, standard: true } },
 ]);
 
+function registerLocalVideoProtocol () {
+  protocol.registerFileProtocol('local-video', (request, callback) => {
+    const url = request.url.replace(/^local-video:\/\//, '')
+    // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
+    const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+    try {
+      // eslint-disable-next-line no-undef
+      return callback(path.join(__static, decodedUrl))
+    } catch (error) {
+      console.error(
+        'ERROR: registerLocalVideoProtocol: Could not get file path:',
+        error
+      )
+    }
+  })
+};
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -67,6 +83,7 @@ app.on("ready", async () => {
     }
   }
   createWindow();
+  registerLocalVideoProtocol();
 });
 
 app.on('browser-window-created', (_, window) => {

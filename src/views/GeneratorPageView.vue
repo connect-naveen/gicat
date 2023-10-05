@@ -34,23 +34,6 @@
     },
     setup(){
       const data = reactive({
-        /*codeInput: "",
-        regexOutput: "",
-        userRegexInput: "",
-        packageName: "",
-        filterName: "",
-        packageAuthor: "",
-        regexName: "",
-        fileExtension: "",
-        description: "",
-        excludes: "",
-        nodeLabel: "",
-        edgeLabel: "",
-        //colorpicker: "",
-        nodeColorpicker: "",
-        edgeName: "",
-        nodeAttributes: "",
-        nodeCaptureGroups: ""*/
         filterPackage: {
                     "packageName": '',
                     "authors": '',

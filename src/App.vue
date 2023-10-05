@@ -1,17 +1,29 @@
 <template>
+  <a
+    href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
+    target="_blank"
+  >
+    <img alt="TST logo" src="../src/assets/rwth_tst_bild_rgb.png" id="tst" />
+  </a>
   <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/extractor">Extractor</router-link> |
     <router-link to="/filters">Filter</router-link> |
-    <router-link to="/guide">Guide</router-link> |
     <router-link to="/license">License</router-link>|
+    <router-link to="/guide">Guide</router-link> |
     <router-link to="/generator">Generator</router-link>
   </nav>
   <RouterView />
 </template>
 
 <style lang="scss">
+#tst {
+  float: left;
+  display: block;
+  margin-top: 15px;
+}
+
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

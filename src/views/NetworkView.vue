@@ -162,6 +162,8 @@ export default {
       const fs = require("fs");
       const editorPath = "/snap/bin/code";
 
+      // TODO dialog for finding vscode or other code editor
+
       let path = data.fileName;
 
       const exists = fs.existsSync(path);

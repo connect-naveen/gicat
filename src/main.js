@@ -18,6 +18,14 @@ const vuetify = createVuetify({
   theme: {
     defaultTheme: "dark",
   },
+  defaults: {
+    VBtn: {
+      variant: "outlined",
+      density: "comfortable",
+      size: "large",
+      rounded: "lg",
+    },
+  },
   icons: {
     defaultSet: "mdi",
     aliases,

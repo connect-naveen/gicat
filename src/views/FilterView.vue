@@ -2,13 +2,9 @@
   <div class="filters">
     <h1>This is the filter page</h1>
     <div>
-      <button color="primary" @click="selectFilterPackage()">
-        Select Filter Package
-      </button>
+      <v-btn @click="selectFilterPackage()">Select Filter Package</v-btn>
       <br />
-      <button color="primary" @click="resetFiltersButton()">
-        Reset Filters
-      </button>
+      <v-btn @click="resetFiltersButton()">Reset Filters</v-btn>
     </div>
     <div>
       <div>Current filters:</div>

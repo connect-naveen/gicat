@@ -69,8 +69,8 @@
       @input="setPackageDescription"
     />
     <br />
-    <button @click="generatePackage">Generate package</button>
-    <button @click="exportFilter">Export</button>
+    <v-btn @click="generatePackage">Generate package </v-btn>
+    <v-btn @click="exportFilter">Export </v-btn>
     <br /><br />
     <h2>Node filter</h2>
     <br />
@@ -95,7 +95,7 @@
     <input type="checkbox" id="captureGroup" />
     <label for="count">Quantifier:</label>
     <input type="text" id="count" size="1" @input="setCount" />
-    <button @click="generateRegex">Submit</button>
+    <v-btn @click="generateRegex">Submit</v-btn>
     <br />
     <label for="regexOutput">(Generated) Regex:</label>
     <input
@@ -105,7 +105,7 @@
       :value="regexOutput"
       @input="updateRegexOutput"
     />
-    <button @click="resetRegex">Reset</button>
+    <v-btn @click="resetRegex">Reset</v-btn>
     <br /><br />
     <label for="fileExtension">File extension:</label>
     <input
@@ -152,7 +152,7 @@
       :value="NodeCaptureGroups"
       @input="setNodeCaptureGroups"
     />
-    <button @click="addNodeAttributes">Add</button>
+    <v-btn @click="addNodeAttributes">Add </v-btn>
     <br /><br />
     <label for="nodeColorpicker">Node color:</label>
     <input
@@ -172,7 +172,7 @@
         {{ propertyName }}
       </option>
     </select>
-    <button @click="addNodeFilter">Add filter</button>
+    <v-btn @click="addNodeFilter">Add filter</v-btn>
     <br /><br />
     <h2>Edge Filter</h2>
     <br />
@@ -251,7 +251,7 @@
       value="#42b983"
       @input="setEdgeColor"
     />
-    <button @click="addEdgeFilter">Add filter</button>
+    <v-btn @click="addEdgeFilter">Add filter</v-btn>
   </div>
   <br />
 </template>
@@ -496,7 +496,8 @@ export default {
   },
 };
 </script>
-<style scoped>
+<style scoped lang="scss">
+@use "../styles/settings.scss";
 /* explorer */
 #explorer {
   float: right;
@@ -519,7 +520,7 @@ export default {
   display: block;
 }
 
-button {
+/*button {
   color: #000000;
   border: 1px solid #000000;
   box-shadow: 0 0 2px #000000;
@@ -529,7 +530,7 @@ button {
   border-radius: 8px;
   padding-left: 5px;
   padding-right: 5px;
-}
+}*/
 
 select,
 input {
@@ -543,7 +544,7 @@ input {
   padding-right: 5px;
 }
 
-button:hover,
+/*button:hover,*/
 select:hover,
 input:hover {
   border: 1px solid #42b983;
@@ -558,10 +559,10 @@ select:focus {
   box-shadow: 0 0 5px #42b983;
 }
 
-button:active {
+/*button:active {
   box-shadow: 0.33px #9b9999;
   transform: translateX(0.4px);
-}
+}*/
 
 #section {
   height: 100%;

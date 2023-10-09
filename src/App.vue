@@ -44,4 +44,48 @@ nav {
     }
   }
 }
+
+button {
+  color: #000000;
+  border: 1px solid #000000;
+  box-shadow: 0 0 2px #000000;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  border-radius: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+select,
+input {
+  color: #000000;
+  border: 1px solid #000000;
+  box-shadow: 0 0 2px #000000;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+button:hover,
+select:hover,
+input:hover {
+  border: 1px solid #42b983;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #fafafa;
+  -webkit-box-shadow: 0 0 6px #42b983;
+  -moz-box-shadow: 0 0 5px #42b983;
+  box-shadow: 0 0 5px #42b983;
+}
+
+button:active {
+  box-shadow: 0.33px #9b9999;
+  transform: translateX(0.4px);
+}
 </style>

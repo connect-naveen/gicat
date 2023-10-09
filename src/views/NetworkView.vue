@@ -74,7 +74,6 @@ export default {
     initGraph() {
       this.nodes = JSON.parse(JSON.stringify(this.getNodes));
       this.edges = JSON.parse(JSON.stringify(this.getEdges));
-      console.log(this.getFilters);
     },
     back() {
       this.$router.push("/extractor");
@@ -92,13 +91,19 @@ export default {
       );
       let hitNode = this.getNodes.find((el) => el.id == params.nodes[0]);
 
-      let isFile = this.isFile(hitNode);
+      // let isFile = this.isFile(hitNode);
       let isFolder = this.isFolder(hitNode);
-      console.log(
-        `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
-      );
-
-      this.collapseChildren(hitNode, hitNodeIndex);
+      // console.log(
+      //   `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
+      // );
+      if (isFolder) {
+        this.collapseChildren(hitNode, hitNodeIndex);
+      } else {
+        this.openFile({
+          fileName: hitNode.group,
+          line: hitNode.meta.line,
+        });
+      }
     },
     // collapseChildren(hitNode, hitNodeIndex) {
     collapseChildren(hitNode) {
@@ -151,6 +156,27 @@ export default {
 
       // console.log(nodes);
       // console.log(this.nodes);
+    },
+    openFile(data) {
+      const { spawn } = require("child_process");
+      const fs = require("fs");
+      const editorPath = "/snap/bin/code";
+
+      // TODO dialog for finding vscode or other code editor
+
+      let path = data.fileName;
+
+      const exists = fs.existsSync(path);
+      if (!exists) {
+        console.error("editor not found");
+      }
+      path += ":" + (data.line ?? 0) + ":0";
+
+      const opts = {
+        detached: true,
+      };
+
+      spawn(editorPath, ["--goto", path], opts);
     },
   },
   computed: {

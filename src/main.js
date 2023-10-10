@@ -16,7 +16,7 @@ import "@mdi/font/css/materialdesignicons.css";
 // create Vuetify
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: "dark",
+    defaultTheme: "light",
   },
   defaults: {
     VBtn: {
@@ -24,6 +24,14 @@ const vuetify = createVuetify({
       density: "comfortable",
       size: "large",
       rounded: "lg",
+    },
+    VToolbar: {
+      color: "grey-lighten-4",
+      elevation: 6,
+    },
+    VToolbarItems: {
+      variant: "text",
+      color: "#00549f",
     },
   },
   icons: {

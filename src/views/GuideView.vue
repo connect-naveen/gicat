@@ -118,7 +118,9 @@
       with another named capture group.<br /><br />
       To show you an example, we will use the previous generated Regex:
       <br /><br />
-      <code>[A-Za-z]*\sclass\s<b>([A-Za-z]+)</b>\sextends\s<b>(A)</b></code>
+      <v-content>
+        <code>[A-Za-z]*\sclass\s<b>([A-Za-z]+)</b>\sextends\s<b>(A)</b></code>
+      </v-content>
       <br /><br />
       As you can see, there are two different capture groups. The first one
       matches all subclasses of its superclass. The latter matches the addressed

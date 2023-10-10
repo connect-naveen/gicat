@@ -1,9 +1,11 @@
 <template>
   <div class="extractor">
     <div>
+      <br />
       <v-btn @click="openDir()" prepend-icon="mdi-folder-arrow-up-outline"
         >Open Repository
       </v-btn>
+      <br />
       <br />
       <div>Current path:</div>
       <div>{{ getRepoPath }}</div>

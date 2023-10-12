@@ -7,16 +7,21 @@
         </button>
       </li>
     </div>
-    <Network
-      ref="network"
-      class="net"
-      :nodes="this.nodes"
-      :edges="this.edges"
-      :options="options"
-      :events="['doubleClick']"
-      @double-click="doubleClick"
-    >
-    </Network>
+    <div>
+      <Network
+        ref="network"
+        class="net"
+        :nodes="this.nodes"
+        :edges="this.edges"
+        :options="getOptions"
+        :events="['doubleClick']"
+        @double-click="doubleClick"
+      ></Network>
+      <button class="button" id="testButton" v-on:click="toggleSimulation()">
+        <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
+        <v-icon icon="mdi-play-circle"></v-icon>
+      </button>
+    </div>
   </div>
 </template>
 
@@ -30,6 +35,7 @@ export default {
   },
   data() {
     return {
+      hit: null,
       nodes: [],
       edges: [],
       options: {
@@ -49,7 +55,7 @@ export default {
           // }
         },
         physics: {
-          enabled: true,
+          enabled: false,
         },
       },
       filtersHidden: [],
@@ -90,6 +96,9 @@ export default {
         (el) => el.id == params.nodes[0]
       );
       let hitNode = this.getNodes.find((el) => el.id == params.nodes[0]);
+
+      this.hit = hitNode;
+      console.log("AAA", this.hit);
 
       // let isFile = this.isFile(hitNode);
       let isFolder = this.isFolder(hitNode);
@@ -178,6 +187,20 @@ export default {
 
       spawn(editorPath, ["--goto", path], opts);
     },
+    toggleSimulation() {
+      let old = this.options.physics.enabled;
+      console.log("old", old);
+      let options = {
+        physics: {
+          enabled: !old,
+        },
+      };
+      this.options.physics.enabled = !old;
+      console.log("new", options.physics.enabled);
+      console.log(this.$refs.network);
+      this.$refs.network.setOptions(options);
+      this.$refs.network.$forceUpdate();
+    },
   },
   computed: {
     // store
@@ -189,6 +212,9 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
+    getOptions() {
+      return this.options;
+    },
   },
 };
 </script>
@@ -207,5 +233,17 @@ export default {
   height: 100%;
   width: 100%;
   position: fixed;
+  border-top: 1px solid #00549f;
+}
+
+#testButton {
+  display: inline-block;
+  position: absolute;
+  z-index: 100;
+  right: 0px;
+  bottom: 0px;
+  border-radius: 20px;
+  background-color: red;
+  line-height: 0px;
 }
 </style>

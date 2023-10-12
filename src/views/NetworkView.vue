@@ -10,6 +10,7 @@
           density="compact"
         ></v-select>
       </div>
+      <div class="network-nav-divider"></div>
       <div class="network-nav-right">
         <!-- put visualization controls here -->
         <button
@@ -18,7 +19,19 @@
           v-on:click="toggleSimulation()"
         >
           <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
-          <v-icon icon="mdi-play-circle"></v-icon>
+          <v-icon
+            v-if="this.options.physics.enabled"
+            icon="mdi-pause-circle"
+            size="50"
+          ></v-icon>
+          <v-icon
+            v-if="!this.options.physics.enabled"
+            icon="mdi-play-circle"
+            size="50"
+          ></v-icon>
+          <v-tooltip activator="parent" location="start">
+            Pause Simulation
+          </v-tooltip>
         </button>
       </div>
       <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
@@ -71,7 +84,7 @@ export default {
           // }
         },
         physics: {
-          enabled: false,
+          enabled: true,
         },
       },
       filtersHidden: [],
@@ -239,20 +252,29 @@ export default {
 }
 
 .network-nav {
-  height: 50px;
+  /* height: 50px; */
   display: flex;
 }
 
 .network-nav-left {
   flex: auto;
+  margin-left: 3px;
 }
 
 .network-nav-right {
   width: 200px;
 }
 
+.network-nav-divider {
+  /* width: 1px; */
+  /* background-color: lightgrey; */
+  border: 0.5px solid rgb(230, 230, 230);
+  border-radius: 50px;
+}
+
 .filter-selector {
   width: 250px;
+  height: 50px;
 }
 
 .net {
@@ -263,13 +285,9 @@ export default {
 }
 
 #simulationButton {
-  /* display: inline-block;
-  position: absolute;
-  z-index: 100;
-  right: 0px;
-  bottom: 0px; */
-  border-radius: 20px;
-  background-color: red;
+  height: 100%;
+  float: right;
+  border-radius: 100%;
   line-height: 0px;
 }
 </style>

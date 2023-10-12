@@ -16,7 +16,7 @@ import "@mdi/font/css/materialdesignicons.css";
 // create Vuetify
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: "dark",
+    defaultTheme: "light",
   },
   icons: {
     defaultSet: "mdi",

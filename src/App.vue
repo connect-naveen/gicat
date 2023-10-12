@@ -37,7 +37,7 @@
           :key="item.title"
           :to="item.path"
         >
-          <v-icon>{{ item.icon }}</v-icon>
+          <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
       </v-toolbar-items>

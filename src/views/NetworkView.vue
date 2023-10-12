@@ -253,6 +253,7 @@ export default {
 
 .network-nav {
   /* height: 50px; */
+  margin-top: 6px;
   display: flex;
 }
 

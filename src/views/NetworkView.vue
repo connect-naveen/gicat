@@ -1,11 +1,31 @@
 <template>
   <div class="network">
     <div class="network-nav">
-      <li v-for="filter in this.getFilters" v-bind:key="filter.name">
+      <div class="network-nav-left">
+        <!-- put filter specific options here, depending on the selection -->
+        <v-select
+          class="filter-selector"
+          label="Select"
+          :items="this.getFilterNames"
+          density="compact"
+        ></v-select>
+      </div>
+      <div class="network-nav-right">
+        <!-- put visualization controls here -->
+        <button
+          class="button"
+          id="simulationButton"
+          v-on:click="toggleSimulation()"
+        >
+          <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
+          <v-icon icon="mdi-play-circle"></v-icon>
+        </button>
+      </div>
+      <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
         <button class="button" v-on:click="toggleFilter()">
           {{ filter.name }}
         </button>
-      </li>
+      </li> -->
     </div>
     <div>
       <Network
@@ -17,10 +37,6 @@
         :events="['doubleClick']"
         @double-click="doubleClick"
       ></Network>
-      <button class="button" id="testButton" v-on:click="toggleSimulation()">
-        <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
-        <v-icon icon="mdi-play-circle"></v-icon>
-      </button>
     </div>
   </div>
 </template>
@@ -35,7 +51,7 @@ export default {
   },
   data() {
     return {
-      hit: null,
+      test: ["a", "b", "c"],
       nodes: [],
       edges: [],
       options: {
@@ -190,15 +206,9 @@ export default {
     toggleSimulation() {
       let old = this.options.physics.enabled;
       console.log("old", old);
-      let options = {
-        physics: {
-          enabled: !old,
-        },
-      };
       this.options.physics.enabled = !old;
-      console.log("new", options.physics.enabled);
-      console.log(this.$refs.network);
-      this.$refs.network.setOptions(options);
+      console.log("new", this.options.physics.enabled);
+      this.$refs.network.setOptions(this.options);
       this.$refs.network.$forceUpdate();
     },
   },
@@ -212,6 +222,9 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
+    getFilterNames() {
+      return this.getFilters.map((filter) => filter.name);
+    },
     getOptions() {
       return this.options;
     },
@@ -226,7 +239,20 @@ export default {
 }
 
 .network-nav {
-  height: 20%;
+  height: 50px;
+  display: flex;
+}
+
+.network-nav-left {
+  flex: auto;
+}
+
+.network-nav-right {
+  width: 200px;
+}
+
+.filter-selector {
+  width: 250px;
 }
 
 .net {
@@ -236,12 +262,12 @@ export default {
   border-top: 1px solid #00549f;
 }
 
-#testButton {
-  display: inline-block;
+#simulationButton {
+  /* display: inline-block;
   position: absolute;
   z-index: 100;
   right: 0px;
-  bottom: 0px;
+  bottom: 0px; */
   border-radius: 20px;
   background-color: red;
   line-height: 0px;

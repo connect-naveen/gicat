@@ -1,15 +1,22 @@
 <template>
   <div class="extractor">
     <div>
-      <!-- TODO add vuetify buttons -->
-      <button color="primary" @click="openDir()">Open Repository</button>
+      <br />
+      <v-btn @click="openDir()" prepend-icon="mdi-folder-arrow-up-outline"
+        >Open Repository
+      </v-btn>
+      <br />
       <br />
       <div>Current path:</div>
       <div>{{ getRepoPath }}</div>
       <br />
-      <button color="primary" @click="startVisualisation()">
-        Start Visualisation
-      </button>
+      <v-btn
+        id="startVisButton"
+        prepend-icon="mdi-play-outline"
+        @click="startVisualisation()"
+        :disabled="isDirEmpty"
+        >Start Visualisation
+      </v-btn>
       <br />
     </div>
   </div>
@@ -22,7 +29,9 @@ const ce = window.ce;
 
 export default {
   data() {
-    return {};
+    return {
+      isDirEmpty: true,
+    };
   },
   name: "ExtractorView",
   components: {},
@@ -46,6 +55,7 @@ export default {
       });
       if (!repoPath.canceled && repoPath.filePaths[0]) {
         this.setRepoPath(repoPath.filePaths[0]);
+        this.isDirEmpty = false;
       } else {
         this.setRepoPath("");
       }

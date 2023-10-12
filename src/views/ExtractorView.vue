@@ -14,7 +14,7 @@
         id="startVisButton"
         prepend-icon="mdi-play-outline"
         @click="startVisualisation()"
-        :disabled="isDirEmpty"
+        :disabled="!isRepoPathEmpty"
         >Start Visualisation
       </v-btn>
       <br />
@@ -29,9 +29,7 @@ const ce = window.ce;
 
 export default {
   data() {
-    return {
-      isDirEmpty: true,
-    };
+    return {};
   },
   name: "ExtractorView",
   components: {},
@@ -126,6 +124,10 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
+    isRepoPathEmpty() {
+      console.log(this.getRepoPath);
+      return this.getRepoPath != "";
+    },
   },
 };
 </script>

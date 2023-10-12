@@ -1,22 +1,56 @@
 <template>
   <div class="network">
     <div class="network-nav">
-      <li v-for="filter in this.getFilters" v-bind:key="filter.name">
+      <div class="network-nav-left">
+        <!-- put filter specific options here, depending on the selection -->
+        <v-select
+          class="filter-selector"
+          label="Select"
+          :items="this.getFilterNames"
+          density="compact"
+        ></v-select>
+      </div>
+      <div class="network-nav-divider"></div>
+      <div class="network-nav-right">
+        <!-- put visualization controls here -->
+        <button
+          class="button"
+          id="simulationButton"
+          v-on:click="toggleSimulation()"
+        >
+          <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
+          <v-icon
+            v-if="this.options.physics.enabled"
+            icon="mdi-pause-circle"
+            size="50"
+          ></v-icon>
+          <v-icon
+            v-if="!this.options.physics.enabled"
+            icon="mdi-play-circle"
+            size="50"
+          ></v-icon>
+          <v-tooltip activator="parent" location="start">
+            Pause Simulation
+          </v-tooltip>
+        </button>
+      </div>
+      <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
         <button class="button" v-on:click="toggleFilter()">
           {{ filter.name }}
         </button>
-      </li>
+      </li> -->
     </div>
-    <Network
-      ref="network"
-      class="net"
-      :nodes="this.nodes"
-      :edges="this.edges"
-      :options="options"
-      :events="['doubleClick']"
-      @double-click="doubleClick"
-    >
-    </Network>
+    <div>
+      <Network
+        ref="network"
+        class="net"
+        :nodes="this.nodes"
+        :edges="this.edges"
+        :options="getOptions"
+        :events="['doubleClick']"
+        @double-click="doubleClick"
+      ></Network>
+    </div>
   </div>
 </template>
 
@@ -30,6 +64,7 @@ export default {
   },
   data() {
     return {
+      test: ["a", "b", "c"],
       nodes: [],
       edges: [],
       options: {
@@ -90,6 +125,9 @@ export default {
         (el) => el.id == params.nodes[0]
       );
       let hitNode = this.getNodes.find((el) => el.id == params.nodes[0]);
+
+      this.hit = hitNode;
+      console.log("AAA", this.hit);
 
       // let isFile = this.isFile(hitNode);
       let isFolder = this.isFolder(hitNode);
@@ -178,6 +216,14 @@ export default {
 
       spawn(editorPath, ["--goto", path], opts);
     },
+    toggleSimulation() {
+      let old = this.options.physics.enabled;
+      console.log("old", old);
+      this.options.physics.enabled = !old;
+      console.log("new", this.options.physics.enabled);
+      this.$refs.network.setOptions(this.options);
+      this.$refs.network.$forceUpdate();
+    },
   },
   computed: {
     // store
@@ -189,6 +235,12 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
+    getFilterNames() {
+      return this.getFilters.map((filter) => filter.name);
+    },
+    getOptions() {
+      return this.options;
+    },
   },
 };
 </script>
@@ -200,12 +252,43 @@ export default {
 }
 
 .network-nav {
-  height: 20%;
+  /* height: 50px; */
+  margin-top: 6px;
+  display: flex;
+}
+
+.network-nav-left {
+  flex: auto;
+  margin-left: 3px;
+}
+
+.network-nav-right {
+  width: 200px;
+}
+
+.network-nav-divider {
+  /* width: 1px; */
+  /* background-color: lightgrey; */
+  border: 0.5px solid rgb(230, 230, 230);
+  border-radius: 50px;
+}
+
+.filter-selector {
+  width: 250px;
+  height: 50px;
 }
 
 .net {
   height: 100%;
   width: 100%;
   position: fixed;
+  border-top: 1px solid #00549f;
+}
+
+#simulationButton {
+  height: 100%;
+  float: right;
+  border-radius: 100%;
+  line-height: 0px;
 }
 </style>

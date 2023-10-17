@@ -1,5 +1,7 @@
 <template>
+  <v-main></v-main>
   <div id="license">
+    <br />
     <h1>GNU LESSER GENERAL PUBLIC LICENSE</h1>
     <i>Version 3, 29 June 2007</i>
     <p>

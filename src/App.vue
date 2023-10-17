@@ -16,32 +16,34 @@
   </nav>
   <RouterView />-->
   <v-app>
-    <v-toolbar>
-      <v-toolbar-title>
-        <a
-          href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
-          target="_blank"
-          style="cursor: pointer"
-        >
-          <img
-            alt="TST logo"
-            src="../src/assets/rwth_tst_bild_rgb.png"
-            id="tst"
-          />
-        </a>
-      </v-toolbar-title>
-      <v-toolbar-items>
-        <v-btn
-          class="mt-0"
-          v-for="item in navBarItems"
-          :key="item.title"
-          :to="item.path"
-        >
-          <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
-          {{ item.title }}
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
+    <v-app-bar>
+      <v-toolbar>
+        <v-toolbar-title>
+          <a
+            href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
+            target="_blank"
+            style="cursor: pointer"
+          >
+            <img
+              alt="TST logo"
+              src="../src/assets/rwth_tst_bild_rgb.png"
+              id="tst"
+            />
+          </a>
+        </v-toolbar-title>
+        <v-toolbar-items>
+          <v-btn
+            class="mt-0"
+            v-for="item in navBarItems"
+            :key="item.title"
+            :to="item.path"
+          >
+            <v-icon v-if="item.icon">{{ item.icon }}</v-icon>
+            {{ item.title }}
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar>
+    </v-app-bar>
     <router-view></router-view>
   </v-app>
 </template>

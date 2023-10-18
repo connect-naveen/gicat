@@ -65,7 +65,47 @@
                 :title="json.packageName"
               ></v-list-item>
             </template>
-            <v-list-item title="Author:"></v-list-item>
+            <v-list-item
+              v-if="json.authors"
+              :title="'Author:' + json.authors"
+            ></v-list-item>
+            <v-list-item
+              v-if="json.desc"
+              :title="'Description:' + json.desc"
+            ></v-list-item>
+            <v-list-group
+              v-for="filter in json['nodeFilterList']"
+              :key="filter.name"
+            >
+              <template v-slot:activator="{ props }">
+                <v-list-item :title="filter.name" v-bind="props"></v-list-item>
+              </template>
+              <v-list-item :title="'Regex:' + filter.regex"></v-list-item>
+              <v-list-item
+                v-if="filter.exclude != ''"
+                :title="'Exclude:' + filter.exclude"
+              ></v-list-item>
+              <v-list-item
+                v-if="filter.extension"
+                :title="'File extension:' + filter.extension"
+              ></v-list-item>
+              <v-list-item
+                v-if="filter.label"
+                :title="'Node label:' + filter.label"
+              ></v-list-item>
+            </v-list-group>
+            <v-list-group
+              v-for="edge in json['edgeFilterList']"
+              :key="edge.name"
+            >
+              <template v-slot:activator="{ props }">
+                <v-list-item :title="edge.name" v-bind="props"></v-list-item>
+              </template>
+              <v-list-item :title="'Edge label:' + edge.label"></v-list-item>
+              <!--<v-list-item :title="'Loops?' + edge.allow-loop"></v-list-item>-->
+              <v-list-item :title="'From:' + edge.from.attribute"></v-list-item>
+              <v-list-item :title="'To:' + edge.to.attribute"></v-list-item>
+            </v-list-group>
           </v-list-group>
         </v-list>
       </v-card>

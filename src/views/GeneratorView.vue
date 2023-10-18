@@ -45,16 +45,30 @@
         </ul>
       </li>
     </div>-->
-    <v-card
-      class="mx-auto"
-      width="350"
-      position="sticky"
-      density="comfortable"
-      elevation="4"
-      title="Package Explorer:"
-    >
-    </v-card>
     <div id="section">
+      <v-card
+        width="400"
+        position="fixed"
+        color="#c7ddf2"
+        density="comfortable"
+        elevation="2"
+        location="right"
+        class="text-center"
+      >
+        <v-list opened="true">
+          <v-list-item value="explorer" title="Package Explorer"></v-list-item>
+          <v-list-group v-if="json != null" :value="packageName">
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                prepend-icon="mdi-package"
+                :title="json.packageName"
+              ></v-list-item>
+            </template>
+            <v-list-item title="Author:"></v-list-item>
+          </v-list-group>
+        </v-list>
+      </v-card>
       <h2>Package information</h2>
       <br />
       <label for="packageName">Name:</label>

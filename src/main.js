@@ -33,6 +33,9 @@ const vuetify = createVuetify({
       variant: "text",
       color: "#00549f",
     },
+    VListGroup: {
+      color: "red",
+    },
   },
   icons: {
     defaultSet: "mdi",

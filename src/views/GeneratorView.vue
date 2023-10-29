@@ -2,16 +2,20 @@
   <v-main>
     <div id="section">
       <v-card
-        width="400"
-        position="fixed"
+        width="25%"
         color="#c7ddf2"
         density="comfortable"
         elevation="2"
-        location="right"
+        location="sticky right"
         class="text-center"
+        position="fixed"
       >
         <v-list opened="true">
-          <v-list-item value="explorer" title="Package Explorer"></v-list-item>
+          <v-list-item
+            value="explorer"
+            title="Package Explorer"
+            color="#00549f"
+          ></v-list-item>
           <v-list-group v-if="json != null" :value="packageName">
             <template v-slot:activator="{ props }">
               <v-list-item
@@ -23,30 +27,42 @@
             <v-list-item
               v-if="json.authors"
               :title="'Author:' + json.authors"
+              class="subItem"
             ></v-list-item>
             <v-list-item
               v-if="json.desc"
               :title="'Description:' + json.desc"
+              class="subItem"
             ></v-list-item>
             <v-list-group
               v-for="filter in json['nodeFilterList']"
               :key="filter.name"
             >
               <template v-slot:activator="{ props }">
-                <v-list-item :title="filter.name" v-bind="props"></v-list-item>
+                <v-list-item
+                  :title="filter.name"
+                  v-bind="props"
+                  class="subItem"
+                ></v-list-item>
               </template>
-              <v-list-item :title="'Regex:' + filter.regex"></v-list-item>
+              <v-list-item
+                :title="'Regex:' + filter.regex"
+                class="subItem"
+              ></v-list-item>
               <v-list-item
                 v-if="filter.exclude != ''"
                 :title="'Exclude:' + filter.exclude"
+                class="subItem"
               ></v-list-item>
               <v-list-item
                 v-if="filter.extension"
                 :title="'File extension:' + filter.extension"
+                class="subItem"
               ></v-list-item>
               <v-list-item
                 v-if="filter.label"
                 :title="'Node label:' + filter.label"
+                class="subItem"
               ></v-list-item>
             </v-list-group>
             <v-list-group
@@ -54,12 +70,25 @@
               :key="edge.name"
             >
               <template v-slot:activator="{ props }">
-                <v-list-item :title="edge.name" v-bind="props"></v-list-item>
+                <v-list-item
+                  :title="edge.name"
+                  v-bind="props"
+                  class="subItem"
+                ></v-list-item>
               </template>
-              <v-list-item :title="'Edge label:' + edge.label"></v-list-item>
+              <v-list-item
+                :title="'Edge label:' + edge.label"
+                class="subItem"
+              ></v-list-item>
               <!--<v-list-item :title="'Loops?' + edge.allow-loop"></v-list-item>-->
-              <v-list-item :title="'From:' + edge.from.attribute"></v-list-item>
-              <v-list-item :title="'To:' + edge.to.attribute"></v-list-item>
+              <v-list-item
+                :title="'From:' + edge.from.attribute"
+                class="subItem"
+              ></v-list-item>
+              <v-list-item
+                :title="'To:' + edge.to.attribute"
+                class="subItem"
+              ></v-list-item>
             </v-list-group>
           </v-list-group>
         </v-list>
@@ -234,6 +263,7 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <br /><br /><br /><br />
         <v-row>
           <v-col cols="12" md="4">
             <v-text-field
@@ -277,102 +307,148 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
-            <v-color-picker
-              label="Node color"
-              v-model="nodeColorpicker"
+            <label for="nodeColorpicker">Node color:</label>
+            <input
+              type="color"
+              id="nodeColorpicker"
+              value="#42b983"
               @input="setNodeColor"
-              :swatches="swatches"
-              show-swatches
-            >
-            </v-color-picker>
+            />
+          </v-col>
+          <v-col cols="12" md="4">
+            <label for="attributeSelection">Label attribute:</label>
+            <select v-model="attributeSelection">
+              <option disabled value="">Select...</option>
+              <option>Null</option>
+              <option
+                v-for="(value, propertyName) in this.attributes"
+                :key="propertyName"
+              >
+                {{ propertyName }}
+              </option>
+            </select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-btn prepend-icon="mdi-plus" @click="addNodeFilter">
+              Add filter
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
-      <label for="attributeSelection">Label attribute:</label>
-      <select v-model="attributeSelection">
-        <option disabled value="">Select...</option>
-        <option>Null</option>
-        <option
-          v-for="(value, propertyName) in this.attributes"
-          :key="propertyName"
-        >
-          {{ propertyName }}
-        </option>
-      </select>
-      <v-btn @click="addNodeFilter">Add filter</v-btn>
       <br /><br />
-      <h2>Edge Filter</h2>
-      <br />
-      <label for="edgeName">Edge filter name:</label>
-      <input type="text" id="edgeName" :value="edgeName" @input="setEdgeName" />
-      <label for="loopSelection">Allow loops:</label>
-      <select v-model="loopSelection">
-        <option>True</option>
-        <option>False</option>
-      </select>
-      <label for="fromSelection" v-if="this.json !== null">From:</label>
-      <select v-model="fromSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.name"
-          :key="node.name"
-        >
-          {{ node.name }}
-        </option>
-      </select>
-      <label for="fromAttributeSelection" v-if="this.json !== null">
-        Attribute:
-      </label>
-      <select v-model="fromAttributeSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.attributes"
-          :key="node.name"
-        >
-          {{ node.attributes }}
-        </option>
-      </select>
-      <label for="toSelection" v-if="this.json !== null">To:</label>
-      <select v-model="toSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.name"
-          :key="node.name"
-        >
-          {{ node.name }}
-        </option>
-      </select>
-      <label for="toAttributeSelection" v-if="this.json !== null">
-        Attribute:
-      </label>
-      <select v-model="toAttributeSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.attributes"
-          :key="node.name"
-        >
-          {{ node.attributes }}
-        </option>
-      </select>
-      <label for="edgeLabel">Edge label:</label>
-      <input
-        type="text"
-        id="edgeLabel"
-        :value="edgeLabel"
-        @input="setEdgeLabel"
-      />
-      <label for="edgeColorpicker">Edge color:</label>
-      <input
-        type="color"
-        id="edgeColorpicker"
-        value="#42b983"
-        @input="setEdgeColor"
-      />
-      <v-btn @click="addEdgeFilter">Add filter</v-btn>
+      <v-container>
+        <h2>Edge filter</h2>
+        <br />
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="edgeName"
+              :rules="nameRules"
+              :counter="10"
+              label="Edge filter name"
+              hide-details
+              @input="setEdgeName"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <label for="loopSelection">Allow loops:</label>
+            <select v-model="loopSelection">
+              <option>True</option>
+              <option>False</option>
+            </select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <label for="fromSelection" v-if="this.json !== null">From:</label>
+            <select v-model="fromSelection" v-if="this.json !== null">
+              <option disabled value="">Select...</option>
+              <option
+                v-for="node in this.json['nodeFilterList']"
+                v-bind:value="node.name"
+                :key="node.name"
+              >
+                {{ node.name }}
+              </option>
+            </select>
+          </v-col>
+          <v-col cols="12" md="4">
+            <label for="fromAttributeSelection" v-if="this.json !== null">
+              Attribute:
+            </label>
+            <select v-model="fromAttributeSelection" v-if="this.json !== null">
+              <option disabled value="">Select...</option>
+              <option
+                v-for="node in this.json['nodeFilterList']"
+                v-bind:value="node.attributes"
+                :key="node.name"
+              >
+                {{ node.attributes }}
+              </option>
+            </select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <label for="toSelection" v-if="this.json !== null">To:</label>
+            <select v-model="toSelection" v-if="this.json !== null">
+              <option disabled value="">Select...</option>
+              <option
+                v-for="node in this.json['nodeFilterList']"
+                v-bind:value="node.name"
+                :key="node.name"
+              >
+                {{ node.name }}
+              </option>
+            </select>
+          </v-col>
+          <v-col cols="12" md="4">
+            <label for="toAttributeSelection" v-if="this.json !== null">
+              Attribute:
+            </label>
+            <select v-model="toAttributeSelection" v-if="this.json !== null">
+              <option disabled value="">Select...</option>
+              <option
+                v-for="node in this.json['nodeFilterList']"
+                v-bind:value="node.attributes"
+                :key="node.name"
+              >
+                {{ node.attributes }}
+              </option>
+            </select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="edgeLabel"
+              :rules="nameRules"
+              :counter="10"
+              label="Edge label"
+              hide-details
+              @input="setEdgeLabel"
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <label for="edgeColorpicker">Edge color:</label>
+            <input
+              type="color"
+              id="edgeColorpicker"
+              value="#42b983"
+              @input="setEdgeColor"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-btn prepend-icon="mdi-plus" @click="addEdgeFilter">
+              Add filter
+            </v-btn>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
     <br />
   </v-main>
@@ -383,13 +459,6 @@ export default {
   components: {},
   data() {
     return {
-      swatches: [
-        ["#FF0000", "#AA0000", "#550000"],
-        ["#FFFF00", "#AAAA00", "#555500"],
-        ["#00FF00", "#00AA00", "#005500"],
-        ["#00FFFF", "#00AAAA", "#005555"],
-        ["#0000FF", "#0000AA", "#000055"],
-      ],
       filterPackage: {
         packageName: "",
         authors: "",
@@ -628,26 +697,8 @@ export default {
 </script>
 <style scoped lang="scss">
 @use "../styles/settings.scss";
-/* explorer */
-#explorer {
-  float: right;
-  width: 25%;
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  align-self: flex-start;
-  border-radius: 8px;
-  border: 2px solid #42b983;
-}
-
-#explorer h2,
-#explorer h4,
-#explorer ul,
-#explorer p {
-  text-align: center;
-}
-
-#explorer ul {
-  display: block;
+.subItem {
+  text-align: left;
 }
 
 select,
@@ -661,26 +712,6 @@ input {
   padding-left: 5px;
   padding-right: 5px;
 }
-
-/*button:hover,*/
-select:hover,
-input:hover {
-  border: 1px solid #42b983;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border: 1px solid #fafafa;
-  -webkit-box-shadow: 0 0 6px #42b983;
-  -moz-box-shadow: 0 0 5px #42b983;
-  box-shadow: 0 0 5px #42b983;
-}
-
-/*button:active {
-  box-shadow: 0.33px #9b9999;
-  transform: translateX(0.4px);
-}*/
 
 #section {
   height: 100%;

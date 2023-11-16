@@ -56,7 +56,7 @@ export default {
       appTitle: "GICAT",
       navBarItems: [
         { title: "", path: "/", icon: "mdi-home" },
-        { title: "About", path: "/about" },
+        { title: "Options", path: "/options" },
         { title: "Extractor", path: "/extractor" },
         { title: "Filter", path: "/filters" },
         { title: "License", path: "/license" },

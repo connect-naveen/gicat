@@ -200,9 +200,11 @@ export default {
     openFile(data) {
       const { spawn } = require("child_process");
       const fs = require("fs");
-      const editorPath = "/snap/bin/code";
+      const editorPath = this.getEditorPath;
 
-      // TODO dialog for finding vscode or other code editor
+      if (editorPath === "") {
+        return;
+      }
 
       let path = data.fileName;
 
@@ -210,13 +212,22 @@ export default {
       if (!exists) {
         console.error("editor not found");
       }
-      path += ":" + (data.line ?? 0) + ":0";
 
       const opts = {
         detached: true,
       };
 
-      spawn(editorPath, ["--goto", path], opts);
+      try {
+        if (this.getIsVsCode) {
+          path += ":" + (data.line ?? 0) + ":0";
+          spawn(editorPath, ["--goto", path], opts);
+        } else {
+          spawn(editorPath, [path], opts);
+        }
+      } catch (error) {
+        console.error("editor not found");
+        return;
+      }
     },
     toggleSimulation() {
       let old = this.options.physics.enabled;
@@ -230,6 +241,8 @@ export default {
   computed: {
     // store
     ...mapGetters([
+      "getEditorPath",
+      "getIsVsCode",
       "getNodes",
       "getEdges",
       "getGraph",

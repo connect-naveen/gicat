@@ -20,18 +20,17 @@
             <template v-slot:activator="{ props }">
               <v-list-item
                 v-bind="props"
-                prepend-icon="mdi-package"
                 :title="json.packageName"
               ></v-list-item>
             </template>
             <v-list-item
-              v-if="json.authors"
-              :title="'Author:' + json.authors"
+              v-if="json.date"
+              :title="'Date:' + json.date"
               class="subItem"
             ></v-list-item>
             <v-list-item
               v-if="json.desc"
-              :title="'Description:' + json.desc"
+              :title="'Desc:' + json.desc"
               class="subItem"
             ></v-list-item>
             <v-list-group
@@ -95,7 +94,7 @@
       <br />
       <v-form v-model="valid">
         <v-container>
-          <h2>Package information</h2>
+          <h1>Package information</h1>
           <br />
           <v-row>
             <v-col cols="12" md="4">
@@ -104,6 +103,9 @@
                 label="Package Name"
                 hide-details
               ></v-text-field>
+              <v-tooltip activator="parent" location="packageName"
+                >This is a tooltip</v-tooltip
+              >
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field
@@ -126,7 +128,6 @@
             <v-col cols="12" md="4">
               <v-btn
                 @click="generatePackage"
-                :disabled="false"
                 prepend-icon="mdi-package-variant-closed-plus"
               >
                 Generate package
@@ -138,6 +139,7 @@
               <v-btn
                 @click="exportFilter"
                 prepend-icon="mdi-file-export-outline"
+                :disabled="!isPackageNameSet"
               >
                 Export
               </v-btn>
@@ -147,7 +149,7 @@
       </v-form>
       <br />
       <v-container>
-        <h2>Node filter</h2>
+        <h1>Node filter</h1>
         <br />
         <v-row>
           <v-col cols="12" md="8">
@@ -265,8 +267,11 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-btn @click="addNodeAttributes" prepend-icon="mdi-plus">
-              Add
+            <v-btn
+              @click="addNodeAttributes"
+              prepend-icon="mdi-plus"
+              :disabled="!isPackageNameSet"
+              >Add
             </v-btn>
           </v-col>
         </v-row>
@@ -280,6 +285,8 @@
               v-model="nodeColor"
             ></v-color-picker>
           </v-col>
+        </v-row>
+        <v-row>
           <v-col cols="12" md="4">
             <v-select
               v-model="labelAttributeSelection"
@@ -290,15 +297,18 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
-            <v-btn prepend-icon="mdi-plus" @click="addNodeFilter">
-              Add filter
+            <v-btn
+              prepend-icon="mdi-plus"
+              @click="addNodeFilter"
+              :disabled="!isPackageNameSet"
+              >Add filter
             </v-btn>
           </v-col>
         </v-row>
       </v-container>
       <br /><br />
       <v-container>
-        <h2>Edge filter</h2>
+        <h1>Edge filter</h1>
         <br />
         <v-row>
           <v-col cols="12" md="4">
@@ -318,75 +328,37 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
-            <label for="fromSelection" v-if="this.json !== null">From:</label>
-            <select v-model="fromSelection" v-if="this.json !== null">
-              <option disabled value="">Select...</option>
-              <option
-                v-for="node in this.json['nodeFilterList']"
-                v-bind:value="node.name"
-                :key="node.name"
-              >
-                {{ node.name }}
-              </option>
-            </select>
+            <v-select
+              v-model="fromSelection"
+              label="Select source"
+              :items="getFromSelection"
+            ></v-select>
           </v-col>
           <v-col cols="12" md="4">
-            <label for="fromAttributeSelection" v-if="this.json !== null">
-              Attribute:
-            </label>
-            <select v-model="fromAttributeSelection" v-if="this.json !== null">
-              <option disabled value="">Select...</option>
-              <option
-                v-for="node in this.json['nodeFilterList']"
-                v-bind:value="node.attributes"
-                :key="node.name"
-              >
-                {{ node.attributes }}
-              </option>
-            </select>
+            <v-select
+              v-model="fromAttributeSelection"
+              label="Select source attribute"
+              :items="getFromAttributes"
+            ></v-select>
           </v-col>
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
-            <label for="toSelection" v-if="this.json !== null">To:</label>
-            <select v-model="toSelection" v-if="this.json !== null">
-              <option disabled value="">Select...</option>
-              <option
-                v-for="node in this.json['nodeFilterList']"
-                v-bind:value="node.name"
-                :key="node.name"
-              >
-                {{ node.name }}
-              </option>
-            </select>
+            <v-select
+              v-model="toSelection"
+              label="Select target"
+              :items="getFromSelection"
+            ></v-select>
           </v-col>
           <v-col cols="12" md="4">
-            <label for="toAttributeSelection" v-if="this.json !== null">
-              Attribute:
-            </label>
-            <select v-model="toAttributeSelection" v-if="this.json !== null">
-              <option disabled value="">Select...</option>
-              <option
-                v-for="node in this.json['nodeFilterList']"
-                v-bind:value="node.attributes"
-                :key="node.name"
-              >
-                {{ node.attributes }}
-              </option>
-            </select>
+            <v-select
+              v-model="toAttributeSelection"
+              label="Select target attribute"
+              :items="getFromAttributes"
+            ></v-select>
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="12" md="4">
-            <v-text-field
-              v-model="edgeLabel"
-              :rules="nameRules"
-              :counter="10"
-              label="Edge label"
-              hide-details
-              @input="setEdgeLabel"
-            ></v-text-field>
-          </v-col>
           <v-col cols="12" md="4">
             <v-color-picker
               width="100%"
@@ -399,9 +371,21 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
+            <v-text-field
+              v-model="edgeLabel"
+              label="Edge label"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
             <br />
-            <v-btn prepend-icon="mdi-plus" @click="addEdgeFilter">
-              Add filter
+            <v-btn
+              prepend-icon="mdi-plus"
+              @click="addEdgeFilter"
+              :disabled="!isPackageNameSet"
+              >Add filter
             </v-btn>
           </v-col>
         </v-row>
@@ -431,13 +415,10 @@ export default {
         edgeFilterList: [],
       },
       json: null,
-      mutation: "",
+      //mutation: "",
       edgeName: "",
-      fromSelection: "",
-      toSelection: "",
-      edgeLabel: "",
       attributes: {},
-      // return all V-Models
+      loopSelection: "",
       packageName: "",
       packageAuthor: "",
       description: "",
@@ -457,11 +438,17 @@ export default {
       nodeColor: "",
       labelAttribute: "",
       labelAttributeSelection: "",
+      fromAttributeSelection: "",
+      edgeLabel: "",
+      edgeColorpicker: "",
+      toSelection: "",
+      fromSelection: "",
+      toAttributeSelection: "",
     };
   },
   computed: {
     labelSelection() {
-      const opt = ["null"];
+      const opt = [];
       if (this.json != null && Object.keys(this.attributes).length > 0) {
         for (let e in this.attributes) {
           opt.push(e);
@@ -473,12 +460,45 @@ export default {
       console.log("Atributes: " + Object.keys(this.attributes));
       return opt;
     },
-  },
-  props: {},
-  methods: {
+    getFromSelection() {
+      const opt = [];
+      let i = 0;
+      if (
+        this.json != null &&
+        Object.keys(this.json["nodeFilterList"]).length > 0
+      ) {
+        while (i < Object.keys(this.json["nodeFilterList"]).length) {
+          opt.push(this.json["nodeFilterList"][i].name);
+          i++;
+        }
+      }
+      //console.log(opt);
+      return opt;
+    },
+    getFromAttributes() {
+      const opt = [];
+      let i = 0;
+      if (
+        this.json != null &&
+        Object.keys(this.json["nodeFilterList"]).length > 0
+      ) {
+        while (i < Object.keys(this.json["nodeFilterList"]).length) {
+          for (let j in this.json["nodeFilterList"][i].attributes) {
+            opt.push(Object.values(j));
+            console.log(Object.values(j));
+          }
+          i++;
+        }
+      }
+      console.log(opt);
+      return opt;
+    },
     isPackageNameSet() {
       return this.packageName != "";
     },
+  },
+  props: {},
+  methods: {
     nodeListDropdown() {
       if (document.getElementById("filterElement").style.display == "none") {
         document.getElementById("filterElement").style.display = "block";

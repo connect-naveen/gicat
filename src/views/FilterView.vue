@@ -4,14 +4,11 @@
       <h1>This is the filter page</h1>
       <div>
         <br />
-        <v-btn @click="selectFilterPackage()" prepend-icon="mdi-file-search">
+        <v-btn @click="selectFilterPackage()" prepend-icon="$fileSearch">
           Select Filter Package
         </v-btn>
         <br /><br />
-        <v-btn
-          @click="resetFiltersButton()"
-          prepend-icon="mdi-arrow-u-left-top"
-        >
+        <v-btn @click="resetFiltersButton()" prepend-icon="$arrowDownLeft">
           Reset Filters
         </v-btn>
       </div>

@@ -716,10 +716,7 @@ li {
 }
 
 .listItem {
+  font-size: 2vw;
   background-color: rgb(240, 240, 240);
-}
-
-.listItem.title {
-  font-weight: 800;
 }
 </style>

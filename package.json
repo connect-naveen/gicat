@@ -17,8 +17,8 @@
   "main": "background.js",
   "dependencies": {
     "@electron/remote": "^2.0.10",
-    "@mdi/font": "^7.2.96",
-    "@mdi/js": "^7.2.96",
+    "@mdi/font": "^7.3.67",
+    "@mdi/js": "^7.3.67",
     "core-js": "^3.8.3",
     "directory-tree": "^3.5.1",
     "string.prototype.matchall": "^4.0.8",

@@ -10,8 +10,18 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 
 // Icons
-import { aliases, mdi } from "vuetify/lib/iconsets/mdi";
-import "@mdi/font/css/materialdesignicons.css";
+import { aliases, mdi } from "vuetify/iconsets/mdi-svg";
+import {
+  mdiPackageVariantClosed,
+  mdiHome,
+  mdiFolderArrowDownOutline,
+  mdiFolderArrowUpOutline,
+  mdiFileSearchOutline,
+  mdiArrowUDownLeft,
+  mdiPackageVariantClosedPlus,
+  mdiFileExportOutline,
+  mdiPlus,
+} from "@mdi/js";
 
 // create Vuetify
 const vuetify = createVuetify({
@@ -33,10 +43,24 @@ const vuetify = createVuetify({
       variant: "text",
       color: "#00549f",
     },
+    VListGroup: {
+      color: "red",
+    },
   },
   icons: {
     defaultSet: "mdi",
-    aliases,
+    aliases: {
+      ...aliases,
+      package: mdiPackageVariantClosed,
+      home: mdiHome,
+      folderArrowDown: mdiFolderArrowDownOutline,
+      folderArrowUp: mdiFolderArrowUpOutline,
+      fileSearch: mdiFileSearchOutline,
+      arrowDownLeft: mdiArrowUDownLeft,
+      packagePlus: mdiPackageVariantClosedPlus,
+      fileExport: mdiFileExportOutline,
+      plus: mdiPlus,
+    },
     sets: {
       mdi,
     },

@@ -1,25 +1,27 @@
 <template>
-  <div class="extractor">
-    <div>
-      <br />
-      <v-btn @click="openDir()" prepend-icon="mdi-folder-arrow-up-outline"
-        >Open Repository
-      </v-btn>
-      <br />
-      <br />
-      <div>Current path:</div>
-      <div>{{ getRepoPath }}</div>
-      <br />
-      <v-btn
-        id="startVisButton"
-        prepend-icon="mdi-play-outline"
-        @click="startVisualisation()"
-        :disabled="!isRepoPathEmpty"
-        >Start Visualisation
-      </v-btn>
-      <br />
+  <v-main>
+    <div class="extractor">
+      <div>
+        <br />
+        <v-btn @click="openDir()" prepend-icon="$folderArrowUp"
+          >Open Repository
+        </v-btn>
+        <br />
+        <br />
+        <div>Current path:</div>
+        <div>{{ getRepoPath }}</div>
+        <br />
+        <v-btn
+          id="startVisButton"
+          prepend-icon="$folderArrowDown"
+          @click="startVisualisation()"
+          :disabled="!isRepoPathEmpty"
+          >Start Visualisation
+        </v-btn>
+        <br />
+      </div>
     </div>
-  </div>
+  </v-main>
 </template>
 
 <script>

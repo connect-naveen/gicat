@@ -1,57 +1,59 @@
 <template>
-  <div class="network">
-    <div class="network-nav">
-      <div class="network-nav-left">
-        <!-- put filter specific options here, depending on the selection -->
-        <v-select
-          class="filter-selector"
-          label="Select"
-          :items="this.getFilterNames"
-          density="compact"
-        ></v-select>
+  <v-main>
+    <div class="network">
+      <div class="network-nav">
+        <div class="network-nav-left">
+          <!-- put filter specific options here, depending on the selection -->
+          <v-select
+            class="filter-selector"
+            label="Select"
+            :items="this.getFilterNames"
+            density="compact"
+          ></v-select>
+        </div>
+        <div class="network-nav-divider"></div>
+        <div class="network-nav-right">
+          <!-- put visualization controls here -->
+          <button
+            class="button"
+            id="simulationButton"
+            v-on:click="toggleSimulation()"
+          >
+            <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
+            <v-icon
+              v-if="this.options.physics.enabled"
+              icon="mdi-pause-circle"
+              size="50"
+            ></v-icon>
+            <v-icon
+              v-if="!this.options.physics.enabled"
+              icon="mdi-play-circle"
+              size="50"
+            ></v-icon>
+            <v-tooltip activator="parent" location="start">
+              Pause Simulation
+            </v-tooltip>
+          </button>
+        </div>
+        <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
+          <button class="button" v-on:click="toggleFilter()">
+            {{ filter.name }}
+          </button>
+        </li> -->
       </div>
-      <div class="network-nav-divider"></div>
-      <div class="network-nav-right">
-        <!-- put visualization controls here -->
-        <button
-          class="button"
-          id="simulationButton"
-          v-on:click="toggleSimulation()"
-        >
-          <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
-          <v-icon
-            v-if="this.options.physics.enabled"
-            icon="mdi-pause-circle"
-            size="50"
-          ></v-icon>
-          <v-icon
-            v-if="!this.options.physics.enabled"
-            icon="mdi-play-circle"
-            size="50"
-          ></v-icon>
-          <v-tooltip activator="parent" location="start">
-            Pause Simulation
-          </v-tooltip>
-        </button>
+      <div>
+        <Network
+          ref="network"
+          class="net"
+          :nodes="this.nodes"
+          :edges="this.edges"
+          :options="getOptions"
+          :events="['doubleClick']"
+          @double-click="doubleClick"
+        ></Network>
       </div>
-      <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
-        <button class="button" v-on:click="toggleFilter()">
-          {{ filter.name }}
-        </button>
-      </li> -->
     </div>
-    <div>
-      <Network
-        ref="network"
-        class="net"
-        :nodes="this.nodes"
-        :edges="this.edges"
-        :options="getOptions"
-        :events="['doubleClick']"
-        @double-click="doubleClick"
-      ></Network>
-    </div>
-  </div>
+  </v-main>
 </template>
 
 <script>

@@ -1,22 +1,28 @@
 <template>
-  <div class="filters">
-    <h1>This is the filter page</h1>
-    <div>
+  <v-main>
+    <div class="filters">
+      <h1>This is the filter page</h1>
+      <div>
+        <br />
+        <v-btn @click="selectFilterPackage()" prepend-icon="$fileSearch">
+          Select Filter Package
+        </v-btn>
+        <br /><br />
+        <v-btn @click="resetFiltersButton()" prepend-icon="$arrowDownLeft">
+          Reset Filters
+        </v-btn>
+      </div>
       <br />
-      <v-btn @click="selectFilterPackage()">Select Filter Package</v-btn>
-      <br /><br />
-      <v-btn @click="resetFiltersButton()">Reset Filters</v-btn>
+      <div>
+        <div>Current filters:</div>
+        <ul>
+          <li v-for="filter in getFilters" v-bind:key="filter.id">
+            {{ filter.name }}
+          </li>
+        </ul>
+      </div>
     </div>
-    <br />
-    <div>
-      <div>Current filters:</div>
-      <ul>
-        <li v-for="filter in getFilters" v-bind:key="filter.id">
-          {{ filter.name }}
-        </li>
-      </ul>
-    </div>
-  </div>
+  </v-main>
 </template>
 
 <script>

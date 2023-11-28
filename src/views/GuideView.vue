@@ -1,4 +1,5 @@
 <template>
+  <v-main></v-main>
   <div class="guide">
     <h1>Generator</h1>
     <br />

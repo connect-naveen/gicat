@@ -21,7 +21,7 @@
               <v-list-item
                 v-bind="props"
                 :title="json.packageName"
-                prepend-icon="mdi-package-variant-closed"
+                prepend-icon="$package"
                 class="listItem"
                 elevation="2"
               ></v-list-item>
@@ -141,10 +141,7 @@
           </v-row>
           <v-row>
             <v-col cols="12" md="4">
-              <v-btn
-                @click="generatePackage"
-                prepend-icon="mdi-package-variant-closed-plus"
-              >
+              <v-btn @click="generatePackage" prepend-icon="$packagePlus">
                 Generate package
               </v-btn>
             </v-col>
@@ -153,7 +150,7 @@
             <v-col>
               <v-btn
                 @click="exportFilter"
-                prepend-icon="mdi-file-export-outline"
+                prepend-icon="$fileExport"
                 :disabled="!isPackageNameSet"
               >
                 Export
@@ -222,7 +219,7 @@
         </v-row>
         <v-row>
           <v-col cols="12" md="4">
-            <v-btn @click="resetRegex" prepend-icon="mdi-arrow-u-left-top">
+            <v-btn @click="resetRegex" prepend-icon="$arrowDownLeft">
               Reset
             </v-btn>
           </v-col>
@@ -284,7 +281,7 @@
           <v-col>
             <v-btn
               @click="addNodeAttributes"
-              prepend-icon="mdi-plus"
+              prepend-icon="$plus"
               :disabled="!isPackageNameSet"
               >Add
             </v-btn>
@@ -323,7 +320,7 @@
         <v-row>
           <v-col cols="12" md="4">
             <v-btn
-              prepend-icon="mdi-plus"
+              prepend-icon="$plus"
               @click="addNodeFilter"
               :disabled="!isPackageNameSet"
               >Add filter
@@ -417,7 +414,7 @@
           <v-col cols="12" md="4">
             <br />
             <v-btn
-              prepend-icon="mdi-plus"
+              prepend-icon="$plus"
               @click="addEdgeFilter"
               :disabled="!isPackageNameSet"
               >Add filter

@@ -2,7 +2,7 @@
   <v-main>
     <div id="section">
       <v-card
-        width="25%"
+        width="40%"
         color="#c7ddf2"
         density="comfortable"
         elevation="2"
@@ -10,7 +10,7 @@
         class="text-center"
         position="fixed"
       >
-        <v-list opened="true">
+        <v-list>
           <v-list-item
             value="explorer"
             title="Package Explorer"
@@ -21,18 +21,25 @@
               <v-list-item
                 v-bind="props"
                 :title="json.packageName"
+                prepend-icon="mdi-package-variant-closed"
+                class="listItem"
+                elevation="2"
               ></v-list-item>
             </template>
             <v-list-item
-              v-if="json.date"
-              :title="'Date:' + json.date"
+              v-if="json.authors"
+              title="Authors:"
+              :subtitle="json.authors"
               class="subItem"
             ></v-list-item>
             <v-list-item
               v-if="json.desc"
-              :title="'Desc:' + json.desc"
+              title="Description:"
+              :subtitle="json.desc"
+              lines="three"
               class="subItem"
             ></v-list-item>
+            <v-list-item title="Node filter list"></v-list-item>
             <v-list-group
               v-for="filter in json['nodeFilterList']"
               :key="filter.name"
@@ -41,29 +48,34 @@
                 <v-list-item
                   :title="filter.name"
                   v-bind="props"
-                  class="subItem"
+                  class="listItem"
                 ></v-list-item>
               </template>
               <v-list-item
-                :title="'Regex:' + filter.regex"
+                title="Regex:"
+                :subtitle="filter.regex"
                 class="subItem"
               ></v-list-item>
               <v-list-item
                 v-if="filter.exclude != ''"
-                :title="'Exclude:' + filter.exclude"
-                class="subItem"
-              ></v-list-item>
-              <v-list-item
-                v-if="filter.extension"
-                :title="'File extension:' + filter.extension"
+                title="Exclude:"
+                :subtitle="filter.exclude"
                 class="subItem"
               ></v-list-item>
               <v-list-item
                 v-if="filter.label"
-                :title="'Node label:' + filter.label"
+                title="Node label:"
+                :subtitle="filter.label"
+                class="subItem"
+              ></v-list-item>
+              <v-list-item
+                v-if="filter.labelAttribute"
+                title="Node label attribute:"
+                :subtitle="filter.labelAttribute"
                 class="subItem"
               ></v-list-item>
             </v-list-group>
+            <v-list-item title="Edge filter list"></v-list-item>
             <v-list-group
               v-for="edge in json['edgeFilterList']"
               :key="edge.name"
@@ -72,19 +84,22 @@
                 <v-list-item
                   :title="edge.name"
                   v-bind="props"
-                  class="subItem"
+                  class="listItem"
                 ></v-list-item>
               </template>
               <v-list-item
-                :title="'Edge label:' + edge.label"
+                title="Edge label:"
+                :subtitle="edge.label"
                 class="subItem"
               ></v-list-item>
               <v-list-item
-                :title="'From:' + edge.from.attribute"
+                title="Source:"
+                :subtitle="edge.from.attribute"
                 class="subItem"
               ></v-list-item>
               <v-list-item
-                :title="'To:' + edge.to.attribute"
+                title="Target:"
+                :subtitle="edge.to.attribute"
                 class="subItem"
               ></v-list-item>
             </v-list-group>
@@ -92,7 +107,7 @@
         </v-list>
       </v-card>
       <br />
-      <v-form v-model="valid">
+      <v-form>
         <v-container>
           <h1>Package information</h1>
           <br />
@@ -103,9 +118,9 @@
                 label="Package Name"
                 hide-details
               ></v-text-field>
-              <v-tooltip activator="parent" location="packageName"
+              <!--<v-tooltip activator="parent" location="packageName"
                 >This is a tooltip</v-tooltip
-              >
+              >-->
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field
@@ -178,7 +193,7 @@
         <v-row>
           <v-col cols="12" md="4">
             <v-checkbox
-              label="Assign capture Group"
+              label="Assign capture group"
               v-model="captureGroup"
             ></v-checkbox>
           </v-col>
@@ -273,6 +288,16 @@
               :disabled="!isPackageNameSet"
               >Add
             </v-btn>
+            <v-dialog v-model="addNodeAttributesDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addNodeAttributesDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
         <v-row>
@@ -303,6 +328,16 @@
               :disabled="!isPackageNameSet"
               >Add filter
             </v-btn>
+            <v-dialog v-model="addNodeFilterDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addNodeFilterDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
       </v-container>
@@ -387,6 +422,16 @@
               :disabled="!isPackageNameSet"
               >Add filter
             </v-btn>
+            <v-dialog v-model="addEdgeFilterDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addEdgeFilterDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-col>
         </v-row>
       </v-container>
@@ -444,6 +489,9 @@ export default {
       toSelection: "",
       fromSelection: "",
       toAttributeSelection: "",
+      addNodeAttributesDialog: false,
+      addNodeFilterDialog: false,
+      addEdgeFilterDialog: false,
     };
   },
   computed: {
@@ -483,9 +531,10 @@ export default {
         Object.keys(this.json["nodeFilterList"]).length > 0
       ) {
         while (i < Object.keys(this.json["nodeFilterList"]).length) {
-          for (let j in this.json["nodeFilterList"][i].attributes) {
-            opt.push(Object.values(j));
-            console.log(Object.values(j));
+          for (const [key] of Object.entries(
+            this.json["nodeFilterList"][i].attributes
+          )) {
+            opt.push(key);
           }
           i++;
         }
@@ -520,6 +569,10 @@ export default {
           .map((e) => e.trim())
           .map((e) => Number(e));
       }
+      this.nodeAttributes = "";
+      this.nodeCaptureGroups = "";
+      this.addNodeAttributesDialog = true;
+      this.labelAttribute = "";
     },
     resetRegex() {
       this.generatedRegex = "";
@@ -539,6 +592,11 @@ export default {
         labelAttribute: this.labelAttributeSelection,
       }),
         (this.attributes = {});
+      this.addNodeFilterDialog = true;
+      this.excludes = "";
+      this.labelAttributeSelection = "";
+      this.nodeLabel = "";
+      this.regexName = "";
     },
     addEdgeFilter() {
       this.json["edgeFilterList"].push({
@@ -566,6 +624,15 @@ export default {
           color: this.edgeColorpicker,
         },
       });
+      this.edgeName = "";
+      this.loopSelection = "";
+      this.fromSelection = "";
+      this.fromAttributeSelection = "";
+      this.toSelection = "";
+      this.toAttributeSelection = "";
+      this.edgeColorpicker = "";
+      this.edgeLabel = "";
+      this.addEdgeFilterDialog = true;
     },
     generateRegex() {
       let snippetSelection = window.getSelection();
@@ -601,6 +668,10 @@ export default {
         this.generatedRegex =
           this.generatedRegex + "[^" + snippetSelection + "]" + this.quantifier;
       }
+      this.quantifier = "";
+      this.captureGroup = false;
+      this.selected = "";
+      this.generatorSelection = "";
     },
     generatePackage() {
       const date = new Date();
@@ -642,5 +713,13 @@ li {
   text-align: left;
   list-style-position: inside;
   margin-left: 2px;
+}
+
+.listItem {
+  background-color: rgb(240, 240, 240);
+}
+
+.listItem.title {
+  font-weight: 800;
 }
 </style>

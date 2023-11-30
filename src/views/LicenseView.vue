@@ -280,11 +280,6 @@ export default {
 </script>
 
 <style scoped>
-/* App-Page */
-.landing-page {
-  font-family: "Roboto", sans-serif;
-}
-
 /* version */
 #version {
   position: absolute;
@@ -297,46 +292,10 @@ export default {
   font-weight: bold;
   font-size: 16px;
   line-height: 21px;
-
-  color: #6b6b6b;
 }
 
 /* License Text */
-#license p,
-#license i,
-#license li {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 21px;
-
-  color: #6b6b6b;
-}
-
-#license h1,
-#license h2,
-#gnu-def h2,
-#gnu-lib h2 {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: 21px;
-
-  color: #000000;
-}
-
-#gnu-def,
-#gnu-exception,
-#gnu-version,
-#gnu-inc,
-#gnu-combined,
-#gnu-lib,
-#gnu-revised {
-  font-style: normal;
-  font-weight: bold;
-  font-size: 12px;
-  line-height: 21px;
-
-  color: #6b6b6b;
+a {
+  color: #42b983;
 }
 </style>

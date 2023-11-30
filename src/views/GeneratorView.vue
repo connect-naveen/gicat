@@ -1,321 +1,437 @@
 <template>
   <v-main>
-    <!--<div id="explorer" v-if="json != null">
-      <h2>{{ json.packageName }}</h2>
-      <b v-if="json.authors">Authors:</b>
-      <p>{{ json.authors }}</p>
-      <b v-if="json.desc">Description:</b>
-      <p>{{ json.desc }}</p>
-      <b>Node filters:</b>
-      <br />
-      <ul
-        v-for="filter in json['nodeFilterList']"
-        :key="filter.name"
-        id="filterElement"
-        v-on:click="nodeListDropdown(filter)"
-      >
-        {{
-          filter.name + ":"
-        }}<br />
-        <li>
-          {{ "Regex: " + filter.regex }}
-        </li>
-        <li v-if="filter.extension">
-          {{ "File extension: " + filter.extension }}
-        </li>
-        <li v-if="filter.exclude != ''">
-          {{ "Excluded Regex: " + filter.exclude }}
-        </li>
-        <li v-if="filter.label">
-          {{ "Node label: " + filter.label }}
-        </li>
-      </ul>
-      <b>Edge filters:</b>
-      <li v-for="edge in json['edgeFilterList']" :key="edge.name">
-        {{ edge.label + ":" }}<br />
-        <ul>
-          <strong>From</strong>
-          {{
-            edge.from["nodeFilterID"]
-          }}
-          <strong> To </strong>
-          {{
-            edge.to["nodeFilterID"]
-          }}
-        </ul>
-      </li>
-    </div>-->
     <div id="section">
       <v-card
-        width="400"
-        position="fixed"
+        width="40%"
         color="#c7ddf2"
         density="comfortable"
         elevation="2"
-        location="right"
+        location="sticky right"
         class="text-center"
+        position="fixed"
       >
-        <v-list opened="true">
-          <v-list-item value="explorer" title="Package Explorer"></v-list-item>
-          <v-list-group v-if="json != null" :value="packageName">
+        <v-list>
+          <v-list-item
+            value="explorer"
+            title="Package Explorer"
+            color="#00549f"
+          ></v-list-item>
+          <v-list-group v-if="json != null">
             <template v-slot:activator="{ props }">
               <v-list-item
                 v-bind="props"
-                prepend-icon="mdi-package"
                 :title="json.packageName"
+                prepend-icon="$package"
+                class="listItem"
+                elevation="2"
               ></v-list-item>
             </template>
             <v-list-item
               v-if="json.authors"
-              :title="'Author:' + json.authors"
+              title="Authors:"
+              :subtitle="json.authors"
+              class="subItem"
             ></v-list-item>
             <v-list-item
               v-if="json.desc"
-              :title="'Description:' + json.desc"
+              title="Description:"
+              :subtitle="json.desc"
+              lines="three"
+              class="subItem"
             ></v-list-item>
+            <v-list-item title="Node filter list"></v-list-item>
             <v-list-group
               v-for="filter in json['nodeFilterList']"
               :key="filter.name"
             >
               <template v-slot:activator="{ props }">
-                <v-list-item :title="filter.name" v-bind="props"></v-list-item>
+                <v-list-item
+                  :title="filter.name"
+                  v-bind="props"
+                  class="listItem"
+                ></v-list-item>
               </template>
-              <v-list-item :title="'Regex:' + filter.regex"></v-list-item>
               <v-list-item
-                v-if="filter.exclude != ''"
-                :title="'Exclude:' + filter.exclude"
+                title="Regex:"
+                :subtitle="filter.regex"
+                class="subItem"
               ></v-list-item>
               <v-list-item
-                v-if="filter.extension"
-                :title="'File extension:' + filter.extension"
+                v-if="filter.exclude != ''"
+                title="Exclude:"
+                :subtitle="filter.exclude"
+                class="subItem"
               ></v-list-item>
               <v-list-item
                 v-if="filter.label"
-                :title="'Node label:' + filter.label"
+                title="Node label:"
+                :subtitle="filter.label"
+                class="subItem"
+              ></v-list-item>
+              <v-list-item
+                v-if="filter.labelAttribute"
+                title="Node label attribute:"
+                :subtitle="filter.labelAttribute"
+                class="subItem"
               ></v-list-item>
             </v-list-group>
+            <v-list-item title="Edge filter list"></v-list-item>
             <v-list-group
               v-for="edge in json['edgeFilterList']"
               :key="edge.name"
             >
               <template v-slot:activator="{ props }">
-                <v-list-item :title="edge.name" v-bind="props"></v-list-item>
+                <v-list-item
+                  :title="edge.name"
+                  v-bind="props"
+                  class="listItem"
+                ></v-list-item>
               </template>
-              <v-list-item :title="'Edge label:' + edge.label"></v-list-item>
-              <!--<v-list-item :title="'Loops?' + edge.allow-loop"></v-list-item>-->
-              <v-list-item :title="'From:' + edge.from.attribute"></v-list-item>
-              <v-list-item :title="'To:' + edge.to.attribute"></v-list-item>
+              <v-list-item
+                title="Edge label:"
+                :subtitle="edge.label"
+                class="subItem"
+              ></v-list-item>
+              <v-list-item
+                title="Source:"
+                :subtitle="edge.from.attribute"
+                class="subItem"
+              ></v-list-item>
+              <v-list-item
+                title="Target:"
+                :subtitle="edge.to.attribute"
+                class="subItem"
+              ></v-list-item>
             </v-list-group>
           </v-list-group>
         </v-list>
       </v-card>
-      <h2>Package information</h2>
       <br />
-      <label for="packageName">Name:</label>
-      <input
-        type="text"
-        id="packageName"
-        :value="packageName"
-        @input="setPackageName"
-      />
-      <label for="packageAuthor">Author:</label>
-      <input
-        type="text"
-        id="packageAuthor"
-        :value="packageAuthor"
-        @input="setPackageAuthor"
-      />
-      <label for="description">Description:</label>
-      <input
-        type="text"
-        id="description"
-        :value="description"
-        @input="setPackageDescription"
-      />
+      <v-form>
+        <v-container>
+          <h1>Package information</h1>
+          <br />
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="packageName"
+                label="Package Name"
+                hide-details
+              ></v-text-field>
+              <!--<v-tooltip activator="parent" location="packageName"
+                >This is a tooltip</v-tooltip
+              >-->
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="packageAuthor"
+                label="Author"
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-text-field
+                v-model="description"
+                label="Description"
+                hide-details
+              ></v-text-field>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-btn @click="generatePackage" prepend-icon="$packagePlus">
+                Generate package
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-btn
+                @click="exportFilter"
+                prepend-icon="$fileExport"
+                :disabled="!isPackageNameSet"
+              >
+                Export
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-form>
       <br />
-      <v-btn @click="generatePackage">Generate package </v-btn>
-      <v-btn @click="exportFilter">Export </v-btn>
+      <v-container>
+        <h1>Node filter</h1>
+        <br />
+        <v-row>
+          <v-col cols="12" md="8">
+            <v-text-field
+              v-model="codeInput"
+              label="Code snippet"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="generatorSelection"
+              label="Select..."
+              :items="[
+                'Mandatory characters',
+                'Arbitrary characters',
+                'Period',
+                'Force whitespace',
+                'Exclude',
+              ]"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-checkbox
+              label="Assign capture group"
+              v-model="captureGroup"
+            ></v-checkbox>
+          </v-col>
+          <v-col cols="12" md="2">
+            <v-text-field
+              v-model="quantifier"
+              label="Quantifier"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn @click="generateRegex">Submit</v-btn>
+          </v-col>
+        </v-row>
+        <br /><br />
+        <v-row>
+          <v-col cols="12" md="8">
+            <v-text-field
+              v-model="generatedRegex"
+              label="(Generated) Regex"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-btn @click="resetRegex" prepend-icon="$arrowDownLeft">
+              Reset
+            </v-btn>
+          </v-col>
+        </v-row>
+        <br />
+        <br />
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="fileExtension"
+              label="File extension"
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="regexName"
+              label="Filter name"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="8">
+            <v-text-field
+              v-model="excludes"
+              label="Exclude Regex"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <br /><br />
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="nodeLabel"
+              label="Node label"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="nodeAttributes"
+              label="Capture group name"
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="nodeCaptureGroups"
+              label="Set capture groups"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-btn
+              @click="addNodeAttributes"
+              prepend-icon="$plus"
+              :disabled="!isPackageNameSet"
+              >Add
+            </v-btn>
+            <v-dialog v-model="addNodeAttributesDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addNodeAttributesDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-color-picker
+              width="100%"
+              show-swatches
+              :swatches="swatches"
+              swatches-max-height="400px"
+              v-model="nodeColor"
+            ></v-color-picker>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="labelAttributeSelection"
+              label="Label attribute"
+              :items="labelSelection"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-btn
+              prepend-icon="$plus"
+              @click="addNodeFilter"
+              :disabled="!isPackageNameSet"
+              >Add filter
+            </v-btn>
+            <v-dialog v-model="addNodeFilterDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addNodeFilterDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
+      </v-container>
       <br /><br />
-      <h2>Node filter</h2>
-      <br />
-      <p>Code snippet:</p>
-      <input
-        type="text"
-        id="codeInput"
-        :value="codeInput"
-        size="50"
-        @input="setCodeInput"
-      />
-      <br />
-      <select v-model="selected">
-        <option disabled value="">Select...</option>
-        <option>Mandatory characters</option>
-        <option>Arbitrary characters</option>
-        <option>Period</option>
-        <option>Force whitespace</option>
-        <option>Exclude</option>
-      </select>
-      <label for="captureGroup">Assign capture group:</label>
-      <input type="checkbox" id="captureGroup" />
-      <label for="count">Quantifier:</label>
-      <input type="text" id="count" size="1" @input="setCount" />
-      <v-btn @click="generateRegex">Submit</v-btn>
-      <br />
-      <label for="regexOutput">(Generated) Regex:</label>
-      <input
-        type="text"
-        id="regexOutput"
-        size="50"
-        :value="regexOutput"
-        @input="updateRegexOutput"
-      />
-      <v-btn @click="resetRegex">Reset</v-btn>
-      <br /><br />
-      <label for="fileExtension">File extension:</label>
-      <input
-        type="text"
-        id="fileExtension"
-        :value="fileExtension"
-        @input="setFileExtension"
-      />
-      <label for="exclude">Exclude Regex:</label>
-      <input
-        type="text"
-        id="excludes"
-        :value="excludes"
-        @input="setExcludeRegex"
-      />
-      <label for="regexName">Filter name:</label>
-      <input
-        type="text"
-        id="regexName"
-        :value="regexName"
-        @input="setRegexName"
-      />
-      <label for="nodeLabel">Node label:</label>
-      <input
-        type="text"
-        id="nodeLabel"
-        :value="nodeLabel"
-        @input="setNodeLabel"
-      />
-      <br /><br />
-      <label for="setAttributes">Set capture group name:</label>
-      <input
-        type="text"
-        id="setAttributes"
-        size="15"
-        :value="NodeAttributes"
-        @input="setNodeAttributes"
-      />
-      <label for="setCaptureGroup">Set capture groups:</label>
-      <input
-        type="text"
-        id="setCaptureGroups"
-        size="15"
-        :value="NodeCaptureGroups"
-        @input="setNodeCaptureGroups"
-      />
-      <v-btn @click="addNodeAttributes">Add </v-btn>
-      <br /><br />
-      <label for="nodeColorpicker">Node color:</label>
-      <input
-        type="color"
-        id="nodeColorpicker"
-        value="#42b983"
-        @input="setNodeColor"
-      />
-      <label for="attributeSelection">Label attribute:</label>
-      <select v-model="attributeSelection">
-        <option disabled value="">Select...</option>
-        <option>Null</option>
-        <option
-          v-for="(value, propertyName) in this.attributes"
-          :key="propertyName"
-        >
-          {{ propertyName }}
-        </option>
-      </select>
-      <v-btn @click="addNodeFilter">Add filter</v-btn>
-      <br /><br />
-      <h2>Edge Filter</h2>
-      <br />
-      <label for="edgeName">Edge filter name:</label>
-      <input type="text" id="edgeName" :value="edgeName" @input="setEdgeName" />
-      <label for="loopSelection">Allow loops:</label>
-      <select v-model="loopSelection">
-        <option>True</option>
-        <option>False</option>
-      </select>
-      <!--<label for="modeSelection">choose mode:</label>
-      <select v-model="modeSelection">
-        <option disabled value="">please select</option>
-        <option>contains</option>
-        <option>equals</option>
-      </select>-->
-      <label for="fromSelection" v-if="this.json !== null">From:</label>
-      <select v-model="fromSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.name"
-          :key="node.name"
-        >
-          {{ node.name }}
-        </option>
-      </select>
-      <label for="fromAttributeSelection" v-if="this.json !== null">
-        Attribute:
-      </label>
-      <select v-model="fromAttributeSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.attributes"
-          :key="node.name"
-        >
-          {{ node.attributes }}
-        </option>
-      </select>
-      <label for="toSelection" v-if="this.json !== null">To:</label>
-      <select v-model="toSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.name"
-          :key="node.name"
-        >
-          {{ node.name }}
-        </option>
-      </select>
-      <label for="toAttributeSelection" v-if="this.json !== null">
-        Attribute:
-      </label>
-      <select v-model="toAttributeSelection" v-if="this.json !== null">
-        <option disabled value="">Select...</option>
-        <option
-          v-for="node in this.json['nodeFilterList']"
-          v-bind:value="node.attributes"
-          :key="node.name"
-        >
-          {{ node.attributes }}
-        </option>
-      </select>
-      <label for="edgeLabel">Edge label:</label>
-      <input
-        type="text"
-        id="edgeLabel"
-        :value="edgeLabel"
-        @input="setEdgeLabel"
-      />
-      <label for="edgeColorpicker">Edge color:</label>
-      <input
-        type="color"
-        id="edgeColorpicker"
-        value="#42b983"
-        @input="setEdgeColor"
-      />
-      <v-btn @click="addEdgeFilter">Add filter</v-btn>
+      <v-container>
+        <h1>Edge filter</h1>
+        <br />
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="edgeName"
+              label="Edge filter name"
+              hide-details
+            ></v-text-field>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="loopSelection"
+              label="Allow loops"
+              :items="['True', 'False']"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="fromSelection"
+              label="Select source"
+              :items="getFromSelection"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="fromAttributeSelection"
+              label="Select source attribute"
+              :items="getFromAttributes"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="toSelection"
+              label="Select target"
+              :items="getFromSelection"
+            ></v-select>
+          </v-col>
+          <v-col cols="12" md="4">
+            <v-select
+              v-model="toAttributeSelection"
+              label="Select target attribute"
+              :items="getFromAttributes"
+            ></v-select>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-color-picker
+              width="100%"
+              show-swatches
+              :swatches="swatches"
+              swatches-max-height="400px"
+              v-model="edgeColorpicker"
+            ></v-color-picker>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <v-text-field
+              v-model="edgeLabel"
+              label="Edge label"
+              hide-details
+            ></v-text-field>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="12" md="4">
+            <br />
+            <v-btn
+              prepend-icon="$plus"
+              @click="addEdgeFilter"
+              :disabled="!isPackageNameSet"
+              >Add filter
+            </v-btn>
+            <v-dialog v-model="addEdgeFilterDialog" width="auto">
+              <v-card>
+                <v-card-text>Success!</v-card-text>
+                <v-card-actions>
+                  <v-btn block @click="addEdgeFilterDialog = false"
+                    >Close
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
     <br />
   </v-main>
@@ -326,6 +442,12 @@ export default {
   components: {},
   data() {
     return {
+      swatches: [
+        ["#FF0000", "#AA0000", "#550000"],
+        ["#FFFF00", "#AAAA00", "#555500"],
+        ["#00FF00", "#00AA00", "#005500"],
+        ["#0000FF", "#0000AA", "#000055"],
+      ],
       filterPackage: {
         packageName: "",
         authors: "",
@@ -334,26 +456,92 @@ export default {
         nodeFilterList: [],
         edgeFilterList: [],
       },
-      selected: "",
       json: null,
-      mutation: "",
-      codeInput: "",
-      cnt: "",
-      regex: "",
-      regexOutput: "",
-      fileExtension: "",
-      excludes: "",
-      regexNameInput: "",
-      regexName: "",
-      nodeLabel: "",
+      //mutation: "",
       edgeName: "",
-      fromSelection: "",
-      toSelection: "",
-      edgeLabel: "",
+      attributes: {},
+      loopSelection: "",
+      packageName: "",
+      packageAuthor: "",
+      description: "",
+      codeInput: "",
+      quantifier: "",
+      selected: "",
+      generatedRegex: "",
+      snippetSelection: "",
+      generatorSelection: "",
+      captureGroup: "",
+      fileExtension: "",
+      regexName: "",
+      excludes: "",
+      nodeLabel: "",
       nodeAttributes: "",
       nodeCaptureGroups: "",
-      attributes: {},
+      nodeColor: "",
+      labelAttribute: "",
+      labelAttributeSelection: "",
+      fromAttributeSelection: "",
+      edgeLabel: "",
+      edgeColorpicker: "",
+      toSelection: "",
+      fromSelection: "",
+      toAttributeSelection: "",
+      addNodeAttributesDialog: false,
+      addNodeFilterDialog: false,
+      addEdgeFilterDialog: false,
     };
+  },
+  computed: {
+    labelSelection() {
+      const opt = [];
+      if (this.json != null && Object.keys(this.attributes).length > 0) {
+        for (let e in this.attributes) {
+          opt.push(e);
+        }
+        console.log("Options after push: " + opt);
+        return opt;
+      }
+      console.log("Options: " + opt);
+      console.log("Atributes: " + Object.keys(this.attributes));
+      return opt;
+    },
+    getFromSelection() {
+      const opt = [];
+      let i = 0;
+      if (
+        this.json != null &&
+        Object.keys(this.json["nodeFilterList"]).length > 0
+      ) {
+        while (i < Object.keys(this.json["nodeFilterList"]).length) {
+          opt.push(this.json["nodeFilterList"][i].name);
+          i++;
+        }
+      }
+      //console.log(opt);
+      return opt;
+    },
+    getFromAttributes() {
+      const opt = [];
+      let i = 0;
+      if (
+        this.json != null &&
+        Object.keys(this.json["nodeFilterList"]).length > 0
+      ) {
+        while (i < Object.keys(this.json["nodeFilterList"]).length) {
+          for (const [key] of Object.entries(
+            this.json["nodeFilterList"][i].attributes
+          )) {
+            opt.push(key);
+          }
+          i++;
+        }
+      }
+      console.log(opt);
+      return opt;
+    },
+    isPackageNameSet() {
+      return this.packageName != "";
+    },
   },
   props: {},
   methods: {
@@ -378,113 +566,34 @@ export default {
           .map((e) => e.trim())
           .map((e) => Number(e));
       }
-    },
-    setNodeCaptureGroups(event) {
-      this.nodeCaptureGroups = event.target.value;
-      this.$emit("nodeCaptureGroupsChanged", this.nodeCaptureGroups);
-    },
-    setNodeAttributes(event) {
-      this.nodeAttributes = event.target.value;
-      this.$emit("nodeAtributeChanged", this.nodeAttributes);
-    },
-    setEdgeName(event) {
-      this.edgeName = event.target.value;
-      this.$emit("edgeNameChanged", this.edgeName);
-    },
-    setCount(event) {
-      this.cnt = event.target.value;
-      this.$emit("captureCountChanged", this.cnt);
-    },
-    setEdgeColor(event) {
-      this.edgeColorpicker = event.target.value;
-      this.$emit("edgeColorChanged", this.edgeColorpicker);
-    },
-    setNodeColor(event) {
-      this.nodeColorpicker = event.target.value;
-      this.$emit("nodeColorChanged", this.nodeColorpicker);
-    },
-    setNodeLabel(event) {
-      this.nodeLabel = event.target.value;
-      this.$emit("nodeLabelChanged", this.nodeLabel);
-    },
-    setEdgeLabel(event) {
-      this.edgeLabel = event.target.value;
-      this.$emit("edgeLabelChanged", this.edgeLabel);
-    },
-    setPackageDescription(event) {
-      this.filterPackage.desc = event.target.value;
-      this.$emit("packageDescriptionChanged", this.description);
-    },
-    updateRegexOutput(event) {
-      this.regexOutput = event.target.value;
-      this.regex = this.regexOutput;
-      this.$emit("uptadedRegexOutput", this.regex);
-    },
-    setRegexName(event) {
-      this.regexNameInput = event.target.value;
-      this.regexName = this.regexNameInput;
-      this.$emit("regexNameChanged", this.regexNameInput);
-    },
-    setFileExtension(event) {
-      this.fileExtension = event.target.value;
-      this.$emit("fileExtensionChanged", this.fileExtension);
-    },
-    setExcludeRegex(event) {
-      this.excludes = event.target.value;
-      this.$emit("excludeRegexChanged", this.excludes);
-    },
-    setUserRegex(event) {
-      this.userRegexInput = event.target.value;
-      this.userRegex = this.userRegexInput;
-      this.$emit("userRegexChanged", this.userRegexInput);
-    },
-    setPackageName(event) {
-      this.packageNameInput = event.target.value;
-      this.filterPackage.packageName = this.packageNameInput;
-      this.$emit("packageNameChanged", this.packageNameInput);
-    },
-    setPackageAuthor(event) {
-      this.packageAuthorInput = event.target.value;
-      this.filterPackage.authors = this.packageAuthorInput;
-      this.$emit("packageAuthorChanged", this.packageAuthorInput);
+      this.nodeAttributes = "";
+      this.nodeCaptureGroups = "";
+      this.addNodeAttributesDialog = true;
+      this.labelAttribute = "";
     },
     resetRegex() {
-      this.regex = "";
-      this.regexOutput = this.regex;
-    },
-    getCount() {
-      if (this.cnt == "*") {
-        return "*";
-      } else if (this.cnt == "+") {
-        return "+";
-      } else if (this.cnt == "") {
-        return "";
-      } else return "{}" + this.cnt + "}";
-    },
-    setCodeInput(event) {
-      this.mutation = event.target.value;
-      this.codeInput = this.mutation;
-      this.$emit("codeInputChanged", this.mutation);
-    },
-    setRegex(event) {
-      this.regex = event.target.value;
-      this.$emit("regexOutputChanged", this.regex);
+      this.generatedRegex = "";
     },
     addNodeFilter() {
       this.json["nodeFilterList"].push({
         name: this.regexName,
-        regex: this.regex,
+        regex: this.generatedRegex,
         id: (this.json.packageName + this.regexName).replace(/\s/g, ""),
         spec: "node",
         exclude: [this.excludes],
         extension: this.fileExtension,
         attributes: this.attributes,
-        style: { color: this.nodeColorpicker },
+        style: { color: this.nodeColor },
         failures: [""],
         label: this.nodeLabel,
-        labelAttribute: this.attributeSelection,
+        labelAttribute: this.labelAttributeSelection,
       }),
         (this.attributes = {});
+      this.addNodeFilterDialog = true;
+      this.excludes = "";
+      this.labelAttributeSelection = "";
+      this.nodeLabel = "";
+      this.regexName = "";
     },
     addEdgeFilter() {
       this.json["edgeFilterList"].push({
@@ -512,41 +621,62 @@ export default {
           color: this.edgeColorpicker,
         },
       });
+      this.edgeName = "";
+      this.loopSelection = "";
+      this.fromSelection = "";
+      this.fromAttributeSelection = "";
+      this.toSelection = "";
+      this.toAttributeSelection = "";
+      this.edgeColorpicker = "";
+      this.edgeLabel = "";
+      this.addEdgeFilterDialog = true;
     },
     generateRegex() {
-      let selection = window.getSelection();
-      let re = "";
-      let captureGroup = document.getElementById("captureGroup").checked;
-      if (this.selected == "mandatory characters" && captureGroup) {
-        re = re + "(" + selection + this.getCount() + ")";
-      } else if (this.selected == "mandatory characters" && !captureGroup) {
-        re = re + selection + this.getCount();
-      } else if (this.selected == "arbitrary characters" && captureGroup) {
-        re = re + "([A-Za-z]" + this.getCount() + ")";
-      } else if (this.selected == "arbitrary characters" && !captureGroup) {
-        re = re + "[A-Za-z]" + this.getCount();
-      } else if (this.selected == "period") {
-        re = re + "\\.";
-      } else if (this.selected == "force whitespace") {
-        re = re + "\\s" + this.getCount();
-      } else if (this.selected == "exclude") {
-        re = re + "[^" + selection + "]" + this.getCount();
+      let snippetSelection = window.getSelection();
+      if (
+        this.generatorSelection == "Mandatory characters" &&
+        this.captureGroup
+      ) {
+        this.generatedRegex =
+          this.generatedRegex + "(" + snippetSelection + ")" + this.quantifier;
+      } else if (
+        this.generatorSelection == "Mandatory characters" &&
+        !this.captureGroup
+      ) {
+        this.generatedRegex =
+          this.generatedRegex + snippetSelection + this.quantifier;
+      } else if (
+        this.generatorSelection == "Arbitrary characters" &&
+        this.captureGroup
+      ) {
+        this.generatedRegex =
+          this.generatedRegex + "([A-Za-z]" + this.quantifier + ")";
+      } else if (
+        this.generatorSelection == "Arbitrary characters" &&
+        !this.captureGroup
+      ) {
+        this.generatedRegex =
+          this.generatedRegex + "[A-Za-z]" + this.quantifier;
+      } else if (this.generatorSelection == "Period") {
+        this.generatedRegex = this.generatedRegex + "\\.";
+      } else if (this.generatorSelection == "Force whitespace") {
+        this.generatedRegex = this.generatedRegex + "\\s" + this.quantifier;
+      } else if (this.generatorSelection == "Exclude") {
+        this.generatedRegex =
+          this.generatedRegex + "[^" + snippetSelection + "]" + this.quantifier;
       }
-      this.regex = this.regex + re;
-      this.regexOutput = this.regex;
+      this.quantifier = "";
+      this.captureGroup = false;
+      this.selected = "";
+      this.generatorSelection = "";
     },
     generatePackage() {
-      if (this.filterPackage.packageName == "") {
-        document.getElementById("packageName").style.border =
-          "1px solid #ff0000";
-        return;
-      } else if (this.json == null) {
-        const date = new Date();
-        this.filterPackage.date = date;
-        this.json = this.filterPackage;
-        document.getElementById("packageName").style.border =
-          "1px solid #000000";
-      } else return;
+      const date = new Date();
+      this.filterPackage.date = date;
+      this.filterPackage.packageName = this.packageName;
+      this.filterPackage.authors = this.packageAuthor;
+      this.filterPackage.desc = this.description;
+      this.json = this.filterPackage;
     },
     exportFilter() {
       let fileString = JSON.stringify(this.json, null, "\t");
@@ -563,71 +693,9 @@ export default {
 </script>
 <style scoped lang="scss">
 @use "../styles/settings.scss";
-/* explorer */
-#explorer {
-  float: right;
-  width: 25%;
-  position: -webkit-sticky; /* Safari */
-  position: sticky;
-  align-self: flex-start;
-  border-radius: 8px;
-  border: 2px solid #42b983;
+.subItem {
+  text-align: left;
 }
-
-#explorer h2,
-#explorer h4,
-#explorer ul,
-#explorer p {
-  text-align: center;
-}
-
-#explorer ul {
-  display: block;
-}
-
-/*button {
-  color: #000000;
-  border: 1px solid #000000;
-  box-shadow: 0 0 2px #000000;
-  display: block;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  border-radius: 8px;
-  padding-left: 5px;
-  padding-right: 5px;
-}*/
-
-select,
-input {
-  color: #000000;
-  border: 1px solid #000000;
-  box-shadow: 0 0 2px #000000;
-  display: block;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding-left: 5px;
-  padding-right: 5px;
-}
-
-/*button:hover,*/
-select:hover,
-input:hover {
-  border: 1px solid #42b983;
-}
-
-input:focus,
-textarea:focus,
-select:focus {
-  border: 1px solid #fafafa;
-  -webkit-box-shadow: 0 0 6px #42b983;
-  -moz-box-shadow: 0 0 5px #42b983;
-  box-shadow: 0 0 5px #42b983;
-}
-
-/*button:active {
-  box-shadow: 0.33px #9b9999;
-  transform: translateX(0.4px);
-}*/
 
 #section {
   height: 100%;
@@ -642,5 +710,10 @@ li {
   text-align: left;
   list-style-position: inside;
   margin-left: 2px;
+}
+
+.listItem {
+  font-size: 2vw;
+  background-color: rgb(240, 240, 240);
 }
 </style>

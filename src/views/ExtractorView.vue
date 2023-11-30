@@ -3,7 +3,7 @@
     <div class="extractor">
       <div>
         <br />
-        <v-btn @click="openDir()" prepend-icon="mdi-folder-arrow-up-outline"
+        <v-btn @click="openDir()" prepend-icon="$folderArrowUp"
           >Open Repository
         </v-btn>
         <br />
@@ -13,7 +13,7 @@
         <br />
         <v-btn
           id="startVisButton"
-          prepend-icon="mdi-play-outline"
+          prepend-icon="$folderArrowDown"
           @click="startVisualisation()"
           :disabled="!isRepoPathEmpty"
           >Start Visualisation

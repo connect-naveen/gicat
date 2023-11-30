@@ -4,9 +4,13 @@
       <h1>This is the filter page</h1>
       <div>
         <br />
-        <v-btn @click="selectFilterPackage()">Select Filter Package</v-btn>
+        <v-btn @click="selectFilterPackage()" prepend-icon="$fileSearch">
+          Select Filter Package
+        </v-btn>
         <br /><br />
-        <v-btn @click="resetFiltersButton()">Reset Filters</v-btn>
+        <v-btn @click="resetFiltersButton()" prepend-icon="$arrowDownLeft">
+          Reset Filters
+        </v-btn>
       </div>
       <br />
       <div>

@@ -4,6 +4,8 @@ export default createStore({
   state: {
     // general program
     repoPath: "",
+    editorPath: "",
+    isVsCode: false,
     // graph
     nodes: [],
     edges: [],
@@ -15,6 +17,12 @@ export default createStore({
     // general program
     getRepoPath: (state) => {
       return state.repoPath;
+    },
+    getEditorPath: (state) => {
+      return state.editorPath;
+    },
+    getIsVsCode: (state) => {
+      return state.isVsCode;
     },
     // graph
     getNodes: (state) => {
@@ -45,6 +53,12 @@ export default createStore({
     mutateSetRepoPath(state, payload) {
       state.repoPath = payload;
     },
+    mutateSetEditorPath(state, payload) {
+      state.editorPath = payload;
+    },
+    mutateSetIsVsCode(state, payload) {
+      state.isVsCode = payload;
+    },
     // graph
     mutateNodes(state, payload) {
       state.nodes = payload.nodes;
@@ -68,6 +82,12 @@ export default createStore({
     // general program
     setRepoPath({ commit }, payload) {
       commit("mutateSetRepoPath", payload);
+    },
+    setEditorPath({ commit }, payload) {
+      commit("mutateSetEditorPath", payload);
+    },
+    setIsVsCode({ commit }, payload) {
+      commit("mutateSetIsVsCode", payload);
     },
     // graph
     setNodes({ commit }, payload) {

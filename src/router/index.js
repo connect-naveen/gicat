@@ -7,6 +7,7 @@ import NetworkView from "../views/NetworkView.vue";
 import GuideView from "../views/GuideView.vue";
 import LicenseView from "../views/LicenseView.vue";
 import Generator from "../views/GeneratorView.vue";
+import OptionView from "../views/OptionView.vue";
 
 const routes = [
   {
@@ -21,6 +22,14 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: AboutView,
+  },
+  {
+    path: "/options",
+    name: "options",
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: OptionView,
   },
   {
     path: "/extractor",

@@ -1,0 +1,153 @@
+import { defineStore, acceptHMRUpdate } from "pinia";
+
+export const useMainStore = defineStore("main", {
+  state: () => ({
+    filterPackage: {
+      packageName: "",
+      authors: "",
+      desc: "",
+      date: "",
+      nodeFilterList: [],
+      edgeFilterList: [],
+    },
+    json: null,
+    edgeName: "",
+    attributes: {},
+    loopSelection: "",
+    codeInput: "",
+    generatedRegex: "",
+    captureGroup: "",
+    fileExtension: "",
+    regexName: "",
+    excludes: "",
+    nodeLabel: "",
+    nodeAttributes: "",
+    nodeCaptureGroups: "",
+    nodeColor: "",
+    labelAttribute: "",
+    labelAttributeSelection: "",
+    fromAttributeSelection: "",
+    edgeLabel: "",
+    edgeColorpicker: "",
+    toSelection: "",
+    fromSelection: "",
+    toAttributeSelection: "",
+  }),
+  getters: {
+    getFilterPackage: (state) => state.filterPackage,
+    getPackageName: (state) => state.filterPackage.packageName,
+    getAuthors: (state) => state.filterPackage.authors,
+    getDesc: (state) => state.filterPackage.desc,
+    getDate: (state) => state.filterPackage.date,
+    getNodeFilterList: (state) => state.filterPackage.nodeFilterList,
+    getEdgeFilterList: (state) => state.filterPackage.edgeFilterList,
+    getJson: (state) => state.json,
+    getEdgeName: (state) => state.edgeName,
+    getAttributes: (state) => state.attributes,
+    getLoopSelection: (state) => state.loopSelection,
+    getCodeInput: (state) => state.codeInput,
+    getGeneratedRegex: (state) => state.generatedRegex,
+    getCaptureGroup: (state) => state.captureGroup,
+    getFileExtension: (state) => state.fileExtension,
+    getRegexName: (state) => state.regexName,
+    getExcludes: (state) => state.excludes,
+    getNodeLabel: (state) => state.nodeLabel,
+    getNodeAttributes: (state) => state.nodeAttributes,
+    getNodeCaptureGroups: (state) => state.nodeCaptureGroups,
+    getNodeColor: (state) => state.nodeColor,
+    getLabelAttribute: (state) => state.labelAttribute,
+    getLabelAttributeSelection: (state) => state.labelAttributeSelection,
+    getEdgeLabel: (state) => state.edgeLabel,
+    getEdgeColorPicker: (state) => state.edgeColorpicker,
+    getToSelection: (state) => state.toSelection,
+    getFromSelection: (state) => state.fromSelection,
+    getToAttributeSelection: (state) => state.toAttributeSelection,
+  },
+  actions: {
+    setpackageName(payload) {
+      this.filterPackage.packageName = payload;
+    },
+    setAuthors(payload) {
+      this.filterPackage.authors = payload;
+    },
+    setDesc(payload) {
+      this.filterPackage.desc = payload;
+    },
+    setDate(payload) {
+      this.filterPackage.date = payload;
+    },
+    setNodeFilterList(payload) {
+      this.filterPackage.nodeFilterList = payload;
+    },
+    setNodeEdgeList(payload) {
+      this.filterPackage.nodeEdgeList = payload;
+    },
+    setJson(payload) {
+      this.json = payload;
+    },
+    setEdgeName(payload) {
+      this.edgeName = payload;
+    },
+    setAttributes(payload) {
+      this.attributes = payload;
+    },
+    setLoopSelection(payload) {
+      this.loopSelection = payload;
+    },
+    setCodeInput(payload) {
+      this.codeInput = payload;
+    },
+    setGeneratedRegex(payload) {
+      this.generatedRegex = payload;
+    },
+    setCaptureGroup(payload) {
+      this.captureGroup = payload;
+    },
+    setFileExtension(payload) {
+      this.fileExtension = payload;
+    },
+    setRegexName(payload) {
+      this.regexName = payload;
+    },
+    setExcludes(payload) {
+      this.excludes = payload;
+    },
+    setNodeLabel(payload) {
+      this.nodeLabel = payload;
+    },
+    setNodeAttributes(payload) {
+      this.nodeAttributes = payload;
+    },
+    setNodeCaptureCroups(payload) {
+      this.nodeCaptureGroups = payload;
+    },
+    setNodeColor(payload) {
+      this.nodeColor = payload;
+    },
+    setLabelAttribute(payload) {
+      this.labelAttribute = payload;
+    },
+    setLabelAttributeSelection(payload) {
+      this.labelAttributeSelection = payload;
+    },
+    setEdgeLabel(payload) {
+      this.edgeLabel = payload;
+    },
+    setEdgeColorPicker(payload) {
+      this.edgeColorpicker = payload;
+    },
+    setToSelection(payload) {
+      this.toSelection = payload;
+    },
+    setFromSelection(payload) {
+      this.fromSelection = payload;
+    },
+    setToAttributeSelection(payload) {
+      this.toAttributeSelection = payload;
+    },
+  },
+});
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useMainStore, import.meta.hot));
+}

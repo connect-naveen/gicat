@@ -16,32 +16,32 @@
             title="Package Explorer"
             color="#00549f"
           ></v-list-item>
-          <v-list-group v-if="json != null">
+          <v-list-group v-if="main.getJson != null">
             <template v-slot:activator="{ props }">
               <v-list-item
                 v-bind="props"
-                :title="json.packageName"
+                :title="main.getPackageName"
                 prepend-icon="$package"
                 class="listItem"
                 elevation="2"
               ></v-list-item>
             </template>
             <v-list-item
-              v-if="json.authors"
+              v-if="main.getAuthors"
               title="Authors:"
-              :subtitle="json.authors"
+              :subtitle="main.getAuthors"
               class="subItem"
             ></v-list-item>
             <v-list-item
-              v-if="json.desc"
+              v-if="main.getDesc"
               title="Description:"
-              :subtitle="json.desc"
+              :subtitle="main.getDesc"
               lines="three"
               class="subItem"
             ></v-list-item>
             <v-list-item title="Node filter list"></v-list-item>
             <v-list-group
-              v-for="filter in json['nodeFilterList']"
+              v-for="filter in main.getJson['nodeFilterList']"
               :key="filter.name"
             >
               <template v-slot:activator="{ props }">
@@ -77,7 +77,7 @@
             </v-list-group>
             <v-list-item title="Edge filter list"></v-list-item>
             <v-list-group
-              v-for="edge in json['edgeFilterList']"
+              v-for="edge in main.getJson['edgeFilterList']"
               :key="edge.name"
             >
               <template v-slot:activator="{ props }">
@@ -437,7 +437,14 @@
   </v-main>
 </template>
 <script>
+import { useMainStore } from "../store/piniaStore";
 export default {
+  setup() {
+    const main = useMainStore();
+    return {
+      main,
+    };
+  },
   name: "GeneratorView",
   components: {},
   data() {
@@ -494,26 +501,29 @@ export default {
   computed: {
     labelSelection() {
       const opt = [];
-      if (this.json != null && Object.keys(this.attributes).length > 0) {
-        for (let e in this.attributes) {
+      if (
+        this.main.getJson != null &&
+        Object.keys(this.main.getAttributes).length > 0
+      ) {
+        for (let e in this.main.getAttributes) {
           opt.push(e);
         }
         console.log("Options after push: " + opt);
         return opt;
       }
       console.log("Options: " + opt);
-      console.log("Atributes: " + Object.keys(this.attributes));
+      console.log("Atributes: " + Object.keys(this.main.getAttributes));
       return opt;
     },
     getFromSelection() {
       const opt = [];
       let i = 0;
       if (
-        this.json != null &&
-        Object.keys(this.json["nodeFilterList"]).length > 0
+        this.main.getJson != null &&
+        Object.keys(this.main.getJson["nodeFilterList"]).length > 0
       ) {
-        while (i < Object.keys(this.json["nodeFilterList"]).length) {
-          opt.push(this.json["nodeFilterList"][i].name);
+        while (i < Object.keys(this.main.getJson["nodeFilterList"]).length) {
+          opt.push(this.main.getJson["nodeFilterList"][i].name);
           i++;
         }
       }
@@ -524,12 +534,12 @@ export default {
       const opt = [];
       let i = 0;
       if (
-        this.json != null &&
-        Object.keys(this.json["nodeFilterList"]).length > 0
+        this.main.getJson != null &&
+        Object.keys(this.main.getJson["nodeFilterList"]).length > 0
       ) {
-        while (i < Object.keys(this.json["nodeFilterList"]).length) {
+        while (i < Object.keys(this.main.getJson["nodeFilterList"]).length) {
           for (const [key] of Object.entries(
-            this.json["nodeFilterList"][i].attributes
+            this.main.getJson["nodeFilterList"][i].attributes
           )) {
             opt.push(key);
           }
@@ -540,7 +550,7 @@ export default {
       return opt;
     },
     isPackageNameSet() {
-      return this.packageName != "";
+      return this.main.getPackageName != "";
     },
   },
   props: {},
@@ -553,23 +563,23 @@ export default {
       }
     },
     addNodeAttributes() {
-      if (this.attributes == {}) {
-        this.attributes = {
-          [this.nodeAttributes]: this.nodeCaptureGroups
+      if (this.main.getAttributes == {}) {
+        this.main.setAttributes({
+          [this.main.getNodeAttributes]: this.main.getNodeCaptureGroups
             .split(",")
             .map((e) => e.trim())
             .map((e) => Number(e)),
-        };
+        });
       } else {
-        this.attributes[this.nodeAttributes] = this.nodeCaptureGroups
+        this.main.setAttributes([this.main.getNodeAttributes] = this.nodeCaptureGroups
           .split(",")
           .map((e) => e.trim())
-          .map((e) => Number(e));
+          .map((e) => Number(e)));
       }
-      this.nodeAttributes = "";
-      this.nodeCaptureGroups = "";
+      this.main.setNodeAttributes("");
+      this.main.setNodeCaptureGroups("");
       this.addNodeAttributesDialog = true;
-      this.labelAttribute = "";
+      this.main.setLabelAttribute("");
     },
     resetRegex() {
       this.generatedRegex = "";
@@ -672,11 +682,11 @@ export default {
     },
     generatePackage() {
       const date = new Date();
-      this.filterPackage.date = date;
-      this.filterPackage.packageName = this.packageName;
-      this.filterPackage.authors = this.packageAuthor;
-      this.filterPackage.desc = this.description;
-      this.json = this.filterPackage;
+      this.main.setDate(date);
+      this.main.setpackageName(this.packageName);
+      this.main.setAuthors(this.packageAuthor);
+      this.main.setDesc(this.description);
+      this.main.setJson(this.main.getFilterPackage);
     },
     exportFilter() {
       let fileString = JSON.stringify(this.json, null, "\t");

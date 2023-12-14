@@ -64,6 +64,9 @@ export const useMainStore = defineStore("main", {
     getToAttributeSelection: (state) => state.toAttributeSelection,
   },
   actions: {
+    setAttributesByElement(att, payload) {
+      this.attributes[att] = payload;
+    },
     setpackageName(payload) {
       this.filterPackage.packageName = payload;
     },

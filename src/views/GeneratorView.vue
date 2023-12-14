@@ -563,7 +563,8 @@ export default {
       }
     },
     addNodeAttributes() {
-      if (this.main.getAttributes == {}) {
+      if (Object.keys(this.main.getAttributes).length === 0) {
+        console.log("Attributes leer");
         this.main.setAttributes({
           [this.main.getNodeAttributes]: this.main.getNodeCaptureGroups
             .split(",")
@@ -571,21 +572,27 @@ export default {
             .map((e) => Number(e)),
         });
       } else {
-        this.main.setAttributes([this.main.getNodeAttributes] = this.nodeCaptureGroups
-          .split(",")
-          .map((e) => e.trim())
-          .map((e) => Number(e)));
+        console.log("Attributes nicht leer");
+        console.log(this.main.getAttributes);
+        this.main.setAttributesByElement(
+          this.main.getNodeAttributes,
+          this.main.getNodeCaptureGroups
+            .split(",")
+            .map((e) => e.trim())
+            .map((e) => Number(e))
+        );
       }
+      console.log("Node attributes: " + this.main.getNodeAttributes);
       this.main.setNodeAttributes("");
-      this.main.setNodeCaptureGroups("");
+      this.main.setCaptureGroup("");
       this.addNodeAttributesDialog = true;
       this.main.setLabelAttribute("");
     },
     resetRegex() {
-      this.generatedRegex = "";
+      this.setGeneratedRegex("");
     },
     addNodeFilter() {
-      this.json["nodeFilterList"].push({
+      this.main.getJson["nodeFilterList"].push({
         name: this.regexName,
         regex: this.generatedRegex,
         id: (this.json.packageName + this.regexName).replace(/\s/g, ""),
@@ -606,77 +613,93 @@ export default {
       this.regexName = "";
     },
     addEdgeFilter() {
-      this.json["edgeFilterList"].push({
-        "allow-loop": this.loopSelection,
+      this.main.getJson["edgeFilterList"].push({
+        "allow-loop": this.main.getLoopSelection,
         mode: this.modeSelection,
-        label: this.edgeLabel,
+        label: this.main.getEdgeLabel,
         spec: "edge",
-        id: (this.json.packageName + this.edgeName).replace(/\s/g, ""),
-        name: this.edgeName,
+        id: (this.main.getJson.packageName + this.main.getEdgeName).replace(
+          /\s/g,
+          ""
+        ),
+        name: this.main.getEdgeName,
         from: {
-          nodeFilterID: (this.json.packageName + this.fromSelection).replace(
-            /\s/g,
-            ""
-          ),
-          attribute: this.fromAttributeSelection,
+          nodeFilterID: (
+            this.main.getJson.packageName + this.main.getFromSelection
+          ).replace(/\s/g, ""),
+          attribute: this.main.getFromAttributeSelection,
         },
         to: {
-          nodeFilterID: (this.json.packageName + this.toSelection).replace(
-            /\s/g,
-            ""
-          ),
-          attribute: this.toAttributeSelection,
+          nodeFilterID: (
+            this.main.getJson.packageName + this.main.getToSelection
+          ).replace(/\s/g, ""),
+          attribute: this.main.getToAttributeSelection,
         },
         style: {
-          color: this.edgeColorpicker,
+          color: this.main.getEdgeColorPicker,
         },
       });
-      this.edgeName = "";
-      this.loopSelection = "";
-      this.fromSelection = "";
-      this.fromAttributeSelection = "";
-      this.toSelection = "";
-      this.toAttributeSelection = "";
-      this.edgeColorpicker = "";
-      this.edgeLabel = "";
+      this.main.setEdgeName = "";
+      this.main.setLoopSelection = "";
+      this.main.setFromSelection = "";
+      this.main.setFromSelection = "";
+      this.main.setToSelection = "";
+      this.main.setToAttributeSelection = "";
+      this.main.setEdgeColorPicker = "";
+      this.main.setEdgeLabel = "";
       this.addEdgeFilterDialog = true;
     },
     generateRegex() {
       let snippetSelection = window.getSelection();
       if (
         this.generatorSelection == "Mandatory characters" &&
-        this.captureGroup
+        this.main.getCaptureGroup
       ) {
-        this.generatedRegex =
-          this.generatedRegex + "(" + snippetSelection + ")" + this.quantifier;
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex +
+            "(" +
+            snippetSelection +
+            ")" +
+            this.quantifier
+        );
       } else if (
         this.generatorSelection == "Mandatory characters" &&
-        !this.captureGroup
+        !this.main.getCaptureGroup
       ) {
-        this.generatedRegex =
-          this.generatedRegex + snippetSelection + this.quantifier;
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + snippetSelection + this.quantifier
+        );
       } else if (
         this.generatorSelection == "Arbitrary characters" &&
-        this.captureGroup
+        this.main.getCaptureGroup
       ) {
-        this.generatedRegex =
-          this.generatedRegex + "([A-Za-z]" + this.quantifier + ")";
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "([A-Za-z]" + this.quantifier + ")"
+        );
       } else if (
         this.generatorSelection == "Arbitrary characters" &&
-        !this.captureGroup
+        !this.main.getCaptureGroup
       ) {
-        this.generatedRegex =
-          this.generatedRegex + "[A-Za-z]" + this.quantifier;
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "[A-Za-z]" + this.quantifier
+        );
       } else if (this.generatorSelection == "Period") {
-        this.generatedRegex = this.generatedRegex + "\\.";
+        this.main.setGeneratedRegex(this.main.getGeneratedRegex + "\\.");
       } else if (this.generatorSelection == "Force whitespace") {
-        this.generatedRegex = this.generatedRegex + "\\s" + this.quantifier;
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "\\s" + this.quantifier
+        );
       } else if (this.generatorSelection == "Exclude") {
-        this.generatedRegex =
-          this.generatedRegex + "[^" + snippetSelection + "]" + this.quantifier;
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex +
+            "[^" +
+            snippetSelection +
+            "]" +
+            this.quantifier
+        );
       }
       this.quantifier = "";
-      this.captureGroup = false;
+      this.main.setCaptureGroup = false;
       this.selected = "";
       this.generatorSelection = "";
     },
@@ -689,7 +712,7 @@ export default {
       this.main.setJson(this.main.getFilterPackage);
     },
     exportFilter() {
-      let fileString = JSON.stringify(this.json, null, "\t");
+      let fileString = JSON.stringify(this.main.getJson, null, "\t");
       let fileUri =
         "data:application/json;charset=utf-8," + encodeURIComponent(fileString);
       let exportFileDefaultName = "filter.json";

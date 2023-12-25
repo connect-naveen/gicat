@@ -116,27 +116,36 @@ export default {
       "addFilter",
     ]),
 
-    // functions
+    // |=================================================================|
+    // |   ______ _    _ _   _  _____ _______ _____ ____  _   _  _____   |
+    // |  |  ____| |  | | \ | |/ ____|__   __|_   _/ __ \| \ | |/ ____|  |
+    // |  | |__  | |  | |  \| | |       | |    | || |  | |  \| | (___    |
+    // |  |  __| | |  | | . ` | |       | |    | || |  | | . ` |\___ \   |
+    // |  | |    | |__| | |\  | |____   | |   _| || |__| | |\  |____) |  |
+    // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
+    // |                                                                 |
+    // |=================================================================|
+
     initGraph() {
+      // making deep copy of nodes and edges
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
       let inputEdges = JSON.parse(JSON.stringify(this.getEdges));
-      
-      inputNodes.forEach((node) =>{
-        this.changeObjectKey(node, "id", "name");
-      });
-      console.log(inputNodes);
 
-      inputEdges.forEach((edge) =>{
-        this.changeObjectKey(edge, "from", "source");
-        this.changeObjectKey(edge, "to", "target");
+      // formatting nodes to fit v-network-graph standard
+      inputNodes.forEach((node) =>{
+        this.changeObjectKey(node, "label", "name");
       });
-      console.log(Object.assign({}, inputEdges));
+
+      // formatting edges to fit v-network-graph standard
+      inputEdges.forEach((edge) =>{
+        // this.changeObjectKey(edge, "from", "source");
+        edge.source = inputNodes.findIndex((node) => edge.from === node.id).toString();
+        // this.changeObjectKey(edge, "to", "target");
+        edge.target = inputNodes.findIndex((node) => edge.to === node.id).toString();
+      });
 
       this.nodes = Object.assign({}, inputNodes);
-      inputEdges.push( {source: "0", target: "1"})
       this.edges = Object.assign({}, inputEdges);
-      console.log("graph", this.nodes, this.edges);
-
     },
     changeObjectKey(o, old_key, new_key) {
       if (old_key !== new_key) {

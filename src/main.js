@@ -1,4 +1,6 @@
 import { createApp } from "vue";
+import VNetworkGraph from "v-network-graph";
+import "v-network-graph/lib/style.css";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -69,4 +71,9 @@ const vuetify = createVuetify({
   directives,
 });
 
-createApp(App).use(store).use(router).use(vuetify).mount("#app");
+createApp(App)
+  .use(VNetworkGraph)
+  .use(store)
+  .use(router)
+  .use(vuetify)
+  .mount("#app");

@@ -106,7 +106,7 @@ export default {
           console.log(graph);
         }
         await this.setGraph(graph);
-        this.$router.push({ path: "extractor/network/" });
+        this.$router.push({ path: "extractor/networkNew/" });
       } else {
         dialog.showMessageBox({
           title: "No valid entry",

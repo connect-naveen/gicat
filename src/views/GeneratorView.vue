@@ -124,7 +124,7 @@
             </v-col>
             <v-col cols="12" md="4">
               <v-text-field
-                v-model="packageAuthor"
+                v-model="authors"
                 label="Author"
                 hide-details
               ></v-text-field>
@@ -151,7 +151,7 @@
               <v-btn
                 @click="exportFilter"
                 prepend-icon="$fileExport"
-                :disabled="!isPackageNameSet"
+                :disabled="main.getJson == null"
               >
                 Export
               </v-btn>
@@ -282,12 +282,14 @@
             <v-btn
               @click="addNodeAttributes"
               prepend-icon="$plus"
-              :disabled="!isPackageNameSet"
+              :disabled="main.getJson == null"
               >Add
             </v-btn>
             <v-dialog v-model="addNodeAttributesDialog" width="auto">
               <v-card>
-                <v-card-text>Success!</v-card-text>
+                <v-card-text>
+                  Your capture group {{ temp }} was generated!
+                </v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addNodeAttributesDialog = false"
                     >Close
@@ -322,12 +324,14 @@
             <v-btn
               prepend-icon="$plus"
               @click="addNodeFilter"
-              :disabled="!isPackageNameSet"
+              :disabled="main.getJson == null"
               >Add filter
             </v-btn>
             <v-dialog v-model="addNodeFilterDialog" width="auto">
               <v-card>
-                <v-card-text>Success!</v-card-text>
+                <v-card-text>
+                  Your filter {{ temp }} was added to your filter package
+                </v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addNodeFilterDialog = false"
                     >Close
@@ -416,12 +420,15 @@
             <v-btn
               prepend-icon="$plus"
               @click="addEdgeFilter"
-              :disabled="!isPackageNameSet"
+              :disabled="main.getJson == null"
               >Add filter
             </v-btn>
             <v-dialog v-model="addEdgeFilterDialog" width="auto">
               <v-card>
-                <v-card-text>Success!</v-card-text>
+                <v-card-text>
+                  Edge filter {{ main.getEdgeName }} was added to your filter
+                  package!
+                </v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addEdgeFilterDialog = false"
                     >Close
@@ -455,50 +462,202 @@ export default {
         ["#00FF00", "#00AA00", "#005500"],
         ["#0000FF", "#0000AA", "#000055"],
       ],
-      filterPackage: {
-        packageName: "",
-        authors: "",
-        desc: "",
-        date: "",
-        nodeFilterList: [],
-        edgeFilterList: [],
-      },
-      json: null,
-      //mutation: "",
-      edgeName: "",
       attributes: {},
-      loopSelection: "",
-      packageName: "",
-      packageAuthor: "",
-      description: "",
-      codeInput: "",
       quantifier: "",
       selected: "",
-      generatedRegex: "",
-      snippetSelection: "",
       generatorSelection: "",
+      snippetSelection: "",
       captureGroup: "",
-      fileExtension: "",
-      regexName: "",
-      excludes: "",
-      nodeLabel: "",
-      nodeAttributes: "",
-      nodeCaptureGroups: "",
-      nodeColor: "",
-      labelAttribute: "",
-      labelAttributeSelection: "",
-      fromAttributeSelection: "",
-      edgeLabel: "",
-      edgeColorpicker: "",
-      toSelection: "",
-      fromSelection: "",
-      toAttributeSelection: "",
       addNodeAttributesDialog: false,
       addNodeFilterDialog: false,
       addEdgeFilterDialog: false,
     };
   },
   computed: {
+    edgeColorpicker: {
+      get() {
+        return this.main.getEdgeColorPicker;
+      },
+      set(payload) {
+        this.main.setEdgeColorPicker(payload);
+      },
+    },
+    labelAttributeSelection: {
+      get() {
+        return this.main.getLabelAttributeSelection;
+      },
+      set(payload) {
+        this.main.setLabelAttributeSelection(payload);
+      },
+    },
+    labelAttribute: {
+      get() {
+        return this.main.getLabelAttribute;
+      },
+      set(payload) {
+        this.main.setLabelAttribute(payload);
+      },
+    },
+    toAttributeSelection: {
+      get() {
+        return this.main.getToAttributeSelection;
+      },
+      set(payload) {
+        this.main.setToAttributeSelection(payload);
+      },
+    },
+    toSelection: {
+      get() {
+        return this.main.getToSelection;
+      },
+      set(payload) {
+        this.main.setToSelection(payload);
+      },
+    },
+    fromAttributeSelection: {
+      get() {
+        return this.main.getFromAttributeSelection;
+      },
+      set(payload) {
+        this.main.setFromAttributeSelection(payload);
+      },
+    },
+    fromSelection: {
+      get() {
+        return this.main.getFromSelection;
+      },
+      set(payload) {
+        this.main.setFromSelection(payload);
+      },
+    },
+    edgeName: {
+      get() {
+        return this.main.getEdgeName;
+      },
+      set(payload) {
+        this.main.setEdgeName(payload);
+      },
+    },
+    edgeLabel: {
+      get() {
+        return this.main.getEdgeLabel;
+      },
+      set(payload) {
+        this.main.setEdgeLabel(payload);
+      },
+    },
+    loopSelection: {
+      get() {
+        return this.main.getLoopSelection;
+      },
+      set(payload) {
+        this.main.setLoopSelection(payload);
+      },
+    },
+    temp: {
+      get() {
+        return this.main.getTemp;
+      },
+      set(payload) {
+        this.main.setTemp(payload);
+      },
+    },
+    nodeColor: {
+      get() {
+        return this.main.getNodeColor;
+      },
+      set(payload) {
+        this.main.setNodeColor(payload);
+      },
+    },
+    nodeCaptureGroups: {
+      get() {
+        return this.main.getNodeCaptureGroups;
+      },
+      set(payload) {
+        this.main.setNodeCaptureGroups(payload);
+      },
+    },
+    nodeAttributes: {
+      get() {
+        return this.main.getNodeAttributes;
+      },
+      set(payload) {
+        this.main.setNodeAttributes(payload);
+      },
+    },
+    nodeLabel: {
+      get() {
+        return this.main.getNodeLabel;
+      },
+      set(payload) {
+        this.main.setNodeLabel(payload);
+      },
+    },
+    fileExtension: {
+      get() {
+        return this.main.getFileExtension;
+      },
+      set(payload) {
+        this.main.setFileExtension(payload);
+      },
+    },
+    excludes: {
+      get() {
+        return this.main.getExcludes;
+      },
+      set(payload) {
+        this.main.setExcludes(payload);
+      },
+    },
+    regexName: {
+      get() {
+        return this.main.getRegexName;
+      },
+      set(payload) {
+        this.main.setRegexName(payload);
+      },
+    },
+    generatedRegex: {
+      get() {
+        return this.main.getGeneratedRegex;
+      },
+      set(payload) {
+        this.main.setGeneratedRegex(payload);
+      },
+    },
+    codeInput: {
+      get() {
+        return this.main.getCodeInput;
+      },
+      set(payload) {
+        this.main.setCodeInput(payload);
+      },
+    },
+    packageName: {
+      get() {
+        return this.main.getPackageName;
+      },
+      set(payload) {
+        this.main.setPackageName(payload);
+      },
+    },
+    authors: {
+      get() {
+        return this.main.getAuthors;
+      },
+      set(payload) {
+        this.main.setAuthors(payload);
+      },
+    },
+    description: {
+      get() {
+        return this.main.getDesc;
+      },
+      set(payload) {
+        this.main.setDesc(payload);
+      },
+    },
     labelSelection() {
       const opt = [];
       if (
@@ -549,9 +708,6 @@ export default {
       console.log(opt);
       return opt;
     },
-    isPackageNameSet() {
-      return this.main.getPackageName != "";
-    },
   },
   props: {},
   methods: {
@@ -583,39 +739,51 @@ export default {
         );
       }
       console.log("Node attributes: " + this.main.getNodeAttributes);
-      this.main.setNodeAttributes("");
-      this.main.setCaptureGroup("");
+      this.main.setTemp(this.main.getNodeLabel);
       this.addNodeAttributesDialog = true;
-      this.main.setLabelAttribute("");
+      this.main.setNodeLabel("");
+      this.main.setNodeAttributes("");
+      this.main.setNodeCaptureGroups("");
     },
     resetRegex() {
-      this.setGeneratedRegex("");
+      this.main.setGeneratedRegex("");
     },
     addNodeFilter() {
       this.main.getJson["nodeFilterList"].push({
-        name: this.regexName,
-        regex: this.generatedRegex,
-        id: (this.json.packageName + this.regexName).replace(/\s/g, ""),
+        name: this.main.getRegexName,
+        regex: this.main.getGeneratedRegex,
+        id: (this.main.getJson.packageName + this.main.getRegexName).replace(
+          /\s/g,
+          ""
+        ),
         spec: "node",
-        exclude: [this.excludes],
-        extension: this.fileExtension,
-        attributes: this.attributes,
-        style: { color: this.nodeColor },
+        exclude: [this.main.getExcludes],
+        extension: this.main.getFileExtension,
+        attributes: this.main.getAttributes,
+        style: { color: this.main.getNodeColor },
         failures: [""],
-        label: this.nodeLabel,
-        labelAttribute: this.labelAttributeSelection,
+        label: this.main.getNodeLabel,
+        labelAttribute: this.main.getLabelAttributeSelection,
       }),
-        (this.attributes = {});
+        this.main.setAttributes({});
+      this.main.setTemp(this.main.getRegexName);
       this.addNodeFilterDialog = true;
-      this.excludes = "";
-      this.labelAttributeSelection = "";
-      this.nodeLabel = "";
-      this.regexName = "";
+      this.main.setRegexName("");
+      this.main.setGeneratedRegex("");
+      this.main.setExcludes("");
+      this.main.setFileExtension("");
+      this.main.setLabelAttributeSelection("");
+      this.main.setNodeLabel("");
+      this.main.setRegexName("");
+      this.main.setNodeLabel("");
+      this.main.setNodeAttributes("");
+      this.main.setNodeCaptureGroups("");
+      this.main.setNodeColor("#8ebae5");
     },
     addEdgeFilter() {
       this.main.getJson["edgeFilterList"].push({
         "allow-loop": this.main.getLoopSelection,
-        mode: this.modeSelection,
+        mode: "",
         label: this.main.getEdgeLabel,
         spec: "edge",
         id: (this.main.getJson.packageName + this.main.getEdgeName).replace(
@@ -639,13 +807,13 @@ export default {
           color: this.main.getEdgeColorPicker,
         },
       });
-      this.main.setEdgeName = "";
-      this.main.setLoopSelection = "";
-      this.main.setFromSelection = "";
-      this.main.setFromSelection = "";
-      this.main.setToSelection = "";
-      this.main.setToAttributeSelection = "";
-      this.main.setEdgeColorPicker = "";
+      this.main.setEdgeName("");
+      this.main.setLoopSelection("");
+      //this.main.setFromSelection = "";
+      //this.main.setFromSelection = "";
+      //this.main.setToSelection = "";
+      //this.main.setToAttributeSelection = "";
+      this.main.setEdgeColorPicker = "#8ebae5";
       this.main.setEdgeLabel = "";
       this.addEdgeFilterDialog = true;
     },
@@ -706,9 +874,6 @@ export default {
     generatePackage() {
       const date = new Date();
       this.main.setDate(date);
-      this.main.setpackageName(this.packageName);
-      this.main.setAuthors(this.packageAuthor);
-      this.main.setDesc(this.description);
       this.main.setJson(this.main.getFilterPackage);
     },
     exportFilter() {

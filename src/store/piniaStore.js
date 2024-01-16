@@ -23,17 +23,19 @@ export const useMainStore = defineStore("main", {
     nodeLabel: "",
     nodeAttributes: "",
     nodeCaptureGroups: "",
-    nodeColor: "",
+    nodeColor: "#8ebae5",
     labelAttribute: "",
     labelAttributeSelection: "",
     fromAttributeSelection: "",
     edgeLabel: "",
-    edgeColorpicker: "",
+    edgeColorpicker: "#8ebae5",
     toSelection: "",
     fromSelection: "",
     toAttributeSelection: "",
+    temp: "",
   }),
   getters: {
+    getTemp: (state) => state.temp,
     getFilterPackage: (state) => state.filterPackage,
     getPackageName: (state) => state.filterPackage.packageName,
     getAuthors: (state) => state.filterPackage.authors,
@@ -61,13 +63,20 @@ export const useMainStore = defineStore("main", {
     getEdgeColorPicker: (state) => state.edgeColorpicker,
     getToSelection: (state) => state.toSelection,
     getFromSelection: (state) => state.fromSelection,
+    getFromAttributeSelection: (state) => state.fromAttributeSelection,
     getToAttributeSelection: (state) => state.toAttributeSelection,
   },
   actions: {
+    setFromAttributeSelection(payload) {
+      this.fromAttributeSelection = payload;
+    },
+    setTemp(payload) {
+      this.temp = payload;
+    },
     setAttributesByElement(att, payload) {
       this.attributes[att] = payload;
     },
-    setpackageName(payload) {
+    setPackageName(payload) {
       this.filterPackage.packageName = payload;
     },
     setAuthors(payload) {
@@ -121,7 +130,7 @@ export const useMainStore = defineStore("main", {
     setNodeAttributes(payload) {
       this.nodeAttributes = payload;
     },
-    setNodeCaptureCroups(payload) {
+    setNodeCaptureGroups(payload) {
       this.nodeCaptureGroups = payload;
     },
     setNodeColor(payload) {

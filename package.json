@@ -11,7 +11,7 @@
   "scripts": {
     "clean": "rm -rf node_modules/ dist/ dist_electron/",
     "serve": "vue-cli-service serve",
-    "pack": "electron-builder",
+    "dist": "electron-builder",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "lint:fix": "yarn eslint --fix",

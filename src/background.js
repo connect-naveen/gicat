@@ -10,11 +10,6 @@ require("@electron/remote/main").initialize();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-// Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
-]);
-
 function registerLocalVideoProtocol () {
   protocol.registerFileProtocol('local-video', (request, callback) => {
     const url = request.url.replace(/^local-video:\/\//, '')

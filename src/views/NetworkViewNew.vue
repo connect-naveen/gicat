@@ -14,27 +14,29 @@
         <div class="network-nav-divider"></div>
         <div class="network-nav-right">
           <!-- put visualization controls here -->
+          <button class="button" id="downloadButton" v-on:click="downloadSVG()">
+            DOWNLOAD
+          </button>
           <button
             class="button"
             id="simulationButton"
             v-on:click="toggleSimulation()"
           >
+            <span>PLAY/PAUSE</span>
             <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
-            <!--
-              v-icon
-                v-if="this.options.physics.enabled"
-                icon="mdi-pause-circle"
-                size="50"
-              ></v-icon>
-              <v-icon
-                v-if="!this.options.physics.enabled"
-                icon="mdi-play-circle"
-                size="50"
-              ></v-icon>
-              <v-tooltip activator="parent" location="start">
-                Pause Simulation
-              </v-tooltip>
-            -->
+            <v-icon
+              v-if="this.physicsEnabled"
+              icon="mdi-pause-circle"
+              size="50"
+            ></v-icon>
+            <v-icon
+              v-if="!this.physicsEnabled"
+              icon="mdi-play-circle"
+              size="50"
+            ></v-icon>
+            <v-tooltip activator="parent" location="start">
+              Pause Simulation
+            </v-tooltip>
           </button>
         </div>
         <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
@@ -45,10 +47,46 @@
       </div>
       <div>
         <v-network-graph
+          ref="graph"
           class="graph"
-          :nodes="this.nodes"
-          :edges="this.edges"
-        />
+          :zoom-level="0.5"
+          :nodes="nodes"
+          :edges="edges"
+          :configs="configs"
+        >
+          <template #override-node="{ nodeId, ...slotProps }">
+            <rect
+              width="200"
+              height="50"
+              :fill="nodes[nodeId].color"
+              v-bind="slotProps"
+              x="-100"
+              y="-25"
+              rx="15"
+            />
+          </template>
+          <template
+            #override-node-label="{
+              text,
+              // x,
+              // y,
+              // config,
+              // textAnchor,
+              // dominantBaseline,
+            }"
+          >
+            <text
+              x="0"
+              y="0"
+              font-size="20"
+              text-anchor="middle"
+              dominant-baseline="central"
+              fill="#ffffff"
+            >
+              {{ text }}
+            </text>
+          </template>
+        </v-network-graph>
       </div>
     </div>
   </v-main>
@@ -56,7 +94,15 @@
 
 <script>
 /* eslint-disable */
+import { reactive, ref, watch } from "vue"
 import { mapActions, mapGetters } from "vuex";
+import * as vNG from "v-network-graph"
+import {
+  ForceLayout,
+  ForceNodeDatum,
+  ForceEdgeDatum,
+} from "v-network-graph/lib/force-layout"
+import { mdiPause } from "@mdi/js";
 
 export default {
   mounted() {
@@ -101,6 +147,59 @@ export default {
         */
       },
       filtersHidden: [],
+      configs: vNG.defineConfigs({
+        view: {
+          layoutHandler: new ForceLayout({
+            positionFixedByDrag: false,
+            positionFixedByClickWithAltKey: true,
+            createSimulation: (d3, nodes, edges) => {
+              // d3-force parameters
+              const forceLink = d3.forceLink(edges).id(d => d.id)
+              return d3
+                // .forceSimulation(nodes)
+                // .force("edge", forceLink.distance(40).strength(0.5))
+                // .force("charge", d3.forceManyBody().strength(-800))
+                // .force("center", d3.forceCenter().strength(0.05))
+                // .alphaMin(0.001)
+
+                // .forceSimulation(nodes)
+                // .force("edge", forceLink.distance(100))
+                // .force("charge", d3.forceManyBody())
+                // .force("collide", d3.forceCollide(50).strength(0.2))
+                // .force("center", d3.forceCenter().strength(0.05))
+                // .alphaMin(0.001)
+                
+                .forceSimulation(nodes)
+                .force("edge", forceLink.distance(200).strength(1))
+                .force("charge", d3.forceManyBody().strength(-2000))
+                .force("x", d3.forceX())
+                .force("y", d3.forceY())
+                .stop() // tick manually,
+                .tick(100)
+            }
+          }),
+        },
+        node: {
+          // label: {
+          //   visible: false,
+          // },
+          // normal: {
+          //   type: "rectangle",
+          //   radius: 16,
+          //   // for type is "rect" -->
+          //   width: 32,
+          //   height: 32,
+          //   borderRadius: 4,
+          //   // <-- for type is "rect"
+          //   strokeWidth: 0,
+          //   strokeColor: "#000000",
+          //   strokeDasharray: "0",
+          //   color: "#4466cc",
+          // },
+        },
+      }),
+      physicsEnabled: true,
+      savedLayout: null,
     };
   },
   name: "NetworkNewView",
@@ -134,6 +233,8 @@ export default {
       // formatting nodes to fit v-network-graph standard
       inputNodes.forEach((node) =>{
         this.changeObjectKey(node, "label", "name");
+        console.log(node.group);
+        node.color = this.stringToColour(node.group);
       });
 
       // formatting edges to fit v-network-graph standard
@@ -146,6 +247,18 @@ export default {
 
       this.nodes = Object.assign({}, inputNodes);
       this.edges = Object.assign({}, inputEdges);
+    },
+    stringToColour(str) {
+      let hash = 0;
+      str.split('').forEach(char => {
+        hash = char.charCodeAt(0) + ((hash << 5) - hash);
+      });
+      let colour = '#';
+      for (let i = 0; i < 3; i++) {
+        const value = (hash >> (i * 8)) & 0xff;
+        colour += value.toString(16).padStart(2, '0');
+      }
+      return colour;
     },
     changeObjectKey(o, old_key, new_key) {
       if (old_key !== new_key) {
@@ -279,8 +392,25 @@ export default {
       */
     },
     toggleSimulation() {
-      console.warn("toggle physics simulation");
+      if (this.physicsEnabled) {
+        this.savedLayout = this.configs.view.layoutHandler;
+        this.configs.view.layoutHandler = new vNG.SimpleLayout()
+        this.physicsEnabled = false;
+      } else {
+        this.configs.view.layoutHandler = this.savedLayout;
+        this.physicsEnabled = true;
+      }
     },
+    async downloadSVG() {
+      if (!graph.value) return
+      const text = await graph.value.exportAsSvgText();
+      const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }));
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "network-graph.svg"; // filename to download
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
   },
   computed: {
     // store
@@ -299,6 +429,9 @@ export default {
     },
     getOptions() {
       return this.options;
+    },
+    getPhysicsEnabled() {
+      return this.physicsEnabled;
     },
   },
 };

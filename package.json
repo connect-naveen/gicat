@@ -20,6 +20,7 @@
     "@mdi/font": "^7.3.67",
     "@mdi/js": "^7.3.67",
     "core-js": "^3.8.3",
+    "d3-force": "^3.0.0",
     "directory-tree": "^3.5.1",
     "string.prototype.matchall": "^4.0.8",
     "v-network-graph": "^0.9.14",

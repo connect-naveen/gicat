@@ -16,7 +16,7 @@ export const useMainStore = defineStore("main", {
     loopSelection: "",
     codeInput: "",
     generatedRegex: "",
-    captureGroup: "",
+    //captureGroup: "",
     fileExtension: "",
     regexName: "",
     excludes: "",
@@ -49,7 +49,7 @@ export const useMainStore = defineStore("main", {
     getLoopSelection: (state) => state.loopSelection,
     getCodeInput: (state) => state.codeInput,
     getGeneratedRegex: (state) => state.generatedRegex,
-    getCaptureGroup: (state) => state.captureGroup,
+    //getCaptureGroup: (state) => state.captureGroup,
     getFileExtension: (state) => state.fileExtension,
     getRegexName: (state) => state.regexName,
     getExcludes: (state) => state.excludes,
@@ -112,9 +112,9 @@ export const useMainStore = defineStore("main", {
     setGeneratedRegex(payload) {
       this.generatedRegex = payload;
     },
-    setCaptureGroup(payload) {
-      this.captureGroup = payload;
-    },
+    //setCaptureGroup(payload) {
+    //  this.captureGroup = payload;
+    //},
     setFileExtension(payload) {
       this.fileExtension = payload;
     },

@@ -179,8 +179,9 @@
               label="Select..."
               :items="[
                 'Mandatory characters',
-                'Arbitrary characters',
-                'Period',
+                'Arbitrary characters of the alphabet',
+                'Mandatory special character',
+                'Any character (except line breaks)',
                 'Force whitespace',
                 'Exclude',
               ]"
@@ -746,25 +747,26 @@ export default {
       this.main.setNodeCaptureGroups("");
     },
     resetRegex() {
-      this.main.setGeneratedRegex("");
+      this.main.setGeneratedRegex("/");
     },
     addNodeFilter() {
-      this.main.getJson["nodeFilterList"].push({
-        name: this.main.getRegexName,
-        regex: this.main.getGeneratedRegex,
-        id: (this.main.getJson.packageName + this.main.getRegexName).replace(
-          /\s/g,
-          ""
-        ),
-        spec: "node",
-        exclude: [this.main.getExcludes],
-        extension: this.main.getFileExtension,
-        attributes: this.main.getAttributes,
-        style: { color: this.main.getNodeColor },
-        failures: [""],
-        label: this.main.getNodeLabel,
-        labelAttribute: this.main.getLabelAttributeSelection,
-      }),
+      this.main.setGeneratedRegex("/" + this.main.getGeneratedRegex + "/gm"),
+        this.main.getJson["nodeFilterList"].push({
+          name: this.main.getRegexName,
+          regex: this.main.getGeneratedRegex,
+          id: (this.main.getJson.packageName + this.main.getRegexName).replace(
+            /\s/g,
+            ""
+          ),
+          spec: "node",
+          exclude: [this.main.getExcludes],
+          extension: this.main.getFileExtension,
+          attributes: this.main.getAttributes,
+          style: { color: this.main.getNodeColor },
+          failures: [""],
+          label: this.main.getNodeLabel,
+          labelAttribute: this.main.getLabelAttributeSelection,
+        }),
         this.main.setAttributes({});
       this.main.setTemp(this.main.getRegexName);
       this.addNodeFilterDialog = true;
@@ -821,7 +823,7 @@ export default {
       let snippetSelection = window.getSelection();
       if (
         this.generatorSelection == "Mandatory characters" &&
-        this.main.getCaptureGroup
+        this.captureGroup
       ) {
         this.main.setGeneratedRegex(
           this.main.getGeneratedRegex +
@@ -832,30 +834,46 @@ export default {
         );
       } else if (
         this.generatorSelection == "Mandatory characters" &&
-        !this.main.getCaptureGroup
+        !this.captureGroup
       ) {
         this.main.setGeneratedRegex(
           this.main.getGeneratedRegex + snippetSelection + this.quantifier
         );
       } else if (
-        this.generatorSelection == "Arbitrary characters" &&
-        this.main.getCaptureGroup
+        this.generatorSelection == "Arbitrary characters of the alphabet" &&
+        this.captureGroup
       ) {
         this.main.setGeneratedRegex(
           this.main.getGeneratedRegex + "([A-Za-z]" + this.quantifier + ")"
         );
       } else if (
-        this.generatorSelection == "Arbitrary characters" &&
-        !this.main.getCaptureGroup
+        this.generatorSelection == "Arbitrary characters of the alphabet" &&
+        !this.captureGroup
       ) {
         this.main.setGeneratedRegex(
           this.main.getGeneratedRegex + "[A-Za-z]" + this.quantifier
         );
-      } else if (this.generatorSelection == "Period") {
-        this.main.setGeneratedRegex(this.main.getGeneratedRegex + "\\.");
       } else if (this.generatorSelection == "Force whitespace") {
         this.main.setGeneratedRegex(
           this.main.getGeneratedRegex + "\\s" + this.quantifier
+        );
+      } else if (this.generatorSelection == "Mandatory special character") {
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "\\\\" + snippetSelection
+        );
+      } else if (
+        this.generatorSelection == "Any character (except line breaks)" &&
+        !this.captureGroup
+      ) {
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "." + this.quantifier
+        );
+      } else if (
+        this.generatorSelection == "Any character (except line breaks)" &&
+        this.captureGroup
+      ) {
+        this.main.setGeneratedRegex(
+          this.main.getGeneratedRegex + "(." + this.quantifier + ")"
         );
       } else if (this.generatorSelection == "Exclude") {
         this.main.setGeneratedRegex(

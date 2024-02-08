@@ -53,6 +53,7 @@
           :nodes="nodes"
           :edges="edges"
           :configs="configs"
+          :event-handlers="eventHandlers"
         >
           <template #override-node="{ nodeId, ...slotProps }">
             <rect
@@ -96,13 +97,43 @@
 /* eslint-disable */
 import { reactive, ref, watch } from "vue"
 import { mapActions, mapGetters } from "vuex";
-import * as vNG from "v-network-graph"
+import * as vNG from "v-network-graph";
 import {
   ForceLayout,
   ForceNodeDatum,
   ForceEdgeDatum,
-} from "v-network-graph/lib/force-layout"
+} from "v-network-graph/lib/force-layout";
 import { mdiPause } from "@mdi/js";
+
+const getForcedLayout = new ForceLayout({
+  positionFixedByDrag: true,
+  positionFixedByClickWithAltKey: true,
+  createSimulation: (d3, nodes, edges) => {
+    // d3-force parameters
+    const forceLink = d3.forceLink(edges).id(d => d.id)
+    return d3
+      // .forceSimulation(nodes)
+      // .force("edge", forceLink.distance(40).strength(0.5))
+      // .force("charge", d3.forceManyBody().strength(-800))
+      // .force("center", d3.forceCenter().strength(0.05))
+      // .alphaMin(0.001)
+
+      // .forceSimulation(nodes)
+      // .force("edge", forceLink.distance(100))
+      // .force("charge", d3.forceManyBody())
+      // .force("collide", d3.forceCollide(50).strength(0.2))
+      // .force("center", d3.forceCenter().strength(0.05))
+      // .alphaMin(0.001)
+      
+      .forceSimulation(nodes)
+      .force("edge", forceLink.distance(200).strength(1))
+      .force("charge", d3.forceManyBody().strength(-1500))
+      .force("x", d3.forceX())
+      .force("y", d3.forceY())
+      .stop() // tick manually,
+      .tick(100)
+  }
+})
 
 export default {
   mounted() {
@@ -110,6 +141,17 @@ export default {
   },
   data() {
     return {
+      eventHandlers: {
+        // wildcard: capture all events
+        "*": (type, event) => {
+          console.log(type, event);
+          if(event instanceof Object) {
+            if (type == "node:dblclick") {
+              this.doubleClick(event.node);
+            } 
+          }
+        },
+      },
       nod: {
         node1: { name: "Node 1" },
         node2: { name: "Node 2" },
@@ -149,35 +191,7 @@ export default {
       filtersHidden: [],
       configs: vNG.defineConfigs({
         view: {
-          layoutHandler: new ForceLayout({
-            positionFixedByDrag: false,
-            positionFixedByClickWithAltKey: true,
-            createSimulation: (d3, nodes, edges) => {
-              // d3-force parameters
-              const forceLink = d3.forceLink(edges).id(d => d.id)
-              return d3
-                // .forceSimulation(nodes)
-                // .force("edge", forceLink.distance(40).strength(0.5))
-                // .force("charge", d3.forceManyBody().strength(-800))
-                // .force("center", d3.forceCenter().strength(0.05))
-                // .alphaMin(0.001)
-
-                // .forceSimulation(nodes)
-                // .force("edge", forceLink.distance(100))
-                // .force("charge", d3.forceManyBody())
-                // .force("collide", d3.forceCollide(50).strength(0.2))
-                // .force("center", d3.forceCenter().strength(0.05))
-                // .alphaMin(0.001)
-                
-                .forceSimulation(nodes)
-                .force("edge", forceLink.distance(200).strength(1))
-                .force("charge", d3.forceManyBody().strength(-2000))
-                .force("x", d3.forceX())
-                .force("y", d3.forceY())
-                .stop() // tick manually,
-                .tick(100)
-            }
-          }),
+          layoutHandler: getForcedLayout,
         },
         node: {
           // label: {
@@ -233,7 +247,6 @@ export default {
       // formatting nodes to fit v-network-graph standard
       inputNodes.forEach((node) =>{
         this.changeObjectKey(node, "label", "name");
-        console.log(node.group);
         node.color = this.stringToColour(node.group);
       });
 
@@ -270,36 +283,24 @@ export default {
     back() {
       this.$router.push("/extractor");
     },
-    doubleClick(params) {
+    doubleClick(hitNodeIndex) {
       console.warn("double click");
-      /* old:
-        let isNode = params.nodes.length > 0;
-        if (!isNode) {
-          return;
-        }
 
-        let hitNodeIndex = this.getNodes.findIndex(
-          (el) => el.id == params.nodes[0]
-        );
-        let hitNode = this.getNodes.find((el) => el.id == params.nodes[0]);
+      let hitNode = this.nodes[hitNodeIndex];
 
-        this.hit = hitNode;
-        console.log("AAA", this.hit);
+      this.hit = hitNode;
+      console.log("AAA", this.hit);
 
-        // let isFile = this.isFile(hitNode);
-        let isFolder = this.isFolder(hitNode);
-        // console.log(
-        //   `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
-        // );
-        if (isFolder) {
-          this.collapseChildren(hitNode, hitNodeIndex);
-        } else {
-          this.openFile({
-            fileName: hitNode.group,
-            line: hitNode.meta.line,
-          });
-        }
-      */
+      // let isFile = this.isFile(hitNode);
+      let isFolder = this.isFolder(hitNode);
+      // console.log(
+      //   `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
+      // );
+      if (isFolder) {
+        this.collapseChildren(hitNode, hitNodeIndex);
+      } else {
+        this.openFile(hitNodeIndex);
+      }
     },
     collapseChildren(hitNode) {
       console.warn("colapse children");
@@ -355,49 +356,47 @@ export default {
       // console.log(nodes);
       // console.log(this.nodes);
     },
-    openFile(data) {
+    openFile(nodeIndex) {
       console.warn("open file function");
-      /*
-      old:
-        const { spawn } = require("child_process");
-        const fs = require("fs");
-        const editorPath = this.getEditorPath;
 
-        if (editorPath === "") {
-          return;
+      const { spawn } = require("child_process");
+      const fs = require("fs");
+      const editorPath = this.getEditorPath;
+
+      if (editorPath === "") {
+        return;
+      }
+
+      let path = this.nodes[nodeIndex].id.split('|')[0];
+
+      const exists = fs.existsSync(path);
+      if (!exists) {
+        console.error("editor not found");
+      }
+
+      const opts = {
+        detached: true,
+      };
+
+      try {
+        if (this.getIsVsCode) {
+          path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
+          spawn(editorPath, ["--goto", path], opts);
+        } else {
+          spawn(editorPath, [path], opts);
         }
-
-        let path = data.fileName;
-
-        const exists = fs.existsSync(path);
-        if (!exists) {
-          console.error("editor not found");
-        }
-
-        const opts = {
-          detached: true,
-        };
-
-        try {
-          if (this.getIsVsCode) {
-            path += ":" + (data.line ?? 0) + ":0";
-            spawn(editorPath, ["--goto", path], opts);
-          } else {
-            spawn(editorPath, [path], opts);
-          }
-        } catch (error) {
-          console.error("editor not found");
-          return;
-        }
-      */
+      } catch (error) {
+        console.error("editor not found");
+        return;
+      }
     },
     toggleSimulation() {
       if (this.physicsEnabled) {
         this.savedLayout = this.configs.view.layoutHandler;
-        this.configs.view.layoutHandler = new vNG.SimpleLayout()
+        this.configs.view.layoutHandler = new vNG.SimpleLayout();
         this.physicsEnabled = false;
       } else {
-        this.configs.view.layoutHandler = this.savedLayout;
+        this.configs.view.layoutHandler = new ForceLayout();
         this.physicsEnabled = true;
       }
     },

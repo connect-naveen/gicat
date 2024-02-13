@@ -8,6 +8,7 @@ import GuideView from "../views/GuideView.vue";
 import LicenseView from "../views/LicenseView.vue";
 import Generator from "../views/GeneratorView.vue";
 import OptionView from "../views/OptionView.vue";
+import NetworkNewView from "../views/NetworkViewNew.vue";
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: "/extractor/network",
     name: "network",
     component: NetworkView,
+  },
+  {
+    path: "/extractor/networkNew",
+    name: "networkNew",
+    component: NetworkNewView,
   },
   {
     path: "/filters",

@@ -156,7 +156,7 @@
       rundown on how one could generate our python class-extension filter regex
       from a given code snippet.
     </p>
-    <video width="650" height="420" controls loop>
+    <video width="650" height="420" controls>
       <source src="../../public/regex_generation_example.mp4" />
     </video>
     <br />
@@ -211,27 +211,8 @@
       To show you an example, we will use the previous generated Regex:
       <br /><br />
       <v-content>
-        <code>[A-Za-z]*\sclass\s<b>([A-Za-z]+)</b>\sextends\s<b>(A)</b></code>
+        <code>class <b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
       </v-content>
-      <br /><br />
-      As you can see, there are two different capture groups. The first one
-      matches all subclasses of its superclass. The latter matches the addressed
-      superclass A. One possible allocation of the named capture groups might
-      look like this:<br /><br />
-      <img src="..\assets\sub.jpg" alt="child class" width="175" height="150" />
-      <img
-        src="..\assets\super.jpg"
-        alt="parent class"
-        width="175"
-        height="150"
-      />
-      <br /><br />
-      If you've been doing everything correctly, the dropdown
-      <i>label attribute</i> will now show you a selection of your previously
-      added capture class names of which you will be able to select one. This
-      selection will later be used as a label for all nodes in the visualisation
-      part in the likes of <i>node label:capture group name</i>. You can always
-      select <i>null</i> if you would like to show the <i>node label</i> only.
     </p>
   </v-main>
 </template>

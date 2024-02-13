@@ -4,6 +4,7 @@ import "v-network-graph/lib/style.css";
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
+import { createPinia } from "pinia";
 
 // Vuetify
 import "vuetify/styles";
@@ -73,6 +74,7 @@ const vuetify = createVuetify({
 
 createApp(App)
   .use(VNetworkGraph)
+  .use(createPinia())
   .use(store)
   .use(router)
   .use(vuetify)

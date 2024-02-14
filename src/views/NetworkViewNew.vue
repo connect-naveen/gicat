@@ -95,7 +95,7 @@
 
 <script>
 /* eslint-disable */
-import { reactive, ref, watch } from "vue"
+import { reactive, ref, watch, toRaw } from "vue"
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import {
@@ -133,11 +133,16 @@ const getForcedLayout = new ForceLayout({
       .stop() // tick manually,
       .tick(100)
   }
-})
+});
 
 export default {
+  setup() {
+    const graph = ref(null);
+    return {graph};
+  },
   mounted() {
     this.initGraph();
+    console.log(this.graph);
   },
   data() {
     return {
@@ -401,15 +406,24 @@ export default {
       }
     },
     async downloadSVG() {
-      if (!graph.value) return
-      const text = await graph.value.exportAsSvgText();
+      // destructure proxy:
+      const graph = {...this.graph};
+
+      const text = await graph.exportAsSvgText();
       const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }));
       const a = document.createElement("a");
       a.href = url;
-      a.download = "network-graph.svg"; // filename to download
+      const filename = this.getRepoPath.split("/").slice(-1);
+      const date = new Date();
+      const dateString =
+        date.getFullYear() + "-" +
+        (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) + "-" +
+        (date.getDay() < 10 ? "0" + date.getDay() : date.getDay()) +
+        "-" + date.getHours() + "-" + date.getMinutes();
+      a.download = filename + "_" + dateString + ".svg"; // filename to download
       a.click();
       window.URL.revokeObjectURL(url);
-    }
+    },
   },
   computed: {
     // store
@@ -422,6 +436,7 @@ export default {
       "getNodeFilters",
       "getEdgeFilters",
       "getFilters",
+      "getRepoPath",
     ]),
     getFilterNames() {
       return this.getFilters.map((filter) => filter.name);

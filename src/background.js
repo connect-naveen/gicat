@@ -37,6 +37,7 @@ async function createWindow() {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       preload: path.resolve(__dirname, 'preload.js'),
+      spellcheck: false,
     },
   });
 

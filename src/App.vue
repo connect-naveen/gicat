@@ -18,7 +18,7 @@
   <v-app>
     <v-app-bar>
       <v-toolbar>
-        <v-toolbar-title>
+        <v-toolbar-items>
           <a
             href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
             target="_blank"
@@ -30,8 +30,6 @@
               id="tst"
             />
           </a>
-        </v-toolbar-title>
-        <v-toolbar-items>
           <v-btn
             class="mt-0"
             v-for="item in navBarItems"
@@ -72,6 +70,7 @@ export default {
 #tst {
   float: left;
   display: block;
+  margin-top: 8px;
 }
 
 #app {

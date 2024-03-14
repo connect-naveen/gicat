@@ -12,10 +12,10 @@
       will be generated from from a given code snippet. Those filter files can
       then be used to analyze a given source code by its rules. Thereby, the
       programming language and the specific type of the analysis process is left
-      open to the users deciscions.
+      open to the users decisions.
     </p>
     <p>
-      In the follwing, we are going to provide a short Use case showing how our
+      In the following, we are going to provide a short use case showing how our
       tool can be utilized in different ways to analyze a programs source code
       followed by a walk-through on how to generate the mentioned filters. All
       examples are applied to the source code of
@@ -28,10 +28,17 @@
     </p>
     <h1>Use case</h1>
     <p>
-      A filter package can contain two different types of filters. (node and
-      edge filters)<br />
+      Xgaltool is a program from computational astrophysics. It analyzes data of
+      the Reference Catalog of galaxy Spectral Energy Distributions (RCSED) in
+      search of a specific kind of galaxy (merging galaxies). Those galaxies are
+      suspected to be the star cradles of the universe (i.e. they are associated
+      with a high star formation rate).
+      <br />
+      <br />
       As our first example, we will take a look at two different versions of the
-      previously mentioned xgaltool. We applied our python class
+      previously mentioned xgaltool, introducing the main idea of filter
+      packages in GICAT. A filter package can contain two different types of
+      filters. (node and edge filters)<br />We applied our python class
       <b>node filter</b> from our basic python filter package onto two different
       snapshots of the xgaltool's source code. You can double click onto
       rectangular nodes to collapse/reveal all of its outgoing edges and left
@@ -76,11 +83,28 @@
     <br />
     <br />
     <p>
-      For a deeper analysis into classes for example, the use of
-      <b>edge filters</b> is strongly recommended. As you can see in Figure 2.1
-      after using the python class node filter in combination with our python
-      class-edge filter, an <b>extends</b> attribute pops up above an edge if
-      the target node inherits from its source.
+      After getting an overview of the whole project, you might want to go
+      deeper into the fine structure of the code to identify concepts that are
+      relevant to your analysis, to learn how they are realized in the code and
+      how they are related to each other. For this, the use of
+      <b>edgefilters</b> is strongly recommended. Figure 2.1 applies this to our
+      example. Most of the information in astrophysics depends on spectral
+      analysis - the information the astrophysicist seeks is encoded in the
+      light the telescope catches. In our example, the main target of
+      observation are spread reflections of light in space - gases. With the
+      python class node filter we can easily identify the relevant class:
+      AnalyseGas. Combining the class-node filter with our python class-edge
+      filter lets pop up an <b>extends</b> attribute an edge if the target node
+      inherits from its source. In this case we see that our class AnalyseGas
+      inherits from the classes SFRTools and EmissionLineTools. SFR means 'star
+      formation rate' while an 'emission line' is a concept employed in spectral
+      analysis. Roughly spoken, the galaxies that Xgaltool searches for (merging
+      galaxies) exhibit a specific kind of emission line (those that show a
+      double peak) that can be computed from the RCSED. We have now found out
+      that the search for specific emission lines (EmissionLineTools) in the
+      context of the general task of a spectral analysis (AnalyseGas) is linked
+      to the information about the star formation rate (SFRTools) and how this
+      relationship is realized in the code.
     </p>
     <figure>
       <img
@@ -96,8 +120,8 @@
     <br />
     <p>
       For even further investigation into the source codes nature, you can
-      double click any node to open the corresponting file with your Code
-      Editior of choice which can be set in the <b>Options</b> page. However, we
+      double click any node to open the corresponding file with your Code Editor
+      of choice which can be set in the <b>Options</b> page. However, we
       recommend using Window's free Code Editor
       <a href="https://code.visualstudio.com/" target="_blank">
         Visual Studio Code</a
@@ -107,7 +131,6 @@
       creating your own filter files is being provided in our
       <b>Filter Generation</b> section of the guide.
     </p>
-    <br /><br />
     <h1>Filter Generation</h1>
     <p>
       Our tool uses
@@ -224,37 +247,23 @@ h2 {
   margin-right: 45px;
 }
 
-#center {
-  text-align: center;
-}
-
-#list {
-  background-color: whitesmoke;
-  margin-left: 45px;
-  margin-right: 45px;
-  border-radius: 15px;
-  text-align: center;
-}
-
-video {
-  clip-path: inset(1px 1px);
-}
-
 ul {
-  display: inline-block;
   text-align: left;
-}
-
-li {
-  margin-top: 5px;
+  margin-left: 25px;
 }
 
 h3 {
-  font-size: 20px;
+  text-align: left;
+  margin-left: 5px;
+  font-size: 14px;
 }
 
 a {
   color: #42b983;
+}
+
+img {
+  margin-right: 25px;
 }
 
 video {

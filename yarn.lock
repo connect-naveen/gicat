@@ -1048,6 +1048,18 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
+"@dagrejs/dagre@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@dagrejs/dagre/-/dagre-1.1.0.tgz#2166de27fa755eb055aa75f92f73215a181ece3d"
+  integrity sha512-GedWkG7bd4kWqYR7adPCr1052GziRRwpYizfqkViFs2E+btVso0I5ZXP5VmvCHHYJTj3OXjDjONfaFZeqR80Lw==
+  dependencies:
+    "@dagrejs/graphlib" "2.2.0"
+
+"@dagrejs/graphlib@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@dagrejs/graphlib/-/graphlib-2.2.0.tgz#cbeb26b8ab227b09a9593f453e5635c251e1aa22"
+  integrity sha512-vgi15QQ1kbwe79eziHC3bHMWjnQ6hhbTWMAowEzbt95X+OKMNO/47mmnvO1QYxG+Qre5Eo1lAkdqHXIki5P6AQ==
+
 "@dash14/svg-pan-zoom@^3.6.9":
   version "3.6.9"
   resolved "https://registry.yarnpkg.com/@dash14/svg-pan-zoom/-/svg-pan-zoom-3.6.9.tgz#e73b5a71f73ce00f20ab3484260f45e6c6512ed7"

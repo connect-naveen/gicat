@@ -14,7 +14,6 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
-  "main": "background.js",
   "dependencies": {
     "@dagrejs/dagre": "^1.1.0",
     "@electron/remote": "^2.0.10",
@@ -32,6 +31,7 @@
     "vuetify": "^3.3.8",
     "vuex": "^4.0.0"
   },
+  "main": "background.js",
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",

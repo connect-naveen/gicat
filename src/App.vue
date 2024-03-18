@@ -18,7 +18,7 @@
   <v-app>
     <v-app-bar>
       <v-toolbar>
-        <v-toolbar-items>
+        <v-toolbar-items class="mx-auto">
           <a
             href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
             target="_blank"

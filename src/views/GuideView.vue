@@ -130,6 +130,9 @@
       applied to different edge-node-filters for different outcomes. Help in
       creating your own filter files is being provided in our
       <b>Filter Generation</b> section of the guide.
+      <br />
+      You can also export the rendered graph as an .svg file and edit it with
+      <a href="https://inkscape.org/" target="_blank">Inkscape</a> for example.
     </p>
     <h1>Filter Generation</h1>
     <p>

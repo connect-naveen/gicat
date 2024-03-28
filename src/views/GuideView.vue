@@ -166,30 +166,22 @@
       The first part of the Node filter is all about generating a Regex from a
       given code snippet. All you need to do is to copy and paste an example
       code snippet from your source code to start generating your Regex as
-      follows:
+      follows:<br /><br />
     </p>
     <p>
       From left to right, select the part of your code snippet of which you wish
       to generate a (partial) regular expression from. To assist you doing so,
-      we offer a list of predetermined commonly used regular expressions. By
-      highlighting a certain part of your code snippet and selecting an option
-      from our predetermined list (optionally in combination with the
-      <b>capture group</b> check mark and a <b>quantifier</b>) a valid regular
-      expression will then be generated. To clarify, we provide a complete
-      rundown on how one could generate our python class-extension filter regex
-      from a given code snippet.
+      we offer a list of predetermined commonly used rulesets. By highlighting a
+      certain part of your code snippet and selecting an option from our
+      predetermined list (optionally in combination with the
+      <b>capture group</b> check mark and/or a <b>quantifier</b>) a valid
+      regular expression will then be generated.
     </p>
-    <video width="650" height="420" controls>
-      <source src="../../public/regex_generation_example.mp4" />
-    </video>
-    <br />
-    <br />
-    <h3>Quantifier</h3>
-    <p id="center">
+    <p>
       A quantifier allows you to set a range of occurrences for the preceded
       expression. Therefore you can choose from different ranges:<br /><br />
     </p>
-    <div class="col-lg-3" id="list">
+    <div id="list">
       <ul>
         <li>
           <i>{min,max}</i> for at least <i>min</i> and at most
@@ -213,34 +205,114 @@
     </div>
     <br />
     <br />
-    <section id="capture groups"></section>
-    <h3>Capture groups</h3>
     <p>
-      Alongside you will find the input fields <i>set attributes</i>,
-      <i>set capture groups</i> and <i>label attribute</i>. First, lets talk
-      about <b>capture groups</b>: as the name suggests, a capture group lets
-      you capture text patterns matching the ruleset inside its round brackets.
-      They can be regarded as a container for similar code patterns. We use this
-      feature to draw the edges between two nodes (in this case between two
-      named capture groups). Therefore, it is mandatory to name each of your
-      specifified capture groups by filling out the
-      <i>set capture group name</i> field. To assign a named capture group to an
-      actual capture group in your Regex, simply write down its index inside the
-      <i>set capture groups</i> field (starting at 1 from left to right). It is
-      possible to assign multiple capture groups to one named capture group by
-      separating them with a comma. Remember to always press the
-      <i>add</i> button to push your changes into your filter before continuing
-      with another named capture group.<br /><br />
+      To clarify, we provide a complete rundown on how one could generate our
+      python class-extension filter regex from a given code snippet. You might
+      also just use your own Regex.
+    </p>
+    <br />
+    <br />
+    <video width="650" height="420" controls>
+      <source src="local-video://regex_generation_example.mp4" />
+    </video>
+    <br />
+    <br />
+    <p>
+      Alongside you will find the option to add a <b>capture group</b>. As the
+      name suggests, a capture group lets you capture text patterns matching the
+      ruleset inside its round brackets. They can be regarded as a container for
+      similar code patterns. We use this feature to draw the edges between two
+      nodes (in this case between two named capture groups). Therefore, it is
+      mandatory to name each of your specifified capture groups by filling out
+      the <i>set capture group name</i> field. To assign a named capture group
+      to an actual capture group in your Regex, simply write down its index
+      inside the <i>set capture groups</i> field (starting at 1 from left to
+      right). It is possible to assign multiple capture groups to one named
+      capture group by separating them with a comma. Remember to always press
+      the <i>add</i> button to push your changes into your filter before
+      continuing with another named capture group.<br /><br />
       To show you an example, we will use the previous generated Regex:
       <br /><br />
       <v-content>
         <code>class <b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
       </v-content>
+      <br /><br />
+      The first capture group with index 1 will collect all terms inside your
+      program code matching the <i>[A-Za-z]+</i> pattern (this ruleset equals to
+      any positive number of upper or lower case letters) with a preceding
+      <i>class </i> term. Thus, it will collect all class-names. The second
+      capture group (matching any number of any character, except line breaks)
+      with index 2 will then collect all class-names of those classes the
+      associated class in capture group 1 inherits from. Remember that this is
+      just an example for the python programming language as your Regex or
+      capture groups will differ from this one according to your chosen
+      programming language's syntax.
+      <br />
+      <br />
+      After you succesfully generated a Regular Expression, our Tool will give
+      you the opportunity to provide some additional information about your
+      filter package such as the <b>node label</b> (which will be shown as a
+      Prefix inside the node followed by the <b>label attribute</b> as seen in
+      Figure 2.1) or an exclude Regex which will ignore code patterns in the
+      rendering process matching its Regex. Regarding the correct rendering of
+      your graph, it is important to name and set your previously generated
+      capture groups correctly. Figures 3.1 and 3.2 will show the assignment of
+      both of our determined capture groups in the same way we used it to create
+      our basic python filter package by naming our first capture group
+      <i>className</i> and our second group <i>extends</i>. At last you will be
+      asked to select a <i>label attribute</i> for the rendered nodes. You will
+      have the option to choose between your previous assigned capture groups to
+      choose which information (captured by your capture groups) should be
+      shown. The label of a rendered node will then be displayed in the form
+      <b>node label:label attribute</b>.
     </p>
+    <figure>
+      <img
+        src="../assets/capture_1.jpg"
+        alt="Figure 3.1"
+        width="500"
+        height="400"
+      />
+      <figcaption>
+        Figure 3.1 - assignment of the first capture group
+      </figcaption>
+    </figure>
+    <figure>
+      <img
+        src="../assets/capture_2.jpg"
+        alt="Figure 3.2"
+        width="500"
+        height="400"
+      />
+      <figcaption>
+        Figure 3.2 - assignment of the second capture group
+      </figcaption>
+    </figure>
+    <br />
+    <br />
+    <h3>Edge filter</h3>
+    <p>
+      A Node Filter on its own is enough to render a graph.<br />
+      But if you would like to represent additional information, you can also
+      add edge filters by simply choosing a source and target attribute as shown
+      in figure 4.1. Therefore you will have to select the respective Node
+      Filter from your package and one of its previously declared capture groups
+      to generate directed edges with your chosen edge label.
+    </p>
+    <br />
+    <br />
+    <figure>
+      <img
+        src="../assets/edgefilter.jpg"
+        alt="Figure 4.1"
+        width="500"
+        height="300"
+      />
+      <figcaption>Figure 4.1 - edge filter</figcaption>
+    </figure>
   </v-main>
 </template>
 <style scoped>
-p,
 h2 {
   text-align: left;
   margin-left: 45px;
@@ -249,25 +321,29 @@ h2 {
 
 ul {
   text-align: left;
-  margin-left: 25px;
 }
 
 h3 {
-  text-align: left;
-  margin-left: 5px;
-  font-size: 14px;
+  font-size: 25px;
 }
 
 a {
   color: #42b983;
 }
 
-img {
-  margin-right: 25px;
-}
-
 video {
   box-shadow: 2px 2px 5px 5px;
   margin-top: 10px;
+}
+
+#list {
+  margin-left: 33%;
+  margin-right: 33%;
+  list-style-position: outside;
+}
+
+p {
+  margin-left: 15%;
+  margin-right: 15%;
 }
 </style>

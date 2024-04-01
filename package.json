@@ -1,6 +1,6 @@
 {
-  "name": "vue3gicat",
-  "version": "0.1.2",
+  "name": "GICAT",
+  "version": "0.1.4",
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules/ dist/ dist_electron/",
@@ -14,8 +14,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
-  "main": "background.js",
   "dependencies": {
+    "@dagrejs/dagre": "^1.1.0",
     "@electron/remote": "^2.0.10",
     "@mdi/font": "^7.3.67",
     "@mdi/js": "^7.3.67",
@@ -31,9 +31,11 @@
     "vuetify": "^3.3.8",
     "vuex": "^4.0.0"
   },
+  "main": "background.js",
   "devDependencies": {
     "@babel/core": "^7.12.16",
     "@babel/eslint-parser": "^7.12.16",
+    "@babel/plugin-transform-private-methods": "^7.23.3",
     "@vue/cli-plugin-babel": "~5.0.0",
     "@vue/cli-plugin-eslint": "~5.0.0",
     "@vue/cli-plugin-router": "~5.0.0",

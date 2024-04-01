@@ -7,7 +7,10 @@ import * as path from "path";
 
 require("@electron/remote/main").initialize();
 
-
+// Scheme must be registered before the app is ready
+protocol.registerSchemesAsPrivileged([
+  { scheme: "app", privileges: { secure: true, standard: true } },
+]);
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 function registerLocalVideoProtocol () {

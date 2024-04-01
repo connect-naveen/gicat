@@ -12,9 +12,7 @@
       will be generated from from a given code snippet. Those filter files can
       then be used to analyze a given source code by its rules. Thereby, the
       programming language and the specific type of the analysis process is left
-      open to the users decisions.
-    </p>
-    <p>
+      open to the users decisions.<br />
       In the following, we are going to provide a short use case showing how our
       tool can be utilized in different ways to analyze a programs source code
       followed by a walk-through on how to generate the mentioned filters. All
@@ -47,7 +45,6 @@
       the left mouse button lets you move around. By doing so, one can adjust
       the visualization to their likings and export the emerging graph as a svg
       file.
-      <br />
       <br />
       As you might see in Figure 1.1 and Figure 1.2, the project structure
       changed at several places between November 2021 and June 2023. For
@@ -237,7 +234,7 @@
       To show you an example, we will use the previous generated Regex:
       <br /><br />
       <v-content>
-        <code>class <b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
+        <code>class\s<b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
       </v-content>
       <br /><br />
       The first capture group with index 1 will collect all terms inside your
@@ -348,5 +345,6 @@ video {
 p {
   margin-left: 15%;
   margin-right: 15%;
+  text-align: start;
 }
 </style>

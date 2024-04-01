@@ -288,9 +288,7 @@
             </v-btn>
             <v-dialog v-model="addNodeAttributesDialog" width="auto">
               <v-card>
-                <v-card-text>
-                  Your capture group {{ temp }} was generated!
-                </v-card-text>
+                <v-card-text>Your capture group was generated!</v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addNodeAttributesDialog = false"
                     >Close
@@ -742,7 +740,6 @@ export default {
       console.log("Node attributes: " + this.main.getNodeAttributes);
       this.main.setTemp(this.main.getNodeLabel);
       this.addNodeAttributesDialog = true;
-      this.main.setNodeLabel("");
       this.main.setNodeAttributes("");
       this.main.setNodeCaptureGroups("");
     },
@@ -811,10 +808,6 @@ export default {
       });
       this.main.setEdgeName("");
       this.main.setLoopSelection("");
-      //this.main.setFromSelection = "";
-      //this.main.setFromSelection = "";
-      //this.main.setToSelection = "";
-      //this.main.setToAttributeSelection = "";
       this.main.setEdgeColorPicker = "#8ebae5";
       this.main.setEdgeLabel = "";
       this.addEdgeFilterDialog = true;

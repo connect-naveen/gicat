@@ -87,6 +87,13 @@
               {{ text }}
             </text>
           </template>
+          <template #edge-label="{ edge, ...slotProps }">
+            <v-edge-label
+              :text="edge.label"
+              vertical-align="above"
+              v-bind="slotProps"
+            />
+          </template>
         </v-network-graph>
       </div>
     </div>
@@ -192,6 +199,14 @@ export default {
       configs: vNG.defineConfigs({
         view: {
           layoutHandler: getForcedLayout,
+        },
+        edge: {
+          margin: 2,
+          marker: {
+            target: {
+              type: "arrow"
+            }
+          }
         },
         node: {
           // label: {

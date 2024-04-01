@@ -1,6 +1,6 @@
 {
   "name": "GICAT",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules/ dist/ dist_electron/",

@@ -17,12 +17,13 @@
           <button class="button" id="downloadButton" v-on:click="downloadSVG()">
             DOWNLOAD
           </button>
+          <br />
           <button
             class="button"
             id="simulationButton"
             v-on:click="toggleSimulation()"
           >
-            <span>PLAY/PAUSE</span>
+            <span>PAUSE</span>
             <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
             <v-icon
               v-if="this.physicsEnabled"
@@ -57,23 +58,25 @@
         >
           <template #override-node="{ nodeId, ...slotProps }">
             <rect
-              width="200"
+              width="300"
               height="50"
               :fill="nodes[nodeId].color"
               v-bind="slotProps"
-              x="-100"
+              x="-150"
               y="-25"
-              rx="15"
+              rx="25"
             />
           </template>
           <template
             #override-node-label="{
               text,
-              // x,
-              // y,
-              // config,
-              // textAnchor,
-              // dominantBaseline,
+              //nodeId,
+              //scale,
+              //x,
+              //y,
+              //config,
+              //textAnchor,
+              //dominantBaseline
             }"
           >
             <text
@@ -90,6 +93,7 @@
           <template #edge-label="{ edge, ...slotProps }">
             <v-edge-label
               :text="edge.label"
+              align="center"
               vertical-align="above"
               v-bind="slotProps"
             />
@@ -133,12 +137,13 @@ const getForcedLayout = new ForceLayout({
       // .alphaMin(0.001)
       
       .forceSimulation(nodes)
-      .force("edge", forceLink.distance(200).strength(1))
-      .force("charge", d3.forceManyBody().strength(-1500))
+      .force("edge", forceLink.distance(75).strength(0.3))
+      .force("charge", d3.forceManyBody().strength(-3000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .stop() // tick manually,
       .tick(100)
+      .alphaMin(0.0001)
   }
 });
 
@@ -203,10 +208,11 @@ export default {
       filtersHidden: [],
       configs: vNG.defineConfigs({
         view: {
+          scalingObjects: true,
           layoutHandler: getForcedLayout,
         },
         edge: {
-          margin: 2,
+          margin: 10,
           marker: {
             target: {
               type: "arrow"
@@ -269,7 +275,7 @@ export default {
         this.changeObjectKey(node, "label", "name");
         node.color = this.stringToColour(node.group);
       });
-
+      
       // formatting edges to fit v-network-graph standard
       inputEdges.forEach((edge) =>{
         // this.changeObjectKey(edge, "from", "source");
@@ -343,6 +349,7 @@ export default {
         });
       */
     },
+    
     hideNode(node) {
       node.hidden = true;
       node.label += "-hidden";

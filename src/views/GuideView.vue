@@ -53,12 +53,15 @@
       removing dependencies between the two groups plotting_tools and
       analysis_tools.
     </p>
+    <br />
+    <br />
+    <br />
     <figure>
       <img
         src="../assets/figure32old.jpg"
         alt="Figure 1.1 old code base"
-        width="1000"
-        height="800"
+        width="70%"
+        height="70%"
       />
       <figcaption>
         Fig.1.1 - GICAT view on xgaltool of November 18th 2021
@@ -70,8 +73,8 @@
       <img
         src="../assets/figure32new.jpg"
         alt="Figure 1.2 new code base"
-        width="1000"
-        height="800"
+        width="70%"
+        height="70%"
       />
       <figcaption>
         Fig.1.2 - GICAT view on xgaltool of June 19th 2023
@@ -103,12 +106,15 @@
       to the information about the star formation rate (SFRTools) and how this
       relationship is realized in the code.
     </p>
+    <br />
+    <br />
+    <br />
     <figure>
       <img
         src="../assets/fig34.jpg"
         alt="Figure 2.1"
-        width="600"
-        height="400"
+        width="50%"
+        height="50%"
       />
       <figcaption>
         Figure 2.1 analysis_tools class after edge and node filter application
@@ -212,7 +218,7 @@
     </p>
     <br />
     <br />
-    <video width="650" height="420" controls>
+    <video width="650" height="400" controls>
       <source src="local-video://regex_generation_example.mp4" />
     </video>
     <br />
@@ -266,23 +272,27 @@
       shown. The label of a rendered node will then be displayed in the form
       <b>node label:label attribute</b>.
     </p>
+    <br />
+    <br />
+    <br />
     <figure>
       <img
         src="../assets/capture_1.jpg"
         alt="Figure 3.1"
-        width="500"
-        height="400"
+        width="70%"
+        height="70%"
       />
       <figcaption>
         Figure 3.1 - assignment of the first capture group
       </figcaption>
     </figure>
+    <br />
     <figure>
       <img
         src="../assets/capture_2.jpg"
         alt="Figure 3.2"
-        width="500"
-        height="400"
+        width="70%"
+        height="70%"
       />
       <figcaption>
         Figure 3.2 - assignment of the second capture group
@@ -301,12 +311,13 @@
     </p>
     <br />
     <br />
+    <br />
     <figure>
       <img
         src="../assets/edgefilter.jpg"
         alt="Figure 4.1"
-        width="500"
-        height="300"
+        width="50%"
+        height="50%"
       />
       <figcaption>Figure 4.1 - edge filter</figcaption>
     </figure>

@@ -137,13 +137,13 @@ const getForcedLayout = new ForceLayout({
       // .alphaMin(0.001)
       
       .forceSimulation(nodes)
-      .force("edge", forceLink.distance(75).strength(0.3))
-      .force("charge", d3.forceManyBody().strength(-3000))
+      .force("edge", forceLink.distance(75).strength(0.5))
+      .force("charge", d3.forceManyBody().strength(-7000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .stop() // tick manually,
       .tick(100)
-      .alphaMin(0.0001)
+      //.alphaMin(0.0001)
   }
 });
 
@@ -217,6 +217,9 @@ export default {
             target: {
               type: "arrow"
             }
+          },
+          label: {
+            fontSize: 25,
           }
         },
         node: {

@@ -24,6 +24,7 @@ import {
   mdiPackageVariantClosedPlus,
   mdiFileExportOutline,
   mdiPlus,
+  mdiPlayPause,
 } from "@mdi/js";
 
 // create Vuetify
@@ -63,6 +64,7 @@ const vuetify = createVuetify({
       packagePlus: mdiPackageVariantClosedPlus,
       fileExport: mdiFileExportOutline,
       plus: mdiPlus,
+      playpause: mdiPlayPause,
     },
     sets: {
       mdi,

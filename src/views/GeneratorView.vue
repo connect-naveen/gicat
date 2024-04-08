@@ -852,7 +852,7 @@ export default {
         );
       } else if (this.generatorSelection == "Mandatory special character") {
         this.main.setGeneratedRegex(
-          this.main.getGeneratedRegex + "\\\\" + snippetSelection
+          this.main.getGeneratedRegex + "\\" + snippetSelection
         );
       } else if (
         this.generatorSelection == "Any character (except line breaks)" &&

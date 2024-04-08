@@ -2,8 +2,8 @@
   <v-main>
     <div class="network">
       <div class="network-nav">
-        <div class="network-nav-left">
-          <!-- put filter specific options here, depending on the selection -->
+        <!--<div class="network-nav-left">
+          put filter specific options here, depending on the selection
           <v-select
             class="filter-selector"
             label="Select"
@@ -11,34 +11,33 @@
             density="compact"
           ></v-select>
         </div>
-        <div class="network-nav-divider"></div>
+      -->
         <div class="network-nav-right">
           <!-- put visualization controls here -->
-          <button class="button" id="downloadButton" v-on:click="downloadSVG()">
-            DOWNLOAD
-          </button>
-          <br />
-          <button
+          <v-btn
             class="button"
-            id="simulationButton"
-            v-on:click="toggleSimulation()"
+            v-on:click="downloadSVG()"
+            prepend-icon="$fileExport"
           >
-            <span>PAUSE</span>
-            <!-- <v-icon icon="mdi-pause-circle"></v-icon> -->
-            <v-icon
-              v-if="this.physicsEnabled"
-              icon="mdi-pause-circle"
-              size="50"
-            ></v-icon>
-            <v-icon
-              v-if="!this.physicsEnabled"
-              icon="mdi-play-circle"
-              size="50"
-            ></v-icon>
-            <v-tooltip activator="parent" location="start">
-              Pause Simulation
-            </v-tooltip>
-          </button>
+            DOWNLOAD
+          </v-btn>
+          <br />
+          <br />
+          <v-btn
+            class="button"
+            v-on:click="toggleSimulation()"
+            prepend-icon="$playpause"
+          >
+            PLAY/PAUSE
+          </v-btn>
+          <br />
+          <br />
+          <v-select
+            class="filter-selector"
+            label="Select..."
+            :items="this.getFilterNames"
+            density="compact"
+          ></v-select>
         </div>
         <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
           <button class="button" v-on:click="toggleFilter()">
@@ -106,15 +105,10 @@
 
 <script>
 /* eslint-disable */
-import { reactive, ref, watch, toRaw } from "vue"
+import { ref } from "vue"
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
-import {
-  ForceLayout,
-  ForceNodeDatum,
-  ForceEdgeDatum,
-} from "v-network-graph/lib/force-layout";
-import { mdiPause } from "@mdi/js";
+import { ForceLayout } from "v-network-graph/lib/force-layout";
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
@@ -137,13 +131,13 @@ const getForcedLayout = new ForceLayout({
       // .alphaMin(0.001)
       
       .forceSimulation(nodes)
-      .force("edge", forceLink.distance(75).strength(0.5))
+      .force("edge", forceLink.distance(50).strength(1))
       .force("charge", d3.forceManyBody().strength(-7000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .stop() // tick manually,
       .tick(100)
-      //.alphaMin(0.0001)
+      .alphaMin(0.0001)
   }
 });
 
@@ -426,7 +420,7 @@ export default {
         this.configs.view.layoutHandler = new vNG.SimpleLayout();
         this.physicsEnabled = false;
       } else {
-        this.configs.view.layoutHandler = new ForceLayout();
+        this.configs.view.layoutHandler = this.savedLayout;
         this.physicsEnabled = true;
       }
     },
@@ -494,7 +488,7 @@ export default {
 }
 
 .network-nav-right {
-  width: 200px;
+  width: 15%;
 }
 
 .network-nav-divider {
@@ -516,15 +510,8 @@ export default {
   border-top: 1px solid #00549f;
 }
 
-#simulationButton {
-  height: 100%;
-  float: right;
-  border-radius: 100%;
-  line-height: 0px;
-}
-
 .graph {
-  width: 800px;
+  width: 100%;
   height: 600px;
   border: 1px solid #000;
 }

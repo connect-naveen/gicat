@@ -97,6 +97,17 @@
               v-bind="slotProps"
             />
           </template>
+          <template
+            #edge-overlay="{ scale, center, position, hovered, selected }"
+          >
+            <!-- Place the triangle at the center of the edge -->
+            <path
+              class="marker"
+              :class="{ hovered, selected }"
+              d="M-5 -5 L5 0 L-5 5 Z"
+              :transform="makeTransform(center, position, scale)"
+            />
+          </template>
         </v-network-graph>
       </div>
     </div>
@@ -213,7 +224,7 @@ export default {
             }
           },
           label: {
-            fontSize: 25,
+            fontSize: 30,
           }
         },
         node: {
@@ -261,6 +272,20 @@ export default {
     // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
     // |                                                                 |
     // |=================================================================|
+
+    makeTransform(center, edgePos, scale) {
+      const radian = Math.atan2(
+        edgePos.target.y - edgePos.source.y,
+        edgePos.target.x - edgePos.source.x
+      )
+      const degree = (radian * 180.0) / Math.PI
+
+      return [
+        `translate(${center.x} ${center.y})`,
+        `scale(${scale}, ${scale})`,
+        `rotate(${degree})`,
+      ].join(" ")
+    },
 
     initGraph() {
       // making deep copy of nodes and edges
@@ -444,6 +469,7 @@ export default {
       window.URL.revokeObjectURL(url);
     },
   },
+
   computed: {
     // store
     ...mapGetters([

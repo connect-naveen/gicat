@@ -55,7 +55,7 @@
           :configs="configs"
           :event-handlers="eventHandlers"
         >
-          <template #override-node="{ nodeId, ...slotProps }">
+          <!--<template #override-node="{ nodeId, ...slotProps }">
             <rect
               width="300"
               height="50"
@@ -65,7 +65,7 @@
               y="-25"
               rx="25"
             />
-          </template>
+          </template>-->
           <template
             #override-node-label="{
               text,
@@ -215,36 +215,49 @@ export default {
         view: {
           scalingObjects: true,
           layoutHandler: getForcedLayout,
+         },
+         node: {
+          selectable: 12,
+          normal: {
+            strokeWidth: 3,
+            strokeColor: "#000000",
+            type:"rect",
+            width:"250",
+            height:"50",
+            color: "#4466cc"
+          },
+          hover: {
+            strokeWidth: 3,
+            strokeColor: "#000000",
+            color: "#7c93db",
+            type:"rect",
+            width:"250",
+            height:"50"
+          },
+          selected: {
+            strokeWidth: 5,
+            strokeColor: "#000000",
+            color: "#7c93db",
+            type:"rect",
+            width:"250",
+            height:"50"
+          }
         },
         edge: {
-          margin: 10,
-          marker: {
-            target: {
-              type: "arrow"
-            }
+          selectable: 12,
+          selected: {
+            width: 4,
+            color: "#4466cc",
+            animate: true
+          },
+          hover: {
+            width: 4
           },
           label: {
             fontSize: 30,
+            margin: 20,
           }
-        },
-        node: {
-          // label: {
-          //   visible: false,
-          // },
-          // normal: {
-          //   type: "rectangle",
-          //   radius: 16,
-          //   // for type is "rect" -->
-          //   width: 32,
-          //   height: 32,
-          //   borderRadius: 4,
-          //   // <-- for type is "rect"
-          //   strokeWidth: 0,
-          //   strokeColor: "#000000",
-          //   strokeDasharray: "0",
-          //   color: "#4466cc",
-          // },
-        },
+        }
       }),
       physicsEnabled: true,
       savedLayout: null,
@@ -282,7 +295,7 @@ export default {
 
       return [
         `translate(${center.x} ${center.y})`,
-        `scale(${scale}, ${scale})`,
+        `scale(${scale * 2}, ${scale * 2})`,
         `rotate(${degree})`,
       ].join(" ")
     },
@@ -445,7 +458,7 @@ export default {
         this.configs.view.layoutHandler = new vNG.SimpleLayout();
         this.physicsEnabled = false;
       } else {
-        this.configs.view.layoutHandler = this.savedLayout;
+        this.configs.view.layoutHandler = getForcedLayout;
         this.physicsEnabled = true;
       }
     },

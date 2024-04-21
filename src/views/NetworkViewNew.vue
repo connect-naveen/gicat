@@ -55,17 +55,19 @@
           :configs="configs"
           :event-handlers="eventHandlers"
         >
-          <!--<template #override-node="{ nodeId, ...slotProps }">
+          <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
-              width="300"
-              height="50"
+              :width="config.width"
+              :height="config.height"
               :fill="nodes[nodeId].color"
+              :stroke="config.strokeColor"
+              :stroke-width="config.strokeWidth"
               v-bind="slotProps"
               x="-150"
               y="-25"
               rx="25"
             />
-          </template>-->
+          </template>
           <template
             #override-node-label="{
               text,
@@ -147,7 +149,7 @@ const getForcedLayout = new ForceLayout({
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .stop() // tick manually,
-      .tick(100)
+      .tick(1000)
       .alphaMin(0.0001)
   }
 });
@@ -221,37 +223,31 @@ export default {
           normal: {
             strokeWidth: 3,
             strokeColor: "#000000",
-            type:"rect",
-            width:"250",
-            height:"50",
-            color: "#4466cc"
+            width:"300",
+            height:"50"
           },
           hover: {
-            strokeWidth: 3,
+            strokeWidth: 6,
             strokeColor: "#000000",
-            color: "#7c93db",
-            type:"rect",
-            width:"250",
+            width:"300",
             height:"50"
           },
           selected: {
-            strokeWidth: 5,
+            strokeWidth: 6,
             strokeColor: "#000000",
-            color: "#7c93db",
-            type:"rect",
-            width:"250",
+            width:"300",
             height:"50"
-          }
+          },
         },
         edge: {
           selectable: 12,
           selected: {
-            width: 4,
+            width: 6,
             color: "#4466cc",
-            animate: true
+            dasharray: false,
           },
           hover: {
-            width: 4
+            width: 6
           },
           label: {
             fontSize: 30,
@@ -285,7 +281,6 @@ export default {
     // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
     // |                                                                 |
     // |=================================================================|
-
     makeTransform(center, edgePos, scale) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
@@ -295,7 +290,7 @@ export default {
 
       return [
         `translate(${center.x} ${center.y})`,
-        `scale(${scale * 2}, ${scale * 2})`,
+        `scale(${scale * 2.5}, ${scale * 2.5})`,
         `rotate(${degree})`,
       ].join(" ")
     },
@@ -554,4 +549,5 @@ export default {
   height: 600px;
   border: 1px solid #000;
 }
+
 </style>

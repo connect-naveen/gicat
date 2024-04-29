@@ -27,7 +27,7 @@
           prepend-icon="$playpause"
           class="button"
         >
-          Play/Pause
+          {{ playPause }}
         </v-btn>
         <br />
         <br />
@@ -174,6 +174,7 @@ export default {
           }
         },
       },
+      playPause: "Pause",
       nod: {
         node1: { name: "Node 1" },
         node2: { name: "Node 2" },
@@ -235,6 +236,9 @@ export default {
             strokeColor: "#000000",
             width:"300",
             height:"50"
+          },
+          focusring: {
+            visible: false,
           },
         },
         edge: {
@@ -450,9 +454,11 @@ export default {
         this.savedLayout = this.configs.view.layoutHandler;
         this.configs.view.layoutHandler = new vNG.SimpleLayout();
         this.physicsEnabled = false;
+        this.playPause = "Play";
       } else {
         this.configs.view.layoutHandler = getForcedLayout;
         this.physicsEnabled = true;
+        this.playPause = "Pause";
       }
     },
     async downloadSVG() {

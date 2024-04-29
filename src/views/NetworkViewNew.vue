@@ -12,38 +12,36 @@
           ></v-select>
         </div>
       -->
-        <div class="network-nav-right">
-          <!-- put visualization controls here -->
-          <v-btn
-            class="button"
-            v-on:click="downloadSVG()"
-            prepend-icon="$fileExport"
-          >
-            DOWNLOAD
-          </v-btn>
-          <br />
-          <br />
-          <v-btn
-            class="button"
-            v-on:click="toggleSimulation()"
-            prepend-icon="$playpause"
-          >
-            PLAY/PAUSE
-          </v-btn>
-          <br />
-          <br />
-          <v-select
-            class="filter-selector"
-            label="Select..."
-            :items="this.getFilterNames"
-            density="compact"
-          ></v-select>
-        </div>
+        <!-- put visualization controls here -->
+        <v-btn
+          v-on:click="downloadSVG()"
+          prepend-icon="$fileExport"
+          class="button"
+        >
+          Download
+        </v-btn>
+        <br />
+        <br />
+        <v-btn
+          v-on:click="toggleSimulation()"
+          prepend-icon="$playpause"
+          class="button"
+        >
+          Play/Pause
+        </v-btn>
+        <br />
+        <br />
+        <v-select
+          class="filter-selector"
+          label="Select..."
+          :items="this.getFilterNames"
+          density="compact"
+        ></v-select>
         <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
-          <button class="button" v-on:click="toggleFilter()">
-            {{ filter.name }}
-          </button>
-        </li> -->
+        <button class="button" v-on:click="toggleFilter()">
+          {{ filter.name }}
+        </button>
+      </li> -->
       </div>
       <div>
         <v-network-graph
@@ -512,17 +510,7 @@ export default {
 
 .network-nav {
   /* height: 50px; */
-  margin-top: 6px;
-  display: flex;
-}
-
-.network-nav-left {
-  flex: auto;
-  margin-left: 3px;
-}
-
-.network-nav-right {
-  width: 15%;
+  margin-top: 15px;
 }
 
 .network-nav-divider {
@@ -533,8 +521,14 @@ export default {
 }
 
 .filter-selector {
-  width: 250px;
-  height: 50px;
+  margin-left: 5px;
+  margin-right: 5px;
+  max-width: 25%;
+}
+
+.button {
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .net {

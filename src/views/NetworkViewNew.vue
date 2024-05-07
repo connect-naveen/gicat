@@ -120,6 +120,7 @@ import { ref } from "vue"
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
+import { getTransitionRawChildren } from "vue";
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
@@ -170,7 +171,13 @@ export default {
           if(event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
-            } 
+            }
+            if (type == "node:contextmenu") {
+              this.rightClick(event.node);
+            }
+            if (type == "node:click") {
+              this.leftClick(event.node)
+            }
           }
         },
       },
@@ -220,7 +227,7 @@ export default {
          node: {
           selectable: 12,
           normal: {
-            strokeWidth: 3,
+            strokeWidth: 1,
             strokeColor: "#000000",
             width:"300",
             height:"50"
@@ -232,13 +239,17 @@ export default {
             height:"50"
           },
           selected: {
-            strokeWidth: 6,
+            strokeWidth: 8,
             strokeColor: "#000000",
             width:"300",
-            height:"50"
+            height:"50",
           },
           focusring: {
             visible: false,
+            width: 4,
+            padding: 3,
+            color: "#eebb00",
+            dasharray: "0",
           },
         },
         edge: {
@@ -360,6 +371,22 @@ export default {
         this.openFile(hitNodeIndex);
       }
     },
+
+
+    rightClick(node) {
+      console.log("collapse children of node: ")
+      this.getNodes.forEach((node) => {
+        console.log(node.label)
+      }
+    )
+  },
+
+  leftClick(node) {
+    let selectedNode = this.nodes[node];
+    selectedNode.meta.active = !selectedNode.meta.active
+    console.log(node.label + " is active: " + selectedNode.meta.active)
+  },
+
     collapseChildren(hitNode) {
       console.warn("colapse children");
       /* old:

@@ -29,8 +29,6 @@
         >
           {{ playPause }}
         </v-btn>
-        <br />
-        <br />
         <v-select
           class="filter-selector"
           label="Select..."
@@ -42,6 +40,14 @@
           {{ filter.name }}
         </button>
       </li> -->
+        <v-slider
+          v-model="dist"
+          :step="10"
+          :min="0"
+          :max="1000"
+          :end="testytest()"
+          class="slider"
+        ></v-slider>
       </div>
       <div>
         <v-network-graph
@@ -219,6 +225,7 @@ export default {
         */
       },
       filtersHidden: [],
+      dist: 50,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -483,11 +490,32 @@ export default {
         this.physicsEnabled = false;
         this.playPause = "Play";
       } else {
-        this.configs.view.layoutHandler = getForcedLayout;
+        this.configs.view.layoutHandler = this.savedLayout;
         this.physicsEnabled = true;
         this.playPause = "Pause";
       }
     },
+    testytest(){
+      console.log("Distance parameter is equal to " + this.dist);
+      let getForcedLayout2 = new ForceLayout({
+        positionFixedByDrag: true,
+        positionFixedByClickWithAltKey: true,
+        createSimulation: (d3, nodes, edges) => {
+          // d3-force parameters
+          const forceLink = d3.forceLink(edges).id(d => d.id)
+          return d3
+            .forceSimulation(nodes)
+            .force("edge", forceLink.distance(this.dist).strength(1))
+            .force("charge", d3.forceManyBody().strength(-7000))
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
+            .stop() // tick manually,
+            .tick(1000)
+            .alphaMin(0.0001)
+        }
+       });
+          this.configs.view.layoutHandler = getForcedLayout2;
+      },
     async downloadSVG() {
       // destructure proxy:
       const graph = {...this.graph};
@@ -577,4 +605,7 @@ export default {
   border: 1px solid #000;
 }
 
+.slider {
+  margin-left: 100px;
+}
 </style>

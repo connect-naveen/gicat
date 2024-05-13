@@ -18,7 +18,6 @@
           :disabled="!isRepoPathEmpty"
           >Start Visualisation
         </v-btn>
-        <br />
       </div>
     </div>
   </v-main>

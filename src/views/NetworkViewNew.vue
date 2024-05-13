@@ -42,11 +42,12 @@
       </li> -->
         <v-slider
           v-model="dist"
-          :step="10"
-          :min="0"
+          :step="20"
+          :min="50"
           :max="1000"
           :end="testytest()"
           class="slider"
+          label="Node distance:"
         ></v-slider>
       </div>
       <div>
@@ -127,6 +128,7 @@ import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
 import { getTransitionRawChildren } from "vue";
+import { reactive } from "vue";
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
@@ -153,8 +155,8 @@ const getForcedLayout = new ForceLayout({
       .force("charge", d3.forceManyBody().strength(-7000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .stop() // tick manually,
-      .tick(1000)
+      //.stop() // tick manually,
+      .tick(1)
       .alphaMin(0.0001)
   }
 });
@@ -202,28 +204,6 @@ export default {
       test: ["a", "b", "c"],
       nodes: [],
       edges: [],
-      options: {
-        /* old:
-          nodes: {
-            borderWidth: 3,
-          },
-          edges: {
-            color: "lightgray",
-            selectionWidth: function (width) {
-              return width * 6;
-            },
-          },
-          layout: {
-            // hierarchical: {
-            //   direction: "DU",
-            //   sortMethod: "directed"
-            // }
-          },
-          physics: {
-            enabled: true,
-          },
-        */
-      },
       filtersHidden: [],
       dist: 50,
       configs: vNG.defineConfigs({
@@ -233,6 +213,12 @@ export default {
          },
          node: {
           selectable: 12,
+          focusring: {
+            visible: false,
+            width: 4,
+            padding: 13,
+            color: "#eebb00",
+          },
           normal: {
             strokeWidth: 1,
             strokeColor: "#000000",
@@ -250,13 +236,6 @@ export default {
             strokeColor: "#000000",
             width:"300",
             height:"50",
-          },
-          focusring: {
-            visible: false,
-            width: 4,
-            padding: 3,
-            color: "#eebb00",
-            dasharray: "0",
           },
         },
         edge: {
@@ -497,7 +476,7 @@ export default {
     },
     testytest(){
       console.log("Distance parameter is equal to " + this.dist);
-      let getForcedLayout2 = new ForceLayout({
+      let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,
         positionFixedByClickWithAltKey: true,
         createSimulation: (d3, nodes, edges) => {
@@ -509,12 +488,14 @@ export default {
             .force("charge", d3.forceManyBody().strength(-7000))
             .force("x", d3.forceX())
             .force("y", d3.forceY())
-            .stop() // tick manually,
-            .tick(1000)
+            //.stop() // tick manually,
+            .tick(1)
             .alphaMin(0.0001)
         }
        });
-          this.configs.view.layoutHandler = getForcedLayout2;
+          this.configs.view.layoutHandler = newForcedLayout;
+          this.physicsEnabled = true;
+          this.playPause = "Pause";
       },
     async downloadSVG() {
       // destructure proxy:

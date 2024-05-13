@@ -42,12 +42,30 @@
       </li> -->
         <v-slider
           v-model="dist"
-          :step="20"
-          :min="50"
-          :max="1000"
-          :end="testytest()"
+          :step="10"
+          :min="0"
+          :max="200"
+          :end="computePhysics()"
           class="slider"
-          label="Node distance:"
+          label="Edge distance:"
+        ></v-slider>
+        <v-slider
+          v-model="strength"
+          :step="0.05"
+          :min="0"
+          :max="2"
+          :end="computePhysics()"
+          class="slider"
+          label="Edge strength:"
+        ></v-slider>
+        <v-slider
+          v-model="charge"
+          :step="500"
+          :min="-20000"
+          :max="-1000"
+          :end="computePhysics()"
+          class="slider"
+          label="Charge:"
         ></v-slider>
       </div>
       <div>
@@ -141,14 +159,12 @@ const getForcedLayout = new ForceLayout({
       // .force("edge", forceLink.distance(40).strength(0.5))
       // .force("charge", d3.forceManyBody().strength(-800))
       // .force("center", d3.forceCenter().strength(0.05))
-      // .alphaMin(0.001)
 
       // .forceSimulation(nodes)
       // .force("edge", forceLink.distance(100))
       // .force("charge", d3.forceManyBody())
       // .force("collide", d3.forceCollide(50).strength(0.2))
       // .force("center", d3.forceCenter().strength(0.05))
-      // .alphaMin(0.001)
       
       .forceSimulation(nodes)
       .force("edge", forceLink.distance(50).strength(1))
@@ -206,6 +222,8 @@ export default {
       edges: [],
       filtersHidden: [],
       dist: 50,
+      strength: 1,
+      charge: -7000,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -474,7 +492,7 @@ export default {
         this.playPause = "Pause";
       }
     },
-    testytest(){
+    computePhysics(){
       console.log("Distance parameter is equal to " + this.dist);
       let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,
@@ -484,13 +502,14 @@ export default {
           const forceLink = d3.forceLink(edges).id(d => d.id)
           return d3
             .forceSimulation(nodes)
-            .force("edge", forceLink.distance(this.dist).strength(1))
-            .force("charge", d3.forceManyBody().strength(-7000))
+            .force("edge", forceLink.distance(this.dist).strength(this.strength))
+            .force("charge", d3.forceManyBody().strength(this.charge))
             .force("x", d3.forceX())
             .force("y", d3.forceY())
             //.stop() // tick manually,
             .tick(1)
-            .alphaMin(0.0001)
+            .alpha(1)
+            .velocityDecay(0.8)
         }
        });
           this.configs.view.layoutHandler = newForcedLayout;

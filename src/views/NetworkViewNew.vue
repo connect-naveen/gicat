@@ -32,8 +32,13 @@
         <v-select
           class="filter-selector"
           label="Select..."
-          :items="this.getFilterNames"
+          :items="this.filters"
           density="compact"
+          multiple
+          chips
+          name="id"
+          item-title="name"
+          v-model="this.filtersSelected"
         ></v-select>
         <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
         <button class="button" v-on:click="toggleFilter()">
@@ -80,16 +85,26 @@
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
-              :width="config.width"
+              :width="
+                this.isFolder(nodes[nodeId])
+                  ? nodes[nodeId].name.length * 20
+                  : nodes[nodeId].name.length * 12
+              "
               :height="config.height"
               :fill="nodes[nodeId].color"
               :stroke="config.strokeColor"
               :stroke-width="config.strokeWidth"
               v-bind="slotProps"
-              x="-150"
+              :x="
+                this.isFolder(nodes[nodeId])
+                  ? -(nodes[nodeId].name.length * 20) / 2
+                  : -(nodes[nodeId].name.length * 12) / 2
+              "
               y="-25"
               rx="25"
-              v-if="!nodes[nodeID].hidden"
+              v-if="
+                !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
+              "
             />
             <div
               width="0"
@@ -106,11 +121,14 @@
             <text
               x="0"
               y="0"
-              font-size="20"
+              :font-size="this.isFolder(nodes[nodeId]) ? 30 : 20"
+              :font-weight="this.isFolder(nodes[nodeId]) ? 'bold' : 'normal'"
               text-anchor="middle"
               dominant-baseline="central"
               fill="#ffffff"
-              v-if="!nodes[nodeId].hidden"
+              v-if="
+                !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
+              "
             >
               {{ text }}
             </text>
@@ -222,7 +240,8 @@ export default {
       test: ["a", "b", "c"],
       nodes: [],
       edges: [],
-      filtersHidden: [],
+      filters: [],
+      filtersSelected: [],
       dist: 50,
       strength: 1,
       charge: -10000,
@@ -348,6 +367,24 @@ export default {
       // this.nodes = Object.assign({}, inputNodes);
       this.nodes = inputNodes;
       this.edges = inputEdges;
+
+      let appliedFilters = this.getFilterItems();
+      this.filters = appliedFilters;
+      this.filtersSelected = appliedFilters;
+    },
+    getFilterItems() {
+      return this.getFilters.map((filter, index) => {
+        return {
+          name: filter.name,
+          value: filter.id,
+        }
+      });
+    },
+    isFilterSelected(node) {
+      if (node.meta?.filterID) {
+        return this.filtersSelected.includes(node.meta.filterID);
+      }
+      return true;
     },
     stringToColour(str) {
       let hash = 0;
@@ -426,28 +463,14 @@ export default {
       }
     },
     edgeHidden(edge) {
-      return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden;
+    return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
+      | !this.isFilterSelected(this.nodes[edge.target]);
     },
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;
     },
     isFile(node) {
       return node.meta.file === true;
-    },
-    toggleFilter() {
-      // param: filterID
-
-      // let nodes = this.nodes.filter((el) => el.meta.filterID == filterID);
-      // console.log(this.filtersHidden);
-
-      // let isHidden = this.filtersHidden.includes(filterID);
-      // console.log(isHidden);
-
-      // TODO: Add possibility to hide filters
-      console.warn("TODO: Add possibility to hide filters");
-
-      // console.log(nodes);
-      // console.log(this.nodes);
     },
     openFile(nodeIndex) {
       console.warn("open file function");
@@ -553,9 +576,6 @@ export default {
       "getFilters",
       "getRepoPath",
     ]),
-    getFilterNames() {
-      return this.getFilters.map((filter) => filter.name);
-    },
     getOptions() {
       return this.options;
     },
@@ -588,6 +608,8 @@ export default {
   margin-left: 5px;
   margin-right: 5px;
   max-width: 25%;
+  width: auto;
+  height: auto;
 }
 
 .button {

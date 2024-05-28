@@ -89,20 +89,20 @@
               x="-150"
               y="-25"
               rx="25"
+              v-if="!nodes[nodeID].hidden"
             />
+            <div
+              width="0"
+              height="0"
+              :fill="nodes[nodeId].color"
+              v-bind="slotProps"
+              x="-100"
+              y="-25"
+              rx="15"
+              v-else
+            ></div>
           </template>
-          <template
-            #override-node-label="{
-              text,
-              //nodeId,
-              //scale,
-              //x,
-              //y,
-              //config,
-              //textAnchor,
-              //dominantBaseline
-            }"
-          >
+          <template #override-node-label="{ text, nodeId }">
             <text
               x="0"
               y="0"
@@ -110,9 +110,11 @@
               text-anchor="middle"
               dominant-baseline="central"
               fill="#ffffff"
+              v-if="!nodes[nodeId].hidden"
             >
               {{ text }}
             </text>
+            <text v-else></text>
           </template>
           <template #edge-label="{ edge, ...slotProps }">
             <v-edge-label
@@ -207,10 +209,10 @@ export default {
       },
       playPause: "Pause",
       nod: {
-        node1: { name: "Node 1" },
-        node2: { name: "Node 2" },
-        node3: { name: "Node 3" },
-        node4: { name: "Node 4" },
+        node1: { name: "Node 1"},
+        node2: { name: "Node 2"},
+        node3: { name: "Node 3"},
+        node4: { name: "Node 4"},
       },
       edg: {
         edge1: { source: "node1", target: "node2" },
@@ -223,7 +225,7 @@ export default {
       filtersHidden: [],
       dist: 50,
       strength: 1,
-      charge: -7000,
+      charge: -10000,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -257,6 +259,9 @@ export default {
           },
         },
         edge: {
+          normal: {
+            width: (edge) => this.edgeHidden(edge) ? 0 : 2,
+          },
           selectable: 12,
           selected: {
             width: 6,
@@ -318,21 +323,31 @@ export default {
       let inputEdges = JSON.parse(JSON.stringify(this.getEdges));
 
       // formatting nodes to fit v-network-graph standard
-      inputNodes.forEach((node) =>{
+      // also sets default values for nodes
+        inputNodes.forEach((node, index) =>{
+        /* default values */
+        node.childrenCollapsed = false;
+        node.hidden = false;
+        node.index = index;
+        // this is needed for hiding within nested folder
+        node.hiddenCounter = 0;
+        /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
         node.color = this.stringToColour(node.group);
       });
       
       // formatting edges to fit v-network-graph standard
       inputEdges.forEach((edge) =>{
+        edge.hidden = false;
+        edge.hiddenCounter = 0;
         // this.changeObjectKey(edge, "from", "source");
         edge.source = inputNodes.findIndex((node) => edge.from === node.id).toString();
         // this.changeObjectKey(edge, "to", "target");
         edge.target = inputNodes.findIndex((node) => edge.to === node.id).toString();
       });
-
-      this.nodes = Object.assign({}, inputNodes);
-      this.edges = Object.assign({}, inputEdges);
+      // this.nodes = Object.assign({}, inputNodes);
+      this.nodes = inputNodes;
+      this.edges = inputEdges;
     },
     stringToColour(str) {
       let hash = 0;
@@ -360,70 +375,58 @@ export default {
       console.warn("double click");
 
       let hitNode = this.nodes[hitNodeIndex];
-
-      this.hit = hitNode;
-      console.log("AAA", this.hit);
-
-      // let isFile = this.isFile(hitNode);
+      if(hitNode.hidden) return;
       let isFolder = this.isFolder(hitNode);
-      // console.log(
-      //   `This node is a file: ${isFile}, This node is a folder: ${isFolder}`
-      // );
       if (isFolder) {
-        this.collapseChildren(hitNode, hitNodeIndex);
+        this.collapseChildren(hitNode);
       } else {
         this.openFile(hitNodeIndex);
       }
     },
-
-
-    rightClick(node) {
+    /*rightClick(node) {
       console.log("collapse children of node: ")
       this.getNodes.forEach((node) => {
         console.log(node.label)
       }
     )
   },
-
   leftClick(node) {
     let selectedNode = this.nodes[node];
     selectedNode.meta.active = !selectedNode.meta.active
     console.log(node.label + " is active: " + selectedNode.meta.active)
-  },
-
+  },*/
     collapseChildren(hitNode) {
       console.warn("colapse children");
-      /* old:
-        if (hitNode.childrenCollapsed) {
+      if (hitNode.childrenCollapsed) {
           hitNode.childrenCollapsed = false;
-        } else {
-          hitNode.childrenCollapsed = true;
-        }
-        let nodes = this.nodes;
-        let condition = (e) => e.id.startsWith(hitNode.id) && e.id != hitNode.id;
-        // let children = this.getNodes.filter(e => e.id.startsWith(hitNode.id) && e.id != hitNode.id)
-        let children = nodes.filter((e) => condition(e));
-        children.forEach((element) => {
+      } else {
+        hitNode.childrenCollapsed = true;
+      } 
+      let isChildren = (e) => e.id.startsWith(hitNode.id) && e.id != hitNode.id;
+      let children = this.nodes.filter((e) => isChildren(e));
+      children.forEach((element) => {
           if (hitNode.childrenCollapsed) {
             this.hideNode(element);
           } else {
             this.showNode(element);
           }
-        });
-      */
+      });
     },
-    
+
     hideNode(node) {
       node.hidden = true;
-      node.label += "-hidden";
+      node.hiddenCounter += 1;
     },
     showNode(node) {
-      if (node.label.slice(-7) === "-hidden") {
-        node.label = node.label.slice(0, -7);
+      if (node.hiddenCounter > 0) {
+        node.hiddenCounter -= 1;
       }
-      if (node.label.slice(-7) != "-hidden") {
+      if (node.hiddenCounter === 0) {
         node.hidden = false;
       }
+    },
+    edgeHidden(edge) {
+      return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden;
     },
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;

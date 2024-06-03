@@ -6,11 +6,15 @@
       As mentioned in [source?], the analysis of a program is quite complex.
       This is due to the large amount of different programming languages but
       also the possibility to run a code analysis from multiple points of view
-      such as inheritance, refactoring, comments, class growth etc. To address
-      those issues, our tool provides you with the functionality to generate
-      your own filter files based on regular expressions (<b>Regex</b>) which
-      will be generated from from a given code snippet. Those filter files can
-      then be used to analyze a given source code by its rules. Thereby, the
+      such as inheritance, refactoring, method signatures, comments, class
+      growth etc. Current code documentation tools mostly focus on helping the
+      process of implementation which is why most of the named analysis methods
+      are not supported sufficiently. Another problem is the circumstance of
+      outdated code which is not compatible with modern documentation tools. To
+      address those issues, our tool provides you with the functionality to
+      generate your own filter files based on regular expressions (<b>Regex</b>)
+      which will be generated from from a given code snippet. Those filter files
+      can then be used to analyze a given source code by its rules. Thereby, the
       programming language and the specific type of the analysis process is left
       open to the users decisions.<br />
       In the following, we are going to provide a short use case showing how our

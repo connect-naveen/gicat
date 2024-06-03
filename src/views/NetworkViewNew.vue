@@ -143,7 +143,15 @@
             />
           </template>
           <template
-            #edge-overlay="{ scale, center, position, hovered, selected }"
+            #edge-overlay="{
+              scale,
+              center,
+              position,
+              hovered,
+              selected,
+              edge,
+              ...slotProps
+            }"
           >
             <!-- Place the triangle at the center of the edge -->
             <path
@@ -151,6 +159,8 @@
               :class="{ hovered, selected }"
               d="M-5 -5 L5 0 L-5 5 Z"
               :transform="makeTransform(center, position, scale)"
+              :fill="this.edgeHidden(edge) ? 'white' : 'black'"
+              v-bind="slotProps"
             />
           </template>
         </v-network-graph>
@@ -244,7 +254,7 @@ export default {
       filtersSelected: [],
       dist: 50,
       strength: 1,
-      charge: -10000,
+      charge: -12000,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -328,7 +338,7 @@ export default {
         edgePos.target.x - edgePos.source.x
       )
       const degree = (radian * 180.0) / Math.PI
-
+      
       return [
         `translate(${center.x} ${center.y})`,
         `scale(${scale * 2.5}, ${scale * 2.5})`,
@@ -420,7 +430,7 @@ export default {
         this.openFile(hitNodeIndex);
       }
     },
-    /*rightClick(node) {
+    rightClick(node) {
       console.log("collapse children of node: ")
       this.getNodes.forEach((node) => {
         console.log(node.label)
@@ -431,7 +441,7 @@ export default {
     let selectedNode = this.nodes[node];
     selectedNode.meta.active = !selectedNode.meta.active
     console.log(node.label + " is active: " + selectedNode.meta.active)
-  },*/
+  },
     collapseChildren(hitNode) {
       console.warn("colapse children");
       if (hitNode.childrenCollapsed) {

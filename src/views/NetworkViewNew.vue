@@ -47,9 +47,9 @@
       </li> -->
         <v-slider
           v-model="dist"
-          :step="10"
-          :min="0"
-          :max="200"
+          :step="50"
+          :min="-1000"
+          :max="1000"
           :end="computePhysics()"
           class="slider"
           label="Edge distance:"
@@ -67,10 +67,10 @@
           v-model="charge"
           :step="500"
           :min="-20000"
-          :max="-1000"
+          :max="0"
           :end="computePhysics()"
           class="slider"
-          label="Charge:"
+          label="Graph strength:"
         ></v-slider>
       </div>
       <div>
@@ -197,7 +197,7 @@ const getForcedLayout = new ForceLayout({
       // .force("center", d3.forceCenter().strength(0.05))
       
       .forceSimulation(nodes)
-      .force("edge", forceLink.distance(50).strength(1))
+      .force("edge", forceLink.distance(50).strength(5000))
       .force("charge", d3.forceManyBody().strength(-7000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
@@ -252,7 +252,7 @@ export default {
       edges: [],
       filters: [],
       filtersSelected: [],
-      dist: 50,
+      dist: 0,
       strength: 1,
       charge: -12000,
       configs: vNG.defineConfigs({

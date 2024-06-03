@@ -87,7 +87,7 @@
             <rect
               :width="
                 this.isFolder(nodes[nodeId])
-                  ? nodes[nodeId].name.length * 20
+                  ? Math.max(nodes[nodeId].name.length * 20, 200)
                   : nodes[nodeId].name.length * 12
               "
               :height="config.height"
@@ -119,7 +119,11 @@
           </template>
           <template #override-node-label="{ text, nodeId }">
             <text
-              x="0"
+              :x="
+                nodes[nodeId].name.length * 20 >= 200
+                  ? 0
+                  : (200 - nodes[nodeId].name.length * 20) / 2
+              "
               y="0"
               :font-size="this.isFolder(nodes[nodeId]) ? 30 : 20"
               :font-weight="this.isFolder(nodes[nodeId]) ? 'bold' : 'normal'"
@@ -137,7 +141,6 @@
           <template #edge-label="{ edge, ...slotProps }">
             <v-edge-label
               :text="edge.label"
-              align="center"
               vertical-align="above"
               v-bind="slotProps"
             />
@@ -293,12 +296,12 @@ export default {
           },
           selectable: 12,
           selected: {
-            width: 6,
+            width: (edge) => this.edgeHidden(edge) ? 0 : 6,
             color: "#4466cc",
             dasharray: false,
           },
           hover: {
-            width: 6
+            width: (edge) => this.edgeHidden(edge) ? 0 : 6,
           },
           label: {
             fontSize: 30,

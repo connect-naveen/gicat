@@ -367,6 +367,7 @@ export default {
         /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
         node.color = this.stringToColour(node.group);
+        console.log("--------------------die Node Farbe ist:" + node.group + "---------------------");
       });
       
       // formatting edges to fit v-network-graph standard

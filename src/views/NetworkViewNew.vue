@@ -141,6 +141,7 @@
           <template #edge-label="{ edge, ...slotProps }">
             <v-edge-label
               :text="edge.label"
+              :fill-opacity="edgeLabelHidden(edge) ? 0 : 1"
               vertical-align="above"
               v-bind="slotProps"
             />
@@ -205,7 +206,7 @@ const getForcedLayout = new ForceLayout({
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       //.stop() // tick manually,
-      .tick(1)
+      //.tick(1)
       .alphaMin(0.0001)
   }
 });
@@ -383,7 +384,7 @@ export default {
 
       let appliedFilters = this.getFilterItems();
       this.filters = appliedFilters;
-      this.filtersSelected = appliedFilters;
+      //this.filtersSelected = appliedFilters;
     },
     getFilterItems() {
       return this.getFilters.map((filter, index) => {
@@ -396,6 +397,12 @@ export default {
     isFilterSelected(node) {
       if (node.meta?.filterID) {
         return this.filtersSelected.includes(node.meta.filterID);
+      }
+      return true;
+    },
+    isEdgeFilterSelected(edge){
+      if(edge.meta?.filter) {
+        return this.filtersSelected.includes(edge.meta.filter);
       }
       return true;
     },
@@ -478,6 +485,10 @@ export default {
     edgeHidden(edge) {
     return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
       | !this.isFilterSelected(this.nodes[edge.target]);
+    },
+    edgeLabelHidden(edge) {
+    return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
+    | !this.isFilterSelected(this.nodes[edge.target]) | !this.isEdgeFilterSelected(edge);
     },
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;

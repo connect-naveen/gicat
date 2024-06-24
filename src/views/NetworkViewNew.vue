@@ -101,7 +101,7 @@
                   : -(nodes[nodeId].name.length * 12) / 2
               "
               y="-25"
-              rx="25"
+              :rx="this.isFolder(nodes[nodeId]) ? 2 : 25"
               v-if="
                 !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
               "
@@ -164,6 +164,7 @@
               d="M-5 -5 L5 0 L-5 5 Z"
               :transform="makeTransform(center, position, scale)"
               :fill="this.edgeHidden(edge) ? 'white' : 'black'"
+              :fill-opacity="this.edgeHidden(edge) ? 0 : 1"
               v-bind="slotProps"
             />
           </template>
@@ -366,7 +367,8 @@ export default {
         node.hiddenCounter = 0;
         /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
-        node.color = this.stringToColour(node.group);
+        node.color = node.meta.color;
+        console.log("--------------------die Node Farbe ist:" + node.meta.color + "---------------------");
       });
       
       // formatting edges to fit v-network-graph standard

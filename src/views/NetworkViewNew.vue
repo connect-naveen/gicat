@@ -141,9 +141,7 @@
           <template #edge-label="{ edge, ...slotProps }">
             <v-edge-label
               :text="edge.label"
-              :fill-opacity="
-                this.edgeHidden(edge) && edgeLabelHidden(edge) ? 0 : 1
-              "
+              :fill-opacity="edgeLabelHidden(edge) ? 0 : 1"
               vertical-align="above"
               v-bind="slotProps"
             />
@@ -489,7 +487,8 @@ export default {
       | !this.isFilterSelected(this.nodes[edge.target]);
     },
     edgeLabelHidden(edge) {
-    return this.edgeHidden(edge) | this.filtersSelected.includes(edge.meta.filter)
+    return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
+    | !this.isFilterSelected(this.nodes[edge.target]) | !this.isEdgeFilterSelected(edge);
     },
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;

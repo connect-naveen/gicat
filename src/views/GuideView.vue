@@ -72,24 +72,14 @@
       <br />
       <div class="images">
         <figure>
-          <img
-            src="../assets/figure1_1_old.svg"
-            alt="Figure 1.1 old code base"
-            height="70%"
-            width="70%"
-          />
+          <img src="" alt="Figure 1.1 old code base" height="70%" width="70%" />
           <figcaption>
             Fig.1.1 - GICAT view on xgaltool of November 18th 2021
           </figcaption>
         </figure>
         <br />
         <figure>
-          <img
-            src="../assets/figure1_1_new.svg"
-            alt="Figure 1.2 new code base"
-            height="70%"
-            width="70%"
-          />
+          <img src="" alt="Figure 1.2 new code base" height="70%" width="70%" />
           <figcaption>
             Fig.1.2 - GICAT view on xgaltool of June 19th 2023
           </figcaption>
@@ -133,12 +123,7 @@
       </div>
       <br />
       <figure>
-        <img
-          src="../assets/analyseGas.svg"
-          alt="Figure 2.1"
-          height="50%"
-          width="50%"
-        />
+        <img src="" alt="Figure 2.1" height="50%" />
         <figcaption>
           Figure 2.1 analysis_tools class after edge and node filter application
         </figcaption>
@@ -351,7 +336,7 @@
       dependence of a sub class to their respective super class. (Figure 4.2)
     </p>
     <figure>
-      <img src="../assets/edge_filter_meta.jpg" alt="Figure 4.2" />
+      <img src="" alt="Figure 4.2" />
       <figcaption>Figure 4.2 - Edge filter label and color</figcaption>
     </figure>
     <br />

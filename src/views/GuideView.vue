@@ -123,7 +123,11 @@
       </div>
       <br />
       <figure>
-        <img src="" alt="Figure 2.1" height="50%" />
+        <img
+          src="../assets/2_1_class_extension.jpg"
+          alt="Figure 2.1"
+          height="50%"
+        />
         <figcaption>
           Figure 2.1 analysis_tools class after edge and node filter application
         </figcaption>
@@ -336,7 +340,7 @@
       dependence of a sub class to their respective super class. (Figure 4.2)
     </p>
     <figure>
-      <img src="" alt="Figure 4.2" />
+      <img src="../assets/edge_filter_meta.jpg" alt="Figure 4.2" />
       <figcaption>Figure 4.2 - Edge filter label and color</figcaption>
     </figure>
     <br />
@@ -351,7 +355,7 @@
       <img
         src="../assets/edge_filter_applied.jpg"
         alt="Figure 4.3"
-        width="100%"
+        width="90%"
       />
       <figcaption>Figure 4.3 - Edge filter inactive vs active</figcaption>
     </figure>

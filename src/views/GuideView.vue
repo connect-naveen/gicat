@@ -36,8 +36,10 @@
         [filter upload?].
       </p>
     </div>
+    <br />
     <div class="usecase">
       <h1>Use case</h1>
+      <br />
       <br />
       <p>
         Xgaltool is a program from computational astrophysics. It analyzes data
@@ -63,23 +65,32 @@
       <br />
       <p>
         As you can see in Figure 1.1 and Figure 1.2, the project structure
-        changed at several places between November 2021 and June 2023. For
-        example, the edge between the two classes EnvironmentTools and PlotBPT
-        does exist in the 2021 version, but not in the later 2023 version thus
-        removing dependencies between the two groups plotting_tools and
-        analysis_tools.
+        changed at several places between June 2021 and June 2023. For example,
+        the class AnalysisTools is non-existent in the later version of the tool
+        thus some classes in the new version are missing some of the older
+        versions dependencies.
       </p>
       <br />
       <div class="images">
         <figure>
-          <img src="" alt="Figure 1.1 old code base" height="70%" width="70%" />
+          <img
+            src="../assets/xgaltool_old.jpg"
+            alt="Figure 1.1 old code base"
+            height="70%"
+            width="70%"
+          />
           <figcaption>
-            Fig.1.1 - GICAT view on xgaltool of November 18th 2021
+            Fig.1.1 - GICAT view on xgaltool of June 10th 2021
           </figcaption>
         </figure>
         <br />
         <figure>
-          <img src="" alt="Figure 1.2 new code base" height="70%" width="70%" />
+          <img
+            src="../assets/xgaltool_new.jpg"
+            alt="Figure 1.2 new code base"
+            height="70%"
+            width="70%"
+          />
           <figcaption>
             Fig.1.2 - GICAT view on xgaltool of June 19th 2023
           </figcaption>
@@ -151,7 +162,10 @@
         <a href="https://inkscape.org/" target="_blank">Inkscape</a>.
       </p>
     </div>
+    <br />
     <h1>Filter Generation</h1>
+    <br />
+    <br />
     <p>
       Our tool uses
       <a
@@ -182,6 +196,8 @@
     </p>
     <br />
     <h3>Node filter</h3>
+    <br />
+    <br />
     <p>
       The first part of the Node filter is all about generating a Regex from a
       given code snippet. To start generating your Regex, all you need to do is
@@ -301,8 +317,9 @@
       </figcaption>
     </figure>
     <br />
-    <br />
     <h3>Edge filter</h3>
+    <br />
+    <br />
     <p>
       A Node Filter on its own is enough to render a graph, but to represent
       additional information, you can also add an Edge filter by choosing source
@@ -345,19 +362,28 @@
     </figure>
     <br />
     <p>
-      Figure 4.3 shows our recently generated Edge filter in action. We
-      therefore activated only our previously generated Python Class Filter on
-      the left side of the picture. On the right side, you will see what it
-      looks like if you activate the Edge filter.
+      Figure 4.3 and 4.4 shows our recently generated Edge filter in action. We
+      therefore activated only our previously generated Python Class Filter as
+      seen in figure 4.3. As shown in figure 4.4, you will see what it looks
+      like if you activate the Edge filter.
     </p>
     <br />
     <figure>
       <img
-        src="../assets/edge_filter_applied.jpg"
+        src="../assets/no-edge-filter-applied.jpg"
         alt="Figure 4.3"
         width="90%"
       />
-      <figcaption>Figure 4.3 - Edge filter inactive vs active</figcaption>
+      <figcaption>Figure 4.3 - Edge filter inactive</figcaption>
+    </figure>
+    <br />
+    <figure>
+      <img
+        src="../assets/edge-filter-applied.jpg"
+        alt="Figure 4.4"
+        width="90%"
+      />
+      <figcaption>Figure 4.4 - Edge filter active</figcaption>
     </figure>
   </v-main>
 </template>
@@ -409,5 +435,13 @@ p {
   margin-left: 15%;
   margin-right: 15%;
   text-align: start;
+}
+h1,
+h2,
+h3 {
+  letter-spacing: 1.5px;
+  font-weight: lighter;
+  text-align: center;
+  color: #073b44;
 }
 </style>

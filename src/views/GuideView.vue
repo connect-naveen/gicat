@@ -1,7 +1,9 @@
 <template>
   <v-main>
     <div class="guide"></div>
+    <v-btn id="browserButton" @click="openNewWindow()">OPEN IN BROWSER</v-btn>
     <div class="motivation">
+      <br />
       <h1>Motivation</h1>
       <br />
       <p>
@@ -396,7 +398,7 @@ export default {
   components: {},
   methods: {
     openNewWindow() {
-      window.open("file://src/index.html");
+      window.open("https://www.css-lab.rwth-aachen.de/tools/manuals");
     },
   },
 };

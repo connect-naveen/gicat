@@ -1,19 +1,19 @@
 <template>
   <v-main>
     <div class="guide"></div>
+    <br />
     <v-btn id="browserButton" @click="openNewWindow()">OPEN IN BROWSER</v-btn>
     <div class="motivation">
       <br />
       <h1>Motivation</h1>
-      <br />
       <p>
-        As mentioned in [source?], the analysis of a program is quite complex.
-        This is due to the large amount of different programming languages but
-        also the possibility to run a code analysis from multiple points of view
-        such as inheritance, refactoring, method signatures, comments, class
-        growth etc. Current code documentation tools mostly focus on helping the
-        process of implementation which is why most of the named analysis
-        methods are not supported sufficiently.
+        The analysis of a program is quite complex. This is due to the large
+        amount of different programming languages but also the possibility to
+        run a code analysis from multiple points of view such as inheritance,
+        refactoring, method signatures, comments, class growth etc. Current code
+        documentation tools mostly focus on helping the process of
+        implementation which is why most of the named analysis methods are not
+        supported sufficiently.
       </p>
       <p>
         Another problem is the circumstance of outdated code which is not
@@ -34,15 +34,17 @@
           xgaltool</a
         >
         using our basic filter package for python which can be found
-        <a href="https://www.css-lab.rwth-aachen.de/" target="_blank">here</a>
-        [filter upload?].
+        <a
+          href="https://github.com/davh-hub/gicat-filter-collection"
+          target="_blank"
+          >here
+        </a>
+        .
       </p>
     </div>
     <br />
     <div class="usecase">
       <h1>Use case</h1>
-      <br />
-      <br />
       <p>
         Xgaltool is a program from computational astrophysics. It analyzes data
         of the Reference Catalog of galaxy Spectral Energy Distributions (RCSED)
@@ -64,7 +66,6 @@
         adjust the visualization to their likings and export the emerging graph
         as a svg file.
       </p>
-      <br />
       <p>
         As you can see in Figure 1.1 and Figure 1.2, the project structure
         changed at several places between June 2021 and June 2023. For example,
@@ -166,12 +167,10 @@
     </div>
     <br />
     <h1>Filter Generation</h1>
-    <br />
-    <br />
     <p>
       Our tool uses
       <a
-        href="https://en.wikipedia.org/wiki/Regular_expression#Basic_concepts"
+        href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions"
         target="_blank"
         >regular expressions
       </a>
@@ -198,8 +197,6 @@
     </p>
     <br />
     <h3>Node filter</h3>
-    <br />
-    <br />
     <p>
       The first part of the Node filter is all about generating a Regex from a
       given code snippet. To start generating your Regex, all you need to do is
@@ -249,7 +246,6 @@
       .json filter file.
     </p>
     <br />
-    <br />
     <video width="600px" height="400px" controls>
       <source src="local-video://regex_generation_example.mp4" />
     </video>
@@ -261,20 +257,26 @@
       you capture text patterns matching the ruleset within the round brackets.
       They can be regarded as a container for similar code patterns. We use this
       feature to draw edges between two nodes (in this case between two named
-      capture groups). Therefore, it is mandatory to name each of your
-      specifified capture groups by filling out the
-      <i>Capture group name</i> field. To assign a named capture group to an
-      actual capture group in your Regex, simply write down its index inside the
-      <i>Set capture groups</i> field (starting at 1 from left to right). It is
-      possible to assign multiple capture groups to one named capture group by
-      separating them with a comma. Remember to always click the
-      <b>ADD</b> button include your changes into the filter before continuing
-      with another named capture group.<br /><br />
+      capture groups).
+    </p>
+    <p>
+      Therefore, it is mandatory to name each of your specifified capture groups
+      by filling out the <i>Capture group name</i> field. To assign a named
+      capture group to an actual capture group in your Regex, simply write down
+      its index inside the <i>Set capture groups</i> field (starting at 1 from
+      left to right). It is possible to assign multiple capture groups to one
+      named capture group by separating them with a comma. Remember to always
+      click the <b>ADD</b> button include your changes into the filter before
+      continuing with another named capture group.
+    </p>
+    <p>
       As an example of adding a capture group, we will use the previously
       generated Regex:
       <br /><br />
       <code>class\s<b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
       <br /><br />
+    </p>
+    <p>
       The first capture group with index 1 will collect all terms inside your
       program code matching the <i>[A-Za-z]+</i> pattern (this ruleset equals to
       any positive number of upper or lower case letters) with a preceding
@@ -285,25 +287,29 @@
       this is just an example for the Python programming language. Your regular
       expression and capture groups may differ according to your programming
       language's syntax.
-      <br />
+    </p>
+    <p>
       After you have succesfully generated a Regex, our tool will give you the
       opportunity to provide some additional information about your filter
       package. These include a Node labe, which will be shown as a Prefix inside
       the node, as seen in Figure 2.1. You can also exclude a Regex, which will
       ignore code patterns in the rendering process matching its Regex. It is
       important to name and set your previously generated capture groups
-      correctly. Figures 3.1 and 3.2 show the assignment of both of our
-      determined capture groups in the same way we used it to create our basic
-      Python filter package by naming our first capture group
-      <i>className</i> and our second group <i>extends</i>. Finally, you can
-      select a <b>Label attribute</b> and the color for the rendered nodes. You
-      have the option to choose from your previous assigned capture groups what
-      information (captured by your capture groups) is shown. The label of a
-      rendered node will be displayed in the form
+      correctly.
+    </p>
+    <p>
+      Figures 3.1 and 3.2 show the assignment of both of our determined capture
+      groups in the same way we used it to create our basic Python filter
+      package by naming our first capture group <i>className</i> and our second
+      group <i>extends</i>.
+    </p>
+    <p>
+      Finally, you can select a <b>Label attribute</b> and the color for the
+      rendered nodes. You have the option to choose from your previous assigned
+      capture groups what information (captured by your capture groups) is
+      shown. The label of a rendered node will be displayed in the form
       <b>node label:label attribute</b>.
     </p>
-    <br />
-    <br />
     <br />
     <figure>
       <img src="../assets/capture_1.jpg" alt="Figure 3.1" />
@@ -320,32 +326,33 @@
     </figure>
     <br />
     <h3>Edge filter</h3>
-    <br />
-    <br />
     <p>
       A Node Filter on its own is enough to render a graph, but to represent
       additional information, you can also add an Edge filter by choosing source
-      and target attributes as shown in Figure 4.1 to draw custom edges. First,
-      you will have to provide the name of the Edge filter. This name will later
-      be shown in a drop down menu when visiting the Extractor page. We
-      recommend naming those in a comprehensive way so you can later distinguish
-      between Edge and Node filter.You can then decide if you want to allow
-      loops. The edge filters generate directed edges between nodes. As
+      and target attributes as shown in Figure 4.1 to draw custom edges.
+    </p>
+    <p>
+      First, you will have to provide the name of the Edge filter. This name
+      will later be shown in a drop down menu when visiting the Extractor page.
+      We recommend naming those in a comprehensive way so you can later
+      distinguish between Edge and Node filter.You can then decide if you want
+      to allow loops. The edge filters generate directed edges between nodes. As
       mentioned previously, those nodes will represent the matching text found
       through their respective capture groups. To generate edge filters, you
       first need to select the respective source node filter from your package
-      you wish to draw edges from. After that, you need to select one of its
-      previously declared capture groups as a source attribute. All of the nodes
-      matched by this capture group will then be treated as the source nodes of
-      your future edges. You will then have to select the target node filter. In
-      this case, we are using the same node filter as source and target since
-      our aim is to draw labeled edges between sub classes and their super
-      class. Both of those capture groups are part of our previously generated
+      you wish to draw edges from.
+    </p>
+    <p>
+      After that, you need to select one of its previously declared capture
+      groups as a source attribute. All of the nodes matched by this capture
+      group will then be treated as the source nodes of your future edges. You
+      will then have to select the target node filter. In this case, we are
+      using the same node filter as source and target since our aim is to draw
+      labeled edges between sub classes and their super class. Both of those
+      capture groups are part of our previously generated
       <i>Class Filter Python</i>. You can also draw edges between two different
       node filters inside the <i>same package</i>.
     </p>
-    <br />
-    <br />
     <br />
     <figure>
       <img src="../assets/edgefilter.jpg" alt="Figure 4.1" />

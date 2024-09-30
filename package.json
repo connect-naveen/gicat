@@ -15,7 +15,6 @@
     "postuninstall": "electron-builder install-app-deps"
   },
   "dependencies": {
-    "@dagrejs/dagre": "^1.1.0",
     "@electron/remote": "^2.0.10",
     "@mdi/font": "^7.3.67",
     "@mdi/js": "^7.3.67",

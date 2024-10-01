@@ -1,21 +1,45 @@
 <template>
-  <!--<a
-    href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
-    target="_blank"
-  >
-    <img alt="TST logo" src="../src/assets/rwth_tst_bild_rgb.png" id="tst" />
-  </a>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link> |
-    <router-link to="/extractor">Extractor</router-link> |
-    <router-link to="/filters">Filter</router-link> |
-    <router-link to="/license">License</router-link>|
-    <router-link to="/guide">Guide</router-link> |
-    <router-link to="/generator">Generator</router-link>
-  </nav>
-  <RouterView />-->
   <v-app>
+    <v-app-bar>
+      <v-toolbar>
+        <v-toolbar-items class="mx-auto">
+          <a
+            href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
+            target="_blank"
+          >
+            <img
+              alt="TST logo"
+              src="../src/assets/rwth_tst_bild_rgb.png"
+              id="tst"
+            />
+          </a>
+          <router-link to="/">
+            <v-btn prepend-icon="$home"></v-btn>
+          </router-link>
+          <router-link to="/options">
+            <v-btn>Options</v-btn>
+          </router-link>
+          <router-link to="/extractor">
+            <v-btn>Extractor</v-btn>
+          </router-link>
+          <router-link to="/filters">
+            <v-btn>Filter</v-btn>
+          </router-link>
+          <router-link to="/license">
+            <v-btn>License</v-btn>
+          </router-link>
+          <router-link to="/guide">
+            <v-btn>Guide</v-btn>
+          </router-link>
+          <router-link to="/generator">
+            <v-btn>Generator</v-btn>
+          </router-link>
+        </v-toolbar-items>
+      </v-toolbar>
+    </v-app-bar>
+    <RouterView />
+  </v-app>
+  <!--<v-app>
     <v-app-bar>
       <v-toolbar>
         <v-toolbar-items class="mx-auto">
@@ -43,7 +67,7 @@
       </v-toolbar>
     </v-app-bar>
     <router-view></router-view>
-  </v-app>
+  </v-app>-->
 </template>
 
 <script>
@@ -76,5 +100,18 @@ export default {
 #app {
   text-align: center;
   font-family: Arial, sans-serif;
+}
+
+button {
+  top: 30%;
+}
+
+h1,
+h2,
+h3 {
+  letter-spacing: 1.5px;
+  font-weight: lighter;
+  text-align: center;
+  color: #073b44;
 }
 </style>

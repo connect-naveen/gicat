@@ -445,12 +445,8 @@ p {
   margin-right: 15%;
   text-align: start;
 }
-h1,
-h2,
-h3 {
-  letter-spacing: 1.5px;
-  font-weight: lighter;
-  text-align: center;
-  color: #073b44;
+
+button {
+  top: 0;
 }
 </style>

@@ -2,16 +2,6 @@
   <v-main>
     <div class="network">
       <div class="network-nav">
-        <!--<div class="network-nav-left">
-          put filter specific options here, depending on the selection
-          <v-select
-            class="filter-selector"
-            label="Select"
-            :items="this.getFilterNames"
-            density="compact"
-          ></v-select>
-        </div>
-      -->
         <!-- put visualization controls here -->
         <v-btn
           v-on:click="downloadSVG()"
@@ -40,11 +30,6 @@
           item-title="name"
           v-model="this.filtersSelected"
         ></v-select>
-        <!-- <li v-for="filter in this.getFilters" v-bind:key="filter.name">
-        <button class="button" v-on:click="toggleFilter()">
-          {{ filter.name }}
-        </button>
-      </li> -->
         <v-slider
           v-model="dist"
           :step="50"
@@ -294,16 +279,18 @@ export default {
         },
         edge: {
           normal: {
+            color: (edge) => (edge.label && !this.edgeLabelHidden(edge)) ? edge.meta.color : "black",
             width: (edge) => this.edgeHidden(edge) ? 0 : 2,
           },
-          selectable: 12,
+          selectable: 25,
           selected: {
             width: (edge) => this.edgeHidden(edge) ? 0 : 6,
-            color: "#4466cc",
+            color: (edge) => edge.label ? edge.meta.color : "black",
             dasharray: false,
           },
           hover: {
             width: (edge) => this.edgeHidden(edge) ? 0 : 6,
+            color: (edge) => edge.label ? edge.meta.color : "black",
           },
           label: {
             fontSize: 30,
@@ -368,7 +355,7 @@ export default {
         /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
         node.color = node.meta.color;
-        console.log("--------------------die Node Farbe ist:" + node.meta.color + "---------------------");
+        //console.log("--------------------die Node Farbe ist:" + node.meta.color + "---------------------");
       });
       
       // formatting edges to fit v-network-graph standard
@@ -379,6 +366,7 @@ export default {
         edge.source = inputNodes.findIndex((node) => edge.from === node.id).toString();
         // this.changeObjectKey(edge, "to", "target");
         edge.target = inputNodes.findIndex((node) => edge.to === node.id).toString();
+        edge.color = edge.meta.color;
       });
       // this.nodes = Object.assign({}, inputNodes);
       this.nodes = inputNodes;
@@ -407,18 +395,6 @@ export default {
         return this.filtersSelected.includes(edge.meta.filter);
       }
       return true;
-    },
-    stringToColour(str) {
-      let hash = 0;
-      str.split('').forEach(char => {
-        hash = char.charCodeAt(0) + ((hash << 5) - hash);
-      });
-      let colour = '#';
-      for (let i = 0; i < 3; i++) {
-        const value = (hash >> (i * 8)) & 0xff;
-        colour += value.toString(16).padStart(2, '0');
-      }
-      return colour;
     },
     changeObjectKey(o, old_key, new_key) {
       if (old_key !== new_key) {
@@ -483,6 +459,9 @@ export default {
       if (node.hiddenCounter === 0) {
         node.hidden = false;
       }
+    },
+    getEdgeColor(edge) {
+      return this.edges[edge].meta.stylecolor
     },
     edgeHidden(edge) {
     return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])

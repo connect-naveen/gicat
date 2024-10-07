@@ -15,6 +15,7 @@
         implementation which is why most of the named analysis methods are not
         supported sufficiently.
       </p>
+      <br />
       <p>
         Another problem is the circumstance of outdated code which is not
         compatible with modern documentation tools. To address those issues, our
@@ -25,6 +26,7 @@
         programming language and the specific type of the analysis process is
         left open to the users decisions.
       </p>
+      <br />
       <p>
         In the following, we are going to provide a short use case showing how
         our tool can be utilized in different ways to analyze a programs source
@@ -41,6 +43,7 @@
         </a>
         .
       </p>
+      <br />
     </div>
     <br />
     <div class="usecase">
@@ -52,6 +55,7 @@
         galaxies are suspected to be the star cradles of the universe (i.e. they
         are associated with a high star formation rate).
       </p>
+      <br />
       <p>
         As our first example, we will take a look at two different versions of
         the previously mentioned xgaltool, introducing the main idea of filter
@@ -66,6 +70,7 @@
         adjust the visualization to their likings and export the emerging graph
         as a svg file.
       </p>
+      <br />
       <p>
         As you can see in Figure 1.1 and Figure 1.2, the project structure
         changed at several places between June 2021 and June 2023. For example,
@@ -107,12 +112,14 @@
           to your analysis, to learn how they are realized in the code and how
           they are related to each other.
         </p>
+        <br />
         <p>
           For this, the use of <b>edgefilters</b> is strongly recommended.
           Figure 2.1 applies this to our example. Most of the information in
           astrophysics depends on spectral analysis - the information the
           astrophysicist seeks is encoded in thelight the telescope catches.
         </p>
+        <br />
         <p>
           In our example, the main target of observation are spread reflections
           of light in space - gases. With the python class node filter we can
@@ -121,6 +128,7 @@
           <b>extends</b> attribute an edge if the target node inherits from its
           source.
         </p>
+        <br />
         <p>
           In this case we see that our class AnalyseGas inherits from the
           classes SFRTools and EmissionLineTools. SFR means 'star formation
@@ -134,6 +142,7 @@
           formation rate (SFRTools) and how this relationship is realized in the
           code.
         </p>
+        <br />
       </div>
       <br />
       <figure>
@@ -164,6 +173,7 @@
         (.svg) file and edit it with a vector graphic editor, such as
         <a href="https://inkscape.org/" target="_blank">Inkscape</a>.
       </p>
+      <br />
     </div>
     <br />
     <h1>Filter Generation</h1>
@@ -182,6 +192,7 @@
       regular expression filters the text and finds all patterns matching the
       criteria.<br />
     </p>
+    <br />
     <p>
       Once you have opened the Generator tab, you will see that it is divided
       into three sections and two parts. The main part consists of the section
@@ -203,6 +214,7 @@
       copy and paste a sample code snippet from your source code. This is done
       as follows:<br />
     </p>
+    <br />
     <p>
       From left to right, select the part of the source code from which you wish
       to generate a (partial) regular expression. To assist you in that, we
@@ -212,10 +224,12 @@
       be done optionally with the capture group check mark and/or a
       <b>quantifier</b>.
     </p>
+    <br />
     <p>
       A quantifier allows you to set a range of occurrences for the preceding
       expression. Therefore you can choose from different ranges:<br /><br />
     </p>
+    <br />
     <div id="list">
       <ul>
         <li>
@@ -259,6 +273,7 @@
       feature to draw edges between two nodes (in this case between two named
       capture groups).
     </p>
+    <br />
     <p>
       Therefore, it is mandatory to name each of your specifified capture groups
       by filling out the <i>Capture group name</i> field. To assign a named
@@ -269,6 +284,7 @@
       click the <b>ADD</b> button include your changes into the filter before
       continuing with another named capture group.
     </p>
+    <br />
     <p>
       As an example of adding a capture group, we will use the previously
       generated Regex:
@@ -276,6 +292,7 @@
       <code>class\s<b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
       <br /><br />
     </p>
+    <br />
     <p>
       The first capture group with index 1 will collect all terms inside your
       program code matching the <i>[A-Za-z]+</i> pattern (this ruleset equals to
@@ -288,6 +305,7 @@
       expression and capture groups may differ according to your programming
       language's syntax.
     </p>
+    <br />
     <p>
       After you have succesfully generated a Regex, our tool will give you the
       opportunity to provide some additional information about your filter
@@ -297,12 +315,14 @@
       important to name and set your previously generated capture groups
       correctly.
     </p>
+    <br />
     <p>
       Figures 3.1 and 3.2 show the assignment of both of our determined capture
       groups in the same way we used it to create our basic Python filter
       package by naming our first capture group <i>className</i> and our second
       group <i>extends</i>.
     </p>
+    <br />
     <p>
       Finally, you can select a <b>Label attribute</b> and the color for the
       rendered nodes. You have the option to choose from your previous assigned
@@ -331,6 +351,7 @@
       additional information, you can also add an Edge filter by choosing source
       and target attributes as shown in Figure 4.1 to draw custom edges.
     </p>
+    <br />
     <p>
       First, you will have to provide the name of the Edge filter. This name
       will later be shown in a drop down menu when visiting the Extractor page.
@@ -342,6 +363,7 @@
       first need to select the respective source node filter from your package
       you wish to draw edges from.
     </p>
+    <br />
     <p>
       After that, you need to select one of its previously declared capture
       groups as a source attribute. All of the nodes matched by this capture
@@ -365,6 +387,7 @@
       this Edge filter with the key word <i>extends</i> to visualize the
       dependence of a sub class to their respective super class. (Figure 4.2)
     </p>
+    <br />
     <figure>
       <img src="../assets/edge_filter_meta.jpg" alt="Figure 4.2" />
       <figcaption>Figure 4.2 - Edge filter label and color</figcaption>

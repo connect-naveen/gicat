@@ -1,6 +1,8 @@
 {
   "name": "GICAT",
-  "version": "0.3.0",
+  "version": "0.5.0",
+  "description": "The GICAT visualizes the class structure of an object-oriented programmed software project. It shows the genealogy based on Git, as well as the software project's heredity of classes. For more information visit https://www.css-lab.rwth-aachen.de/tools/overview",
+  "author": "David H., Frederic K., CSS Lab RWTH Aachen",
   "private": true,
   "scripts": {
     "clean": "rm -rf node_modules/ dist/ dist_electron/",
@@ -12,7 +14,9 @@
     "electron:build": "vue-cli-service electron:build",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps"
+    "postuninstall": "electron-builder install-app-deps",
+    "app:dir": "electron-builder --dir",
+    "app:dist": "electron-builder"
   },
   "dependencies": {
     "@electron/remote": "^2.0.10",
@@ -31,6 +35,10 @@
     "vuetify": "^3.3.8",
     "vuex": "^4.0.0",
     "webpack": "^5.0.0"
+  },
+  "resolutions": {
+    "@achrinza/node-ipc": "10.1.11",
+    "vue-cli-plugin-electron-builder/electron-builder": "^23.0.3"
   },
   "main": "background.js",
   "devDependencies": {

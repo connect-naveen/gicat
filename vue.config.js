@@ -6,6 +6,38 @@ module.exports = defineConfig({
       nodeIntegration: true,
       contextIsolation: false,
       preload: "public/preload.js",
+      builderOptions: {
+        win: {
+          target: [
+            "nsis"
+          ]
+        },
+        nsis: {
+          allowToChangeInstallationDirectory: true,
+          createStartMenuShortcut: false,
+          deleteAppDataOnUninstall: true,
+          uninstallDisplayName: "GICAT-Uninstaller",
+          license: "license.md",
+          menuCategory: true,
+          oneClick: false
+        },
+        mac: {
+          "darkModeSupport": true,
+          target: [
+            "dmg"
+          ]
+        },
+        dmg: {
+        },
+        linux: {
+          target: [
+            "appImage"
+          ]
+        },
+        appImage: {
+          license: "license.md"
+        }
+      }
     }
   }
 });

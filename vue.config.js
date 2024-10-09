@@ -20,6 +20,22 @@ module.exports = defineConfig({
           license: "license.md",
           menuCategory: true,
           oneClick: false
+        },
+        mac: {
+          "darkModeSupport": true,
+          target: [
+            "dmg"
+          ]
+        },
+        dmg: {
+        },
+        linux: {
+          target: [
+            "appImage"
+          ]
+        },
+        appImage: {
+          license: "license.md"
         }
       }
     }

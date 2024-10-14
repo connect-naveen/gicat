@@ -290,7 +290,7 @@
       generated Regex:
       <br /><br />
       <code>class\s<b>([A-Za-z]+)</b>\\(<b>(.*)</b>\\)\\:</code>
-      <br /><br />
+      <br />
     </p>
     <br />
     <p>
@@ -307,7 +307,7 @@
     </p>
     <br />
     <p>
-      After you have succesfully generated a Regex, our tool will give you the
+      After you have successfully generated a Regex, our tool will give you the
       opportunity to provide some additional information about your filter
       package. These include a Node labe, which will be shown as a Prefix inside
       the node, as seen in Figure 2.1. You can also exclude a Regex, which will

@@ -73,7 +73,7 @@
               :width="
                 this.isFolder(nodes[nodeId])
                   ? Math.max(nodes[nodeId].name.length * 20, 200)
-                  : nodes[nodeId].name.length * 12
+                  : Math.max(nodes[nodeId].name.length * 12, 200)
               "
               :height="config.height"
               :fill="nodes[nodeId].color"
@@ -105,15 +105,19 @@
           <template #override-node-label="{ text, nodeId }">
             <text
               :x="
-                nodes[nodeId].name.length * 20 >= 200
+                this.isFolder(nodes[nodeId])
+                  ? nodes[nodeId].name.length * 20 >= 200
+                    ? 0
+                    : (200 - nodes[nodeId].name.length * 20) / 2
+                  : nodes[nodeId].name.length * 12 >= 200
                   ? 0
-                  : (200 - nodes[nodeId].name.length * 20) / 2
+                  : (200 - nodes[nodeId].name.length * 12) / 2
               "
               y="0"
               :font-size="this.isFolder(nodes[nodeId]) ? 30 : 20"
               :font-weight="this.isFolder(nodes[nodeId]) ? 'bold' : 'normal'"
               text-anchor="middle"
-              dominant-baseline="central"
+              dominant-baseline="middle"
               fill="#ffffff"
               v-if="
                 !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
@@ -160,47 +164,31 @@
 </template>
 
 <script>
-/* eslint-disable */
-import { ref } from "vue"
+import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
-import { getTransitionRawChildren } from "vue";
-import { reactive } from "vue";
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
   positionFixedByClickWithAltKey: true,
   createSimulation: (d3, nodes, edges) => {
     // d3-force parameters
-    const forceLink = d3.forceLink(edges).id(d => d.id)
+    const forceLink = d3.forceLink(edges).id((d) => d.id);
     return d3
-      // .forceSimulation(nodes)
-      // .force("edge", forceLink.distance(40).strength(0.5))
-      // .force("charge", d3.forceManyBody().strength(-800))
-      // .force("center", d3.forceCenter().strength(0.05))
-
-      // .forceSimulation(nodes)
-      // .force("edge", forceLink.distance(100))
-      // .force("charge", d3.forceManyBody())
-      // .force("collide", d3.forceCollide(50).strength(0.2))
-      // .force("center", d3.forceCenter().strength(0.05))
-      
       .forceSimulation(nodes)
       .force("edge", forceLink.distance(50).strength(5000))
       .force("charge", d3.forceManyBody().strength(-7000))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      //.stop() // tick manually,
-      //.tick(1)
-      .alphaMin(0.0001)
-  }
+      .alphaMin(0.0001);
+  },
 });
 
 export default {
   setup() {
     const graph = ref(null);
-    return {graph};
+    return { graph };
   },
   mounted() {
     this.initGraph();
@@ -212,7 +200,7 @@ export default {
         // wildcard: capture all events
         "*": (type, event) => {
           console.log(type, event);
-          if(event instanceof Object) {
+          if (event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
             }
@@ -220,17 +208,17 @@ export default {
               this.rightClick(event.node);
             }
             if (type == "node:click") {
-              this.leftClick(event.node)
+              this.leftClick(event.node);
             }
           }
         },
       },
       playPause: "Pause",
       nod: {
-        node1: { name: "Node 1"},
-        node2: { name: "Node 2"},
-        node3: { name: "Node 3"},
-        node4: { name: "Node 4"},
+        node1: { name: "Node 1" },
+        node2: { name: "Node 2" },
+        node3: { name: "Node 3" },
+        node4: { name: "Node 4" },
       },
       edg: {
         edge1: { source: "node1", target: "node2" },
@@ -249,8 +237,8 @@ export default {
         view: {
           scalingObjects: true,
           layoutHandler: getForcedLayout,
-         },
-         node: {
+        },
+        node: {
           selectable: 12,
           focusring: {
             visible: false,
@@ -261,42 +249,45 @@ export default {
           normal: {
             strokeWidth: 1,
             strokeColor: "#000000",
-            width:"300",
-            height:"50"
+            width: "300",
+            height: "50",
           },
           hover: {
             strokeWidth: 6,
             strokeColor: "#000000",
-            width:"300",
-            height:"50"
+            width: "300",
+            height: "50",
           },
           selected: {
             strokeWidth: 8,
             strokeColor: "#000000",
-            width:"300",
-            height:"50",
+            width: "300",
+            height: "50",
           },
         },
         edge: {
           normal: {
-            color: (edge) => (edge.label && !this.edgeLabelHidden(edge)) ? edge.meta.color : "black",
-            width: (edge) => this.edgeHidden(edge) ? 0 : 2,
+            color: (edge) =>
+              edge.label && !this.edgeLabelHidden(edge)
+                ? edge.meta.color
+                : "black",
+            width: (edge) => (this.edgeHidden(edge) ? 0 : 2),
           },
           selectable: 25,
           selected: {
-            width: (edge) => this.edgeHidden(edge) ? 0 : 6,
-            color: (edge) => edge.label ? edge.meta.color : "black",
+            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
+            color: (edge) => (edge.label ? edge.meta.color : "black"),
             dasharray: false,
           },
           hover: {
-            width: (edge) => this.edgeHidden(edge) ? 0 : 6,
-            color: (edge) => edge.label ? edge.meta.color : "black",
+            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
+            color: (edge) => (edge.label ? edge.meta.color : "black"),
           },
           label: {
             fontSize: 30,
             margin: 20,
-          }
-        }
+          },
+        },
       }),
       physicsEnabled: true,
       savedLayout: null,
@@ -328,14 +319,14 @@ export default {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
         edgePos.target.x - edgePos.source.x
-      )
-      const degree = (radian * 180.0) / Math.PI
-      
+      );
+      const degree = (radian * 180.0) / Math.PI;
+
       return [
         `translate(${center.x} ${center.y})`,
         `scale(${scale * 2.5}, ${scale * 2.5})`,
         `rotate(${degree})`,
-      ].join(" ")
+      ].join(" ");
     },
 
     initGraph() {
@@ -345,7 +336,7 @@ export default {
 
       // formatting nodes to fit v-network-graph standard
       // also sets default values for nodes
-        inputNodes.forEach((node, index) =>{
+      inputNodes.forEach((node, index) => {
         /* default values */
         node.childrenCollapsed = false;
         node.hidden = false;
@@ -355,17 +346,20 @@ export default {
         /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
         node.color = node.meta.color;
-        //console.log("--------------------die Node Farbe ist:" + node.meta.color + "---------------------");
       });
-      
+
       // formatting edges to fit v-network-graph standard
-      inputEdges.forEach((edge) =>{
+      inputEdges.forEach((edge) => {
         edge.hidden = false;
         edge.hiddenCounter = 0;
         // this.changeObjectKey(edge, "from", "source");
-        edge.source = inputNodes.findIndex((node) => edge.from === node.id).toString();
+        edge.source = inputNodes
+          .findIndex((node) => edge.from === node.id)
+          .toString();
         // this.changeObjectKey(edge, "to", "target");
-        edge.target = inputNodes.findIndex((node) => edge.to === node.id).toString();
+        edge.target = inputNodes
+          .findIndex((node) => edge.to === node.id)
+          .toString();
         edge.color = edge.meta.color;
       });
       // this.nodes = Object.assign({}, inputNodes);
@@ -377,11 +371,11 @@ export default {
       //this.filtersSelected = appliedFilters;
     },
     getFilterItems() {
-      return this.getFilters.map((filter, index) => {
+      return this.getFilters.map((filter) => {
         return {
           name: filter.name,
           value: filter.id,
-        }
+        };
       });
     },
     isFilterSelected(node) {
@@ -390,16 +384,19 @@ export default {
       }
       return true;
     },
-    isEdgeFilterSelected(edge){
-      if(edge.meta?.filter) {
+    isEdgeFilterSelected(edge) {
+      if (edge.meta?.filter) {
         return this.filtersSelected.includes(edge.meta.filter);
       }
       return true;
     },
     changeObjectKey(o, old_key, new_key) {
       if (old_key !== new_key) {
-        Object.defineProperty(o, new_key,
-          Object.getOwnPropertyDescriptor(o, old_key));
+        Object.defineProperty(
+          o,
+          new_key,
+          Object.getOwnPropertyDescriptor(o, old_key)
+        );
         delete o[old_key];
       }
     },
@@ -410,7 +407,7 @@ export default {
       console.warn("double click");
 
       let hitNode = this.nodes[hitNodeIndex];
-      if(hitNode.hidden) return;
+      if (hitNode.hidden) return;
       let isFolder = this.isFolder(hitNode);
       if (isFolder) {
         this.collapseChildren(hitNode);
@@ -418,33 +415,32 @@ export default {
         this.openFile(hitNodeIndex);
       }
     },
-    rightClick(node) {
-      console.log("collapse children of node: ")
+    rightClick() {
+      console.log("collapse children of node: ");
       this.getNodes.forEach((node) => {
-        console.log(node.label)
-      }
-    )
-  },
-  leftClick(node) {
-    let selectedNode = this.nodes[node];
-    selectedNode.meta.active = !selectedNode.meta.active
-    console.log(node.label + " is active: " + selectedNode.meta.active)
-  },
+        console.log(node.label);
+      });
+    },
+    leftClick(node) {
+      let selectedNode = this.nodes[node];
+      selectedNode.meta.active = !selectedNode.meta.active;
+      console.log(node.label + " is active: " + selectedNode.meta.active);
+    },
     collapseChildren(hitNode) {
       console.warn("colapse children");
       if (hitNode.childrenCollapsed) {
-          hitNode.childrenCollapsed = false;
+        hitNode.childrenCollapsed = false;
       } else {
         hitNode.childrenCollapsed = true;
-      } 
+      }
       let isChildren = (e) => e.id.startsWith(hitNode.id) && e.id != hitNode.id;
       let children = this.nodes.filter((e) => isChildren(e));
       children.forEach((element) => {
-          if (hitNode.childrenCollapsed) {
-            this.hideNode(element);
-          } else {
-            this.showNode(element);
-          }
+        if (hitNode.childrenCollapsed) {
+          this.hideNode(element);
+        } else {
+          this.showNode(element);
+        }
       });
     },
 
@@ -460,16 +456,22 @@ export default {
         node.hidden = false;
       }
     },
-    getEdgeColor(edge) {
-      return this.edges[edge].meta.stylecolor
-    },
     edgeHidden(edge) {
-    return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
-      | !this.isFilterSelected(this.nodes[edge.target]);
+      return (
+        this.nodes[edge.source].hidden |
+        this.nodes[edge.target].hidden |
+        !this.isFilterSelected(this.nodes[edge.source]) |
+        !this.isFilterSelected(this.nodes[edge.target])
+      );
     },
     edgeLabelHidden(edge) {
-    return this.nodes[edge.source].hidden | this.nodes[edge.target].hidden | !this.isFilterSelected(this.nodes[edge.source])
-    | !this.isFilterSelected(this.nodes[edge.target]) | !this.isEdgeFilterSelected(edge);
+      return (
+        this.nodes[edge.source].hidden |
+        this.nodes[edge.target].hidden |
+        !this.isFilterSelected(this.nodes[edge.source]) |
+        !this.isFilterSelected(this.nodes[edge.target]) |
+        !this.isEdgeFilterSelected(edge)
+      );
     },
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;
@@ -488,7 +490,7 @@ export default {
         return;
       }
 
-      let path = this.nodes[nodeIndex].id.split('|')[0];
+      let path = this.nodes[nodeIndex].id.split("|")[0];
 
       const exists = fs.existsSync(path);
       if (!exists) {
@@ -523,45 +525,57 @@ export default {
         this.playPause = "Pause";
       }
     },
-    computePhysics(){
+    computePhysics() {
       console.log("Distance parameter is equal to " + this.dist);
       let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,
         positionFixedByClickWithAltKey: true,
         createSimulation: (d3, nodes, edges) => {
           // d3-force parameters
-          const forceLink = d3.forceLink(edges).id(d => d.id)
-          return d3
-            .forceSimulation(nodes)
-            .force("edge", forceLink.distance(this.dist).strength(this.strength))
-            .force("charge", d3.forceManyBody().strength(this.charge))
-            .force("x", d3.forceX())
-            .force("y", d3.forceY())
-            //.stop() // tick manually,
-            .tick(1)
-            .alpha(1)
-            .velocityDecay(0.8)
-        }
-       });
-          this.configs.view.layoutHandler = newForcedLayout;
-          this.physicsEnabled = true;
-          this.playPause = "Pause";
-      },
+          const forceLink = d3.forceLink(edges).id((d) => d.id);
+          return (
+            d3
+              .forceSimulation(nodes)
+              .force(
+                "edge",
+                forceLink.distance(this.dist).strength(this.strength)
+              )
+              .force("charge", d3.forceManyBody().strength(this.charge))
+              .force("x", d3.forceX())
+              .force("y", d3.forceY())
+              //.stop() // tick manually,
+              .tick(1)
+              .alpha(1)
+              .velocityDecay(0.8)
+          );
+        },
+      });
+      this.configs.view.layoutHandler = newForcedLayout;
+      this.physicsEnabled = true;
+      this.playPause = "Pause";
+    },
     async downloadSVG() {
       // destructure proxy:
-      const graph = {...this.graph};
+      const graph = { ...this.graph };
 
       const text = await graph.exportAsSvgText();
-      const url = URL.createObjectURL(new Blob([text], { type: "octet/stream" }));
+      const url = URL.createObjectURL(
+        new Blob([text], { type: "octet/stream" })
+      );
       const a = document.createElement("a");
       a.href = url;
       const filename = this.getRepoPath.split("/").slice(-1);
       const date = new Date();
       const dateString =
-        date.getFullYear() + "-" +
-        (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) + "-" +
+        date.getFullYear() +
+        "-" +
+        (date.getMonth() < 10 ? "0" + date.getMonth() : date.getMonth()) +
+        "-" +
         (date.getDay() < 10 ? "0" + date.getDay() : date.getDay()) +
-        "-" + date.getHours() + "-" + date.getMinutes();
+        "-" +
+        date.getHours() +
+        "-" +
+        date.getMinutes();
       a.download = filename + "_" + dateString + ".svg"; // filename to download
       a.click();
       window.URL.revokeObjectURL(url);

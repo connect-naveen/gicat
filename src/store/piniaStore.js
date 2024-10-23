@@ -67,6 +67,9 @@ export const useMainStore = defineStore("main", {
     getToAttributeSelection: (state) => state.toAttributeSelection,
   },
   actions: {
+    setEdgeFilterList(payload) {
+      this.filterPackage.edgeFilterList = payload;
+    },
     setFromAttributeSelection(payload) {
       this.fromAttributeSelection = payload;
     },

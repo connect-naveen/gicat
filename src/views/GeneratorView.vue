@@ -148,6 +148,30 @@
           </v-row>
           <v-row>
             <v-col>
+              <v-file-input
+                label="Filter import..."
+                variant="underlined"
+                density="compact"
+                :rules="rules"
+                max-width="480"
+                accept=".json"
+                v-model="importedFilter"
+              ></v-file-input>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-btn
+                @click="importFilter"
+                prepend-icon="$fileExport"
+                :disabled="importedFilter == null"
+              >
+                Import
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" md="4">
               <v-btn
                 @click="exportFilter"
                 prepend-icon="$fileExport"
@@ -461,6 +485,7 @@ export default {
         ["#00FF00", "#00AA00", "#005500"],
         ["#0000FF", "#0000AA", "#000055"],
       ],
+      importedFilter: null,
       attributes: {},
       quantifier: "",
       selected: "",
@@ -470,6 +495,7 @@ export default {
       addNodeAttributesDialog: false,
       addNodeFilterDialog: false,
       addEdgeFilterDialog: false,
+      rules: [],
     };
   },
   computed: {
@@ -886,6 +912,19 @@ export default {
       const date = new Date();
       this.main.setDate(date);
       this.main.setJson(this.main.getFilterPackage);
+    },
+    importFilter() {
+      //var reader = new FileReader();
+      this.importedFilter.text().then((value) => {
+        const parsedInput = JSON.parse(value);
+        //console.log(parsedInput);
+        this.main.setPackageName(parsedInput.packageName);
+        this.main.setAuthors(parsedInput.authors);
+        this.main.setDesc(parsedInput.desc);
+        this.main.setNodeFilterList(parsedInput.nodeFilterList);
+        this.main.setEdgeFilterList(parsedInput.edgeFilterList);
+        this.generatePackage();
+      });
     },
     exportFilter() {
       let fileString = JSON.stringify(this.main.getJson, null, "\t");

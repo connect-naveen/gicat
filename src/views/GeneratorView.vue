@@ -915,7 +915,16 @@ export default {
     },
     importFilter() {
       //var reader = new FileReader();
-      this.importedFilter.text().then((value) => console.log(value));
+      this.importedFilter.text().then((value) => {
+        const parsedInput = JSON.parse(value);
+        //console.log(parsedInput);
+        this.main.setPackageName(parsedInput.packageName);
+        this.main.setAuthors(parsedInput.authors);
+        this.main.setDesc(parsedInput.desc);
+        this.main.setNodeFilterList(parsedInput.nodeFilterList);
+        this.main.setEdgeFilterList(parsedInput.edgeFilterList);
+        this.generatePackage();
+      });
     },
     exportFilter() {
       let fileString = JSON.stringify(this.main.getJson, null, "\t");

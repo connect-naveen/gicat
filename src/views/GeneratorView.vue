@@ -74,6 +74,14 @@
                 :subtitle="filter.labelAttribute"
                 class="subItem"
               ></v-list-item>
+              <v-btn
+                prepend-icon="$edit"
+                :disabled="
+                  main.getInNodeFilterEditMode || main.getInEdgeFilterEditMode
+                "
+                @click="nodeEditMode"
+                >edit</v-btn
+              >
             </v-list-group>
             <v-list-item title="Edge filter list"></v-list-item>
             <v-list-group
@@ -102,6 +110,14 @@
                 :subtitle="edge.to.attribute"
                 class="subItem"
               ></v-list-item>
+              <v-btn
+                prepend-icon="$edit"
+                :disabled="
+                  !main.getInEdgeFilterEditMode || !main.getInNodeFilterEditMode
+                "
+                @click="edgeEditMode"
+                >edit</v-btn
+              >
             </v-list-group>
           </v-list-group>
         </v-list>
@@ -499,6 +515,22 @@ export default {
     };
   },
   computed: {
+    inNodeFilterEditMode: {
+      get() {
+        return this.main.getInNodeFilterEditMode;
+      },
+      set(payload) {
+        this.main.setInNodeFilterEditMode(payload);
+      },
+    },
+    inEdgeFilterEditMode: {
+      get() {
+        return this.main.getInEdgeFilterEditMode;
+      },
+      set(payload) {
+        this.main.setInEdgeFilterEditMode(payload);
+      },
+    },
     edgeColorpicker: {
       get() {
         return this.main.getEdgeColorPicker;
@@ -736,6 +768,12 @@ export default {
   },
   props: {},
   methods: {
+    nodeEditMode() {
+      this.main.setInNodeFilterEditMode(true);
+    },
+    edgeEditMode() {
+      this.main.setInEdgeFilterEditMode(true);
+    },
     nodeListDropdown() {
       if (document.getElementById("filterElement").style.display == "none") {
         document.getElementById("filterElement").style.display = "block";
@@ -834,8 +872,8 @@ export default {
       });
       this.main.setEdgeName("");
       this.main.setLoopSelection("");
-      this.main.setEdgeColorPicker = "#8ebae5";
-      this.main.setEdgeLabel = "";
+      this.main.setEdgeColorPicker("#8ebae5");
+      this.main.setEdgeLabel("");
       this.addEdgeFilterDialog = true;
     },
     generateRegex() {
@@ -923,6 +961,8 @@ export default {
         this.main.setDesc(parsedInput.desc);
         this.main.setNodeFilterList(parsedInput.nodeFilterList);
         this.main.setEdgeFilterList(parsedInput.edgeFilterList);
+        this.main.setInEdgeFilterEditMode(false);
+        this.main.setInNodeFilterEditMode(false);
         this.generatePackage();
       });
     },

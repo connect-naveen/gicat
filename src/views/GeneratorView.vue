@@ -79,7 +79,7 @@
                 :disabled="
                   main.getInNodeFilterEditMode || main.getInEdgeFilterEditMode
                 "
-                @click="nodeEditMode"
+                @click="nodeEditMode(filter.name)"
                 >edit</v-btn
               >
             </v-list-group>
@@ -364,7 +364,7 @@
               prepend-icon="$plus"
               @click="addNodeFilter"
               :disabled="main.getJson == null"
-              >Add filter
+              >{{ main.getInNodeFilterEditMode ? "save" : "Add filter" }}
             </v-btn>
             <v-dialog v-model="addNodeFilterDialog" width="auto">
               <v-card>
@@ -724,11 +724,11 @@ export default {
         for (let e in this.main.getAttributes) {
           opt.push(e);
         }
-        console.log("Options after push: " + opt);
+        //console.log("Options after push: " + opt);
         return opt;
       }
-      console.log("Options: " + opt);
-      console.log("Atributes: " + Object.keys(this.main.getAttributes));
+      //console.log("Options: " + opt);
+      //console.log("Atributes: " + Object.keys(this.main.getAttributes));
       return opt;
     },
     getFromSelection() {
@@ -762,14 +762,24 @@ export default {
           i++;
         }
       }
-      console.log(opt);
+      //console.log(opt);
       return opt;
     },
   },
   props: {},
   methods: {
-    nodeEditMode() {
+    nodeEditMode(filterName) {
       this.main.setInNodeFilterEditMode(true);
+      //console.log(filterName);
+      for (let i = 0; i < this.main.getJson.nodeFilterList.length; i++) {
+        if (this.main.getJson.nodeFilterList[i].name === filterName) {
+          console.log(this.main.getJson.nodeFilterList[i]);
+          this.generatedRegex = this.main.getJson.nodeFilterList[i].regex;
+          this.fileExtension = this.main.getJson.nodeFilterList[i].extension;
+          this.regexName = this.main.getJson.nodeFilterList[i].name;
+          this.nodeLabel = this.main.getJson.nodeFilterList[i].label;
+        }
+      }
     },
     edgeEditMode() {
       this.main.setInEdgeFilterEditMode(true);
@@ -791,8 +801,8 @@ export default {
             .map((e) => Number(e)),
         });
       } else {
-        console.log("Attributes nicht leer");
-        console.log(this.main.getAttributes);
+        //console.log("Attributes nicht leer");
+        //console.log(this.main.getAttributes);
         this.main.setAttributesByElement(
           this.main.getNodeAttributes,
           this.main.getNodeCaptureGroups
@@ -801,7 +811,7 @@ export default {
             .map((e) => Number(e))
         );
       }
-      console.log("Node attributes: " + this.main.getNodeAttributes);
+      //console.log("Node attributes: " + this.main.getNodeAttributes);
       this.main.setTemp(this.main.getNodeLabel);
       this.addNodeAttributesDialog = true;
       this.main.setNodeAttributes("");

@@ -35,8 +35,11 @@ export const useMainStore = defineStore("main", {
     temp: "",
     inNodeFilterEditMode: false,
     inEdgeFilterEditMode: false,
+    labelSelection: [],
+    editModeScope: "",
   }),
   getters: {
+    getEditModeScope: (state) => state.editModeScope,
     getInNodeFilterEditMode: (state) => state.inNodeFilterEditMode,
     getInEdgeFilterEditMode: (state) => state.inNodeEdgeEditMode,
     getTemp: (state) => state.temp,
@@ -71,6 +74,12 @@ export const useMainStore = defineStore("main", {
     getToAttributeSelection: (state) => state.toAttributeSelection,
   },
   actions: {
+    setEditModeScope(payload) {
+      this.editModeScope = payload;
+    },
+    setLabelSelection(payload) {
+      this.labelSelection = payload;
+    },
     setInNodeFilterEditMode(payload) {
       this.inNodeFilterEditMode = payload;
     },

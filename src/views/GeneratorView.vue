@@ -515,6 +515,14 @@ export default {
     };
   },
   computed: {
+    editModeScope: {
+      get() {
+        return this.main.getEditModeScope;
+      },
+      set(payload) {
+        this.main.setEditModeScope(payload);
+      },
+    },
     inNodeFilterEditMode: {
       get() {
         return this.main.getInNodeFilterEditMode;
@@ -724,11 +732,8 @@ export default {
         for (let e in this.main.getAttributes) {
           opt.push(e);
         }
-        //console.log("Options after push: " + opt);
         return opt;
       }
-      //console.log("Options: " + opt);
-      //console.log("Atributes: " + Object.keys(this.main.getAttributes));
       return opt;
     },
     getFromSelection() {
@@ -773,11 +778,27 @@ export default {
       //console.log(filterName);
       for (let i = 0; i < this.main.getJson.nodeFilterList.length; i++) {
         if (this.main.getJson.nodeFilterList[i].name === filterName) {
-          console.log(this.main.getJson.nodeFilterList[i]);
-          this.generatedRegex = this.main.getJson.nodeFilterList[i].regex;
+          //console.log(this.main.getJson.nodeFilterList[i]);
+          this.main.setEditModeScope(this.main.getJson.nodeFilterList[i].id);
+          this.generatedRegex = this.main.getJson.nodeFilterList[
+            i
+          ].regex.substr(
+            1,
+            this.main.getJson.nodeFilterList[i].regex.length - 4
+          );
           this.fileExtension = this.main.getJson.nodeFilterList[i].extension;
           this.regexName = this.main.getJson.nodeFilterList[i].name;
           this.nodeLabel = this.main.getJson.nodeFilterList[i].label;
+          this.excludes = this.main.getJson.nodeFilterList[i].exclude[0].substr(
+            1,
+            this.main.getJson.nodeFilterList[i].exclude[0].length - 4
+          );
+          this.labelAttributeSelection =
+            this.main.getJson.nodeFilterList[i].labelAttribue;
+          this.nodeColor = this.main.getJson.nodeFilterList[i].style.color;
+          this.main.setAttributes(
+            this.main.getJson.nodeFilterList[i].attributes
+          );
         }
       }
     },
@@ -818,40 +839,75 @@ export default {
       this.main.setNodeCaptureGroups("");
     },
     resetRegex() {
-      this.main.setGeneratedRegex("/");
+      this.main.setGeneratedRegex("");
     },
     addNodeFilter() {
-      this.main.setGeneratedRegex("/" + this.main.getGeneratedRegex + "/gm"),
-        this.main.getJson["nodeFilterList"].push({
-          name: this.main.getRegexName,
-          regex: this.main.getGeneratedRegex,
-          id: (this.main.getJson.packageName + this.main.getRegexName).replace(
-            /\s/g,
-            ""
-          ),
-          spec: "node",
-          exclude: [this.main.getExcludes],
-          extension: this.main.getFileExtension,
-          attributes: this.main.getAttributes,
-          style: { color: this.main.getNodeColor },
-          failures: [""],
-          label: this.main.getNodeLabel,
-          labelAttribute: this.main.getLabelAttributeSelection,
-        }),
-        this.main.setAttributes({});
-      this.main.setTemp(this.main.getRegexName);
-      this.addNodeFilterDialog = true;
-      this.main.setRegexName("");
-      this.main.setGeneratedRegex("");
-      this.main.setExcludes("");
-      this.main.setFileExtension("");
-      this.main.setLabelAttributeSelection("");
-      this.main.setNodeLabel("");
-      this.main.setRegexName("");
-      this.main.setNodeLabel("");
-      this.main.setNodeAttributes("");
-      this.main.setNodeCaptureGroups("");
-      this.main.setNodeColor("#8ebae5");
+      if (!this.main.getInNodeFilterEditMode) {
+        this.main.setGeneratedRegex("/" + this.main.getGeneratedRegex + "/gm"),
+          this.main.getJson["nodeFilterList"].push({
+            name: this.main.getRegexName,
+            regex: this.main.getGeneratedRegex,
+            id: (
+              this.main.getJson.packageName + this.main.getRegexName
+            ).replace(/\s/g, ""),
+            spec: "node",
+            exclude: [this.main.getExcludes],
+            extension: this.main.getFileExtension,
+            attributes: this.main.getAttributes,
+            style: { color: this.main.getNodeColor },
+            failures: [""],
+            label: this.main.getNodeLabel,
+            labelAttribute: this.main.getLabelAttributeSelection,
+          }),
+          this.main.setAttributes({});
+        this.main.setTemp(this.main.getRegexName);
+        this.addNodeFilterDialog = true;
+        this.main.setRegexName("");
+        this.main.setGeneratedRegex("");
+        this.main.setExcludes("");
+        this.main.setFileExtension("");
+        this.main.setLabelAttributeSelection("");
+        this.main.setNodeLabel("");
+        this.main.setRegexName("");
+        this.main.setNodeLabel("");
+        this.main.setNodeAttributes("");
+        this.main.setNodeCaptureGroups("");
+        this.main.setNodeColor("#8ebae5");
+      } else {
+        for (let i = 0; i < this.main.getJson.nodeFilterList.length; i++) {
+          if (
+            this.main.getJson.nodeFilterList[i].id ===
+            this.main.getEditModeScope
+          ) {
+            let tempFilter = this.main.getJson.nodeFilterList;
+            console.log(tempFilter[i]);
+            tempFilter[i].name = this.regexName;
+            tempFilter[i].regex = "/" + this.generatedRegex + "/gm";
+            tempFilter[i].exclude = ["/" + this.excludes + "/gm"];
+            tempFilter[i].extension = this.fileExtension;
+            tempFilter[i].style.color = this.nodeColor;
+            tempFilter[i].label = this.nodeLabel;
+            tempFilter[i].labelAttribute = this.labelAttributeSelection;
+
+            this.main.setAttributes({});
+            this.main.setTemp(this.main.getRegexName);
+            this.addNodeFilterDialog = true;
+            this.main.setRegexName("");
+            this.main.setGeneratedRegex("");
+            this.main.setExcludes("");
+            this.main.setFileExtension("");
+            this.main.setLabelAttributeSelection("");
+            this.main.setNodeLabel("");
+            this.main.setRegexName("");
+            this.main.setNodeLabel("");
+            this.main.setNodeAttributes("");
+            this.main.setNodeCaptureGroups("");
+            this.main.setNodeColor("#8ebae5");
+            this.main.setNodeFilterList(tempFilter);
+          }
+        }
+      }
+      this.main.setInNodeFilterEditMode(false);
     },
     addEdgeFilter() {
       this.main.getJson["edgeFilterList"].push({

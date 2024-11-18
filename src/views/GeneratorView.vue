@@ -76,9 +76,7 @@
               ></v-list-item>
               <v-btn
                 prepend-icon="$edit"
-                :disabled="
-                  main.getInNodeFilterEditMode || main.getInEdgeFilterEditMode
-                "
+                :disabled="main.getInEditMode"
                 @click="nodeEditMode(filter.name)"
                 >edit</v-btn
               >
@@ -112,10 +110,8 @@
               ></v-list-item>
               <v-btn
                 prepend-icon="$edit"
-                :disabled="
-                  !main.getInEdgeFilterEditMode || !main.getInNodeFilterEditMode
-                "
-                @click="edgeEditMode"
+                :disabled="main.getInEditMode"
+                @click="edgeEditMode(edge.name)"
                 >edit</v-btn
               >
             </v-list-group>
@@ -515,28 +511,20 @@ export default {
     };
   },
   computed: {
+    inEditMode: {
+      get() {
+        return this.main.getInEditMode;
+      },
+      set(payload) {
+        this.main.setInEditMode(payload);
+      },
+    },
     editModeScope: {
       get() {
         return this.main.getEditModeScope;
       },
       set(payload) {
         this.main.setEditModeScope(payload);
-      },
-    },
-    inNodeFilterEditMode: {
-      get() {
-        return this.main.getInNodeFilterEditMode;
-      },
-      set(payload) {
-        this.main.setInNodeFilterEditMode(payload);
-      },
-    },
-    inEdgeFilterEditMode: {
-      get() {
-        return this.main.getInEdgeFilterEditMode;
-      },
-      set(payload) {
-        this.main.setInEdgeFilterEditMode(payload);
       },
     },
     edgeColorpicker: {
@@ -774,7 +762,7 @@ export default {
   props: {},
   methods: {
     nodeEditMode(filterName) {
-      this.main.setInNodeFilterEditMode(true);
+      this.main.setInEditMode(true);
       //console.log(filterName);
       for (let i = 0; i < this.main.getJson.nodeFilterList.length; i++) {
         if (this.main.getJson.nodeFilterList[i].name === filterName) {
@@ -802,8 +790,35 @@ export default {
         }
       }
     },
-    edgeEditMode() {
-      this.main.setInEdgeFilterEditMode(true);
+    edgeEditMode(edgeFilterName) {
+      this.main.setInEditMode(true);
+      for (let i = 0; i < this.main.getJson.edgeFilterList.length; i++) {
+        if (this.main.getJson.edgeFilterList[i].name === edgeFilterName) {
+          this.edgeName = this.main.getJson.edgeFilterList[i].name;
+          this.fromAttributeSelection =
+            this.main.getJson.edgeFilterList[i].from.attribute;
+          this.toAttributeSelection =
+            this.main.getJson.edgeFilterList[i].to.attribute;
+          for (let j = 0; j < this.main.getJson.nodeFilterList.length; j++) {
+            if (
+              this.main.getJson.nodeFilterList[j].id ===
+              this.main.getJson.edgeFilterList[i].from.nodeFilterID
+            ) {
+              this.fromSelection = this.main.getJson.nodeFilterList[j].name;
+            }
+          }
+          for (let k = 0; k < this.main.getJson.nodeFilterList.length; k++) {
+            if (
+              this.main.getJson.nodeFilterList[k].id ===
+              this.main.getJson.edgeFilterList[i].to.nodeFilterID
+            ) {
+              this.toSelection = this.main.getJson.nodeFilterList[k].name;
+            }
+          }
+        }
+        this.edgeColorpicker = this.main.getJson.edgeFilterList[i].style.color;
+        this.edgeLabel = this.main.getJson.edgeFilterList[i].label;
+      }
     },
     nodeListDropdown() {
       if (document.getElementById("filterElement").style.display == "none") {
@@ -907,7 +922,7 @@ export default {
           }
         }
       }
-      this.main.setInNodeFilterEditMode(false);
+      this.main.setInEditMode(false);
     },
     addEdgeFilter() {
       this.main.getJson["edgeFilterList"].push({
@@ -1027,8 +1042,7 @@ export default {
         this.main.setDesc(parsedInput.desc);
         this.main.setNodeFilterList(parsedInput.nodeFilterList);
         this.main.setEdgeFilterList(parsedInput.edgeFilterList);
-        this.main.setInEdgeFilterEditMode(false);
-        this.main.setInNodeFilterEditMode(false);
+        this.main.setInEditMode(false);
         this.generatePackage();
       });
     },

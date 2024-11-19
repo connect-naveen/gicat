@@ -360,12 +360,12 @@
               prepend-icon="$plus"
               @click="addNodeFilter"
               :disabled="main.getJson == null"
-              >{{ main.getInNodeFilterEditMode ? "save" : "Add filter" }}
+              >{{ main.getInEditMode ? "save" : "Add filter" }}
             </v-btn>
             <v-dialog v-model="addNodeFilterDialog" width="auto">
               <v-card>
                 <v-card-text>
-                  Your filter {{ temp }} was added to your filter package
+                  {{ "Your package explorer has been updated!" }}
                 </v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addNodeFilterDialog = false"
@@ -456,13 +456,12 @@
               prepend-icon="$plus"
               @click="addEdgeFilter"
               :disabled="main.getJson == null"
-              >Add filter
+              >{{ main.getInEditMode ? "save" : "Add filter" }}
             </v-btn>
             <v-dialog v-model="addEdgeFilterDialog" width="auto">
               <v-card>
                 <v-card-text>
-                  Edge filter {{ main.getEdgeName }} was added to your filter
-                  package!
+                  {{ "Your package explorer has been updated!" }}
                 </v-card-text>
                 <v-card-actions>
                   <v-btn block @click="addEdgeFilterDialog = false"
@@ -794,6 +793,7 @@ export default {
       this.main.setInEditMode(true);
       for (let i = 0; i < this.main.getJson.edgeFilterList.length; i++) {
         if (this.main.getJson.edgeFilterList[i].name === edgeFilterName) {
+          this.main.setEditModeScope(this.main.getJson.edgeFilterList[i].id);
           this.edgeName = this.main.getJson.edgeFilterList[i].name;
           this.fromAttributeSelection =
             this.main.getJson.edgeFilterList[i].from.attribute;
@@ -857,7 +857,7 @@ export default {
       this.main.setGeneratedRegex("");
     },
     addNodeFilter() {
-      if (!this.main.getInNodeFilterEditMode) {
+      if (!this.main.getInEditMode) {
         this.main.setGeneratedRegex("/" + this.main.getGeneratedRegex + "/gm"),
           this.main.getJson["nodeFilterList"].push({
             name: this.main.getRegexName,
@@ -922,40 +922,73 @@ export default {
           }
         }
       }
+      this.main.setEditModeScope("");
       this.main.setInEditMode(false);
     },
     addEdgeFilter() {
-      this.main.getJson["edgeFilterList"].push({
-        "allow-loop": this.main.getLoopSelection,
-        mode: "",
-        label: this.main.getEdgeLabel,
-        spec: "edge",
-        id: (this.main.getJson.packageName + this.main.getEdgeName).replace(
-          /\s/g,
-          ""
-        ),
-        name: this.main.getEdgeName,
-        from: {
-          nodeFilterID: (
-            this.main.getJson.packageName + this.main.getFromSelection
-          ).replace(/\s/g, ""),
-          attribute: this.main.getFromAttributeSelection,
-        },
-        to: {
-          nodeFilterID: (
-            this.main.getJson.packageName + this.main.getToSelection
-          ).replace(/\s/g, ""),
-          attribute: this.main.getToAttributeSelection,
-        },
-        style: {
-          color: this.main.getEdgeColorPicker,
-        },
-      });
-      this.main.setEdgeName("");
-      this.main.setLoopSelection("");
-      this.main.setEdgeColorPicker("#8ebae5");
-      this.main.setEdgeLabel("");
-      this.addEdgeFilterDialog = true;
+      if (!this.main.getInEditMode) {
+        this.main.getJson["edgeFilterList"].push({
+          "allow-loop": this.main.getLoopSelection,
+          mode: "",
+          label: this.main.getEdgeLabel,
+          spec: "edge",
+          id: (this.main.getJson.packageName + this.main.getEdgeName).replace(
+            /\s/g,
+            ""
+          ),
+          name: this.main.getEdgeName,
+          from: {
+            nodeFilterID: (
+              this.main.getJson.packageName + this.main.getFromSelection
+            ).replace(/\s/g, ""),
+            attribute: this.main.getFromAttributeSelection,
+          },
+          to: {
+            nodeFilterID: (
+              this.main.getJson.packageName + this.main.getToSelection
+            ).replace(/\s/g, ""),
+            attribute: this.main.getToAttributeSelection,
+          },
+          style: {
+            color: this.main.getEdgeColorPicker,
+          },
+        });
+        this.main.setEdgeName("");
+        this.main.setLoopSelection("");
+        this.main.setEdgeColorPicker("#8ebae5");
+        this.main.setEdgeLabel("");
+        this.addEdgeFilterDialog = true;
+      } else {
+        for (let i = 0; i < this.main.getJson.edgeFilterList.length; i++) {
+          if (
+            this.main.getJson.edgeFilterList[i].id ===
+            this.main.getEditModeScope
+          ) {
+            let tempFilter = this.main.getJson.edgeFilterList;
+            tempFilter[i].label = this.edgeLabel;
+            tempFilter[i].name = this.edgeName;
+            tempFilter[i].from.attribute = this.fromAttributeSelection;
+            tempFilter[i].to.attribute = this.toAttributeSelection;
+            tempFilter[i].style.color = this.edgeColorPicker;
+
+            for (let j = 0; j < this.main.getJson.nodeFilterList.length; j++) {
+              if (
+                this.fromSelection === this.main.getJson.nodeFilterList[j].name
+              ) {
+                tempFilter[i].from.nodeFilterID =
+                  this.main.getJson.nodeFilterList[j].id;
+              }
+              if (
+                this.toSelection === this.main.getJson.nodeFilterList[j].name
+              ) {
+                tempFilter[i].to.nodeFilterID =
+                  this.main.getJson.nodeFilterList[j].id;
+              }
+            }
+            this.addEdgeFilterDialog = true;
+          }
+        }
+      }
     },
     generateRegex() {
       let snippetSelection = window.getSelection();

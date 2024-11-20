@@ -10,7 +10,7 @@
         class="text-center"
         position="fixed"
       >
-        <v-list>
+        <v-list id="packageExplorer">
           <v-list-item
             value="explorer"
             title="Package Explorer"
@@ -1105,6 +1105,12 @@ export default {
   width: 75%;
   text-align: left;
   margin-left: 5px;
+}
+
+#packageExplorer {
+  overflow: scroll;
+  overflow-y: scroll;
+  max-height: 400px;
 }
 
 li {

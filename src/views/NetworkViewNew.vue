@@ -58,7 +58,7 @@
           label="Graph strength:"
         ></v-slider>
       </div>
-      <div>
+      <div class="renderer">
         <v-network-graph
           ref="graph"
           class="graph"
@@ -606,9 +606,8 @@ export default {
 </script>
 
 <style>
-.network {
+.renderer {
   height: 100%;
-  width: 100%;
 }
 
 .network-nav {

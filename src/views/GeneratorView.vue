@@ -56,12 +56,12 @@
                 :subtitle="filter.regex"
                 class="subItem"
               ></v-list-item>
-              <v-list-item
+              <!--<v-list-item
                 v-if="filter.exclude != ''"
                 title="Exclude:"
                 :subtitle="filter.exclude"
                 class="subItem"
-              ></v-list-item>
+              ></v-list-item>-->
               <v-list-item
                 v-if="filter.label"
                 title="Node label:"
@@ -279,6 +279,7 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        <!--
         <v-row>
           <v-col cols="12" md="8">
             <v-text-field
@@ -288,6 +289,7 @@
             ></v-text-field>
           </v-col>
         </v-row>
+      -->
         <br /><br />
         <v-row>
           <v-col cols="12" md="4">
@@ -654,14 +656,14 @@ export default {
         this.main.setFileExtension(payload);
       },
     },
-    excludes: {
+    /*excludes: {
       get() {
         return this.main.getExcludes;
       },
       set(payload) {
         this.main.setExcludes(payload);
       },
-    },
+    },*/
     regexName: {
       get() {
         return this.main.getRegexName;
@@ -776,10 +778,10 @@ export default {
           this.fileExtension = this.main.getJson.nodeFilterList[i].extension;
           this.regexName = this.main.getJson.nodeFilterList[i].name;
           this.nodeLabel = this.main.getJson.nodeFilterList[i].label;
-          this.excludes = this.main.getJson.nodeFilterList[i].exclude[0].substr(
+          /*this.excludes = this.main.getJson.nodeFilterList[i].exclude[0].substr(
             1,
             this.main.getJson.nodeFilterList[i].exclude[0].length - 4
-          );
+          );*/
           this.labelAttributeSelection =
             this.main.getJson.nodeFilterList[i].labelAttribue;
           this.nodeColor = this.main.getJson.nodeFilterList[i].style.color;
@@ -866,7 +868,7 @@ export default {
               this.main.getJson.packageName + this.main.getRegexName
             ).replace(/\s/g, ""),
             spec: "node",
-            exclude: [this.main.getExcludes],
+            //exclude: [this.main.getExcludes],
             extension: this.main.getFileExtension,
             attributes: this.main.getAttributes,
             style: { color: this.main.getNodeColor },
@@ -879,7 +881,7 @@ export default {
         this.addNodeFilterDialog = true;
         this.main.setRegexName("");
         this.main.setGeneratedRegex("");
-        this.main.setExcludes("");
+        //this.main.setExcludes("");
         this.main.setFileExtension("");
         this.main.setLabelAttributeSelection("");
         this.main.setNodeLabel("");
@@ -898,7 +900,7 @@ export default {
             console.log(tempFilter[i]);
             tempFilter[i].name = this.regexName;
             tempFilter[i].regex = "/" + this.generatedRegex + "/gm";
-            tempFilter[i].exclude = ["/" + this.excludes + "/gm"];
+            //tempFilter[i].exclude = ["/" + this.excludes + "/gm"];
             tempFilter[i].extension = this.fileExtension;
             tempFilter[i].style.color = this.nodeColor;
             tempFilter[i].label = this.nodeLabel;
@@ -909,7 +911,7 @@ export default {
             this.addNodeFilterDialog = true;
             this.main.setRegexName("");
             this.main.setGeneratedRegex("");
-            this.main.setExcludes("");
+            //this.main.setExcludes("");
             this.main.setFileExtension("");
             this.main.setLabelAttributeSelection("");
             this.main.setNodeLabel("");

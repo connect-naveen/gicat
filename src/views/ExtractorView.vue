@@ -19,6 +19,23 @@
           >Start Visualisation
         </v-btn>
       </div>
+      <v-dialog max-width="500">
+        <template v-slot:default="{ isActive }">
+          <v-card title="Dialog">
+            <v-card-text>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn
+                text="Close Dialog"
+                @click="isActive.value = false"
+              ></v-btn>
+            </v-card-actions>
+          </v-card>
+        </template>
+      </v-dialog>
     </div>
   </v-main>
 </template>
@@ -26,6 +43,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
+import { readdir } from "node:fs/promises";
 const ce = window.ce;
 
 export default {
@@ -58,11 +76,10 @@ export default {
       } else {
         this.setRepoPath("");
       }
-      console.log("repo:");
-      console.log(this.getRepoPath);
+      //console.log("repo:");
+      //console.log(this.getRepoPath);
     },
     // -----
-    // TODO always load all available filters
     async loadFilters() {
       let arr = await dialog.showOpenDialog({
         properties: ["openFile", "multiSelections"],
@@ -70,7 +87,7 @@ export default {
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
           // TODO check for existing filter id
-          console.log(el);
+          //console.log(el);
           let filter = ce.loadNodeFilter(el);
           if (filter.spec === "node") {
             this.addNodeFilter(filter);
@@ -82,7 +99,7 @@ export default {
           }
         }
       }
-      console.log(this.getFilters);
+      //console.log(this.getFilters);
     },
     resetFiltersButton() {
       this.resetFilters();
@@ -90,19 +107,34 @@ export default {
     // -----
     async startVisualisation() {
       if (this.getRepoPath != "") {
-        console.log(`The Path of the repository is: ${this.getRepoPath}`);
+        //console.log(`The Path of the repository is: ${this.getRepoPath}`);
 
         let graph = await ce.getGraph(this.getRepoPath);
         let nodeFilters = this.getNodeFilters;
         let edgeFilters = this.getEdgeFilters;
+        let fileList;
+
+        try {
+          fileList = await readdir(this.getRepoPath, { recursive: true });
+        } catch (err) {
+          console.error(err);
+        }
+        console.log(
+          "--------------- NUMBER OF FILES IN CHOSEN DIRECTORY: " +
+            fileList.length +
+            "--------------------------"
+        );
+        if (fileList.length > 50) {
+          this.isActive.value = true;
+        }
 
         for (const filter of nodeFilters) {
           await ce.filterNode(graph, filter);
-          console.log(graph);
+          //console.log(graph);
         }
         for (const filter of edgeFilters) {
           await ce.filterEdge(graph, filter);
-          console.log(graph);
+          //console.log(graph);
         }
         await this.setGraph(graph);
         this.$router.push({ path: "extractor/networkNew/" });
@@ -126,7 +158,7 @@ export default {
       "getFilters",
     ]),
     isRepoPathEmpty() {
-      console.log(this.getRepoPath);
+      //console.log(this.getRepoPath);
       return this.getRepoPath != "";
     },
   },

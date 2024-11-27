@@ -8,6 +8,15 @@
         </v-btn>
         <br />
         <br />
+        <v-alert
+          rounded="lg"
+          v-model="alertWarning"
+          closable
+          text="The directory you have selected is relatively large. Please make sure that your machine has enough resources to display a large graph or the performance of the software will be significantly reduced. Otherwise, you can go deeper into the directory tree to first analyze parts of the code and further reduce the number of nodes generated in this way."
+          type="warning"
+          variant="tonal"
+        ></v-alert>
+        <br />
         <div>Current path:</div>
         <div>{{ getRepoPath }}</div>
         <br />
@@ -19,23 +28,6 @@
           >Start Visualisation
         </v-btn>
       </div>
-      <v-dialog max-width="500">
-        <template v-slot:default="{ isActive }">
-          <v-card title="Dialog">
-            <v-card-text>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                text="Close Dialog"
-                @click="isActive.value = false"
-              ></v-btn>
-            </v-card-actions>
-          </v-card>
-        </template>
-      </v-dialog>
     </div>
   </v-main>
 </template>
@@ -48,7 +40,9 @@ const ce = window.ce;
 
 export default {
   data() {
-    return {};
+    return {
+      alertWarning: false,
+    };
   },
   name: "ExtractorView",
   components: {},
@@ -73,6 +67,22 @@ export default {
       if (!repoPath.canceled && repoPath.filePaths[0]) {
         this.setRepoPath(repoPath.filePaths[0]);
         this.isDirEmpty = false;
+        let fileList;
+        try {
+          fileList = await readdir(this.getRepoPath, { recursive: true });
+          if (fileList.length > 200) {
+            this.alertWarning = true;
+          } else {
+            this.alertWarning = false;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+        console.log(
+          "--------------- NUMBER OF FILES IN CHOSEN DIRECTORY: " +
+            fileList.length +
+            "--------------------------"
+        );
       } else {
         this.setRepoPath("");
       }
@@ -112,21 +122,6 @@ export default {
         let graph = await ce.getGraph(this.getRepoPath);
         let nodeFilters = this.getNodeFilters;
         let edgeFilters = this.getEdgeFilters;
-        let fileList;
-
-        try {
-          fileList = await readdir(this.getRepoPath, { recursive: true });
-        } catch (err) {
-          console.error(err);
-        }
-        console.log(
-          "--------------- NUMBER OF FILES IN CHOSEN DIRECTORY: " +
-            fileList.length +
-            "--------------------------"
-        );
-        if (fileList.length > 50) {
-          this.isActive.value = true;
-        }
 
         for (const filter of nodeFilters) {
           await ce.filterNode(graph, filter);

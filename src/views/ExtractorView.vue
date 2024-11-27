@@ -8,6 +8,15 @@
         </v-btn>
         <br />
         <br />
+        <v-alert
+          rounded="lg"
+          v-model="alertWarning"
+          closable
+          text="The directory you have selected is relatively large. Please make sure that your machine has enough resources to display a large graph or the performance of the software will be significantly reduced. Otherwise, you can go deeper into the directory tree to first analyze parts of the code and further reduce the number of nodes generated in this way."
+          type="warning"
+          variant="tonal"
+        ></v-alert>
+        <br />
         <div>Current path:</div>
         <div>{{ getRepoPath }}</div>
         <br />
@@ -26,11 +35,14 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
+import { readdir } from "node:fs/promises";
 const ce = window.ce;
 
 export default {
   data() {
-    return {};
+    return {
+      alertWarning: false,
+    };
   },
   name: "ExtractorView",
   components: {},
@@ -55,14 +67,29 @@ export default {
       if (!repoPath.canceled && repoPath.filePaths[0]) {
         this.setRepoPath(repoPath.filePaths[0]);
         this.isDirEmpty = false;
+        let fileList;
+        try {
+          fileList = await readdir(this.getRepoPath, { recursive: true });
+          if (fileList.length > 200) {
+            this.alertWarning = true;
+          } else {
+            this.alertWarning = false;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+        console.log(
+          "--------------- NUMBER OF FILES IN CHOSEN DIRECTORY: " +
+            fileList.length +
+            "--------------------------"
+        );
       } else {
         this.setRepoPath("");
       }
-      console.log("repo:");
-      console.log(this.getRepoPath);
+      //console.log("repo:");
+      //console.log(this.getRepoPath);
     },
     // -----
-    // TODO always load all available filters
     async loadFilters() {
       let arr = await dialog.showOpenDialog({
         properties: ["openFile", "multiSelections"],
@@ -70,7 +97,7 @@ export default {
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
           // TODO check for existing filter id
-          console.log(el);
+          //console.log(el);
           let filter = ce.loadNodeFilter(el);
           if (filter.spec === "node") {
             this.addNodeFilter(filter);
@@ -82,7 +109,7 @@ export default {
           }
         }
       }
-      console.log(this.getFilters);
+      //console.log(this.getFilters);
     },
     resetFiltersButton() {
       this.resetFilters();
@@ -90,7 +117,7 @@ export default {
     // -----
     async startVisualisation() {
       if (this.getRepoPath != "") {
-        console.log(`The Path of the repository is: ${this.getRepoPath}`);
+        //console.log(`The Path of the repository is: ${this.getRepoPath}`);
 
         let graph = await ce.getGraph(this.getRepoPath);
         let nodeFilters = this.getNodeFilters;
@@ -98,11 +125,11 @@ export default {
 
         for (const filter of nodeFilters) {
           await ce.filterNode(graph, filter);
-          console.log(graph);
+          //console.log(graph);
         }
         for (const filter of edgeFilters) {
           await ce.filterEdge(graph, filter);
-          console.log(graph);
+          //console.log(graph);
         }
         await this.setGraph(graph);
         this.$router.push({ path: "extractor/networkNew/" });
@@ -126,7 +153,7 @@ export default {
       "getFilters",
     ]),
     isRepoPathEmpty() {
-      console.log(this.getRepoPath);
+      //console.log(this.getRepoPath);
       return this.getRepoPath != "";
     },
   },

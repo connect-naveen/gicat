@@ -988,6 +988,7 @@ export default {
               }
             }
             this.addEdgeFilterDialog = true;
+            this.main.setInEditMode(false);
           }
         }
       }

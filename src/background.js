@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow } from "electron";
+import { app, protocol, BrowserWindow, dialog } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
@@ -13,22 +13,22 @@ protocol.registerSchemesAsPrivileged([
 ]);
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-function registerLocalVideoProtocol () {
-  protocol.registerFileProtocol('local-video', (request, callback) => {
-    const url = request.url.replace(/^local-video:\/\//, '')
+function registerLocalVideoProtocol() {
+  protocol.registerFileProtocol("local-video", (request, callback) => {
+    const url = request.url.replace(/^local-video:\/\//, "");
     // Decode URL to prevent errors when loading filenames with UTF-8 chars or chars like "#"
-    const decodedUrl = decodeURI(url) // Needed in case URL contains spaces
+    const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
     try {
       // eslint-disable-next-line no-undef
-      return callback(path.join(__static, decodedUrl))
+      return callback(path.join(__static, decodedUrl));
     } catch (error) {
       console.error(
-        'ERROR: registerLocalVideoProtocol: Could not get file path:',
+        "ERROR: registerLocalVideoProtocol: Could not get file path:",
         error
-      )
+      );
     }
-  })
-};
+  });
+}
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -40,9 +40,32 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      preload: path.resolve(__dirname, 'preload.js'),
+      //preload: path.resolve(__dirname, "preload.js"),
       spellcheck: false,
     },
+  });
+
+  // Remove Windows and Linux tray menu
+  win.removeMenu();
+
+  // Close window warning
+  win.on("close", (e) => {
+    e.preventDefault();
+    dialog
+      .showMessageBox({
+        type: "question",
+        buttons: ["No", "Yes"],
+        title: "Closing the program!",
+        message: "Do you really want to close the program?",
+        defaultId: 0,
+        cancelId: 1,
+      })
+      .then(({ response }) => {
+        if (response) {
+          win.destroy();
+          app.quit();
+        }
+      });
   });
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
@@ -87,9 +110,9 @@ app.on("ready", async () => {
   registerLocalVideoProtocol();
 });
 
-app.on('browser-window-created', (_, window) => {
-  require("@electron/remote/main").enable(window.webContents)
-})
+app.on("browser-window-created", (_, window) => {
+  require("@electron/remote/main").enable(window.webContents);
+});
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {

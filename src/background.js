@@ -40,7 +40,7 @@ async function createWindow() {
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
-      //preload: path.resolve(__dirname, "preload.js"),
+      preload: path.resolve(__dirname, "preload.js"),
       spellcheck: false,
     },
   });

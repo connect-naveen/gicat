@@ -151,9 +151,17 @@
               class="marker"
               :class="{ hovered, selected }"
               d="M-5 -5 L5 0 L-5 5 Z"
-              :transform="makeTransform(center, position, scale)"
-              :fill="this.edgeHidden(edge) ? 'white' : 'black'"
-              :fill-opacity="this.edgeHidden(edge) ? 0 : 1"
+              :transform="
+                makeTransform(center, position, scale, hovered, selected)
+              "
+              :fill="
+                this.edgeHidden(edge) || this.edgeLabelHidden(edge)
+                  ? 'white'
+                  : 'black'
+              "
+              :fill-opacity="
+                this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 1
+              "
               v-bind="slotProps"
             />
           </template>
@@ -240,12 +248,6 @@ export default {
         },
         node: {
           selectable: 12,
-          focusring: {
-            visible: false,
-            width: 4,
-            padding: 13,
-            color: "#eebb00",
-          },
           normal: {
             strokeWidth: 1,
             strokeColor: "#000000",
@@ -259,7 +261,7 @@ export default {
             height: "50",
           },
           selected: {
-            strokeWidth: 8,
+            strokeWidth: 6,
             strokeColor: "#000000",
             width: "300",
             height: "50",
@@ -268,20 +270,30 @@ export default {
         edge: {
           normal: {
             color: (edge) =>
-              edge.label && !this.edgeLabelHidden(edge)
+              edge.label &&
+              !this.edgeLabelHidden(edge) &&
+              !this.edgeHidden(edge)
                 ? edge.meta.color
+                : edge.label &&
+                  (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
+                ? "white"
                 : "black",
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 2),
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 2,
+            dasharray: "0",
           },
-          selectable: 25,
+          selectable: 12,
           selected: {
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
             color: (edge) => (edge.label ? edge.meta.color : "black"),
-            dasharray: false,
+            dasharray: "0",
           },
           hover: {
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
             color: (edge) => (edge.label ? edge.meta.color : "black"),
+            dasharray: "0",
           },
           label: {
             fontSize: 30,
@@ -315,13 +327,20 @@ export default {
     // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
     // |                                                                 |
     // |=================================================================|
-    makeTransform(center, edgePos, scale) {
+    makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
         edgePos.target.x - edgePos.source.x
       );
       const degree = (radian * 180.0) / Math.PI;
 
+      if (hovered || selected) {
+        return [
+          `translate(${center.x} ${center.y})`,
+          `scale(${scale * 3.5}, ${scale * 3.5})`,
+          `rotate(${degree})`,
+        ].join(" ");
+      }
       return [
         `translate(${center.x} ${center.y})`,
         `scale(${scale * 2.5}, ${scale * 2.5})`,

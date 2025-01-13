@@ -70,6 +70,7 @@
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
+              class="testClass"
               :width="
                 this.isFolder(nodes[nodeId])
                   ? Math.max(nodes[nodeId].name.length * 20, 200)
@@ -254,7 +255,7 @@ export default {
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",
-            height: "500",
+            height: "50",
           },
           hover: {
             strokeWidth: 6,
@@ -673,5 +674,9 @@ export default {
 
 .slider {
   margin-left: 100px;
+}
+
+.testClass {
+  fill: #00549f;
 }
 </style>

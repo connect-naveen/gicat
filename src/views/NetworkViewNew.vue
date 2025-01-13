@@ -251,7 +251,7 @@ export default {
         node: {
           selectable: 12,
           normal: {
-            color: (node) => node.meta.color,
+            color: (node) => node.color,
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",
@@ -259,14 +259,14 @@ export default {
           },
           hover: {
             strokeWidth: 6,
-            color: (node) => node.meta.color,
+            color: (node) => node.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
           },
           selected: {
             strokeWidth: 6,
-            color: (node) => node.meta.color,
+            color: (node) => node.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
@@ -291,13 +291,13 @@ export default {
           selected: {
             width: (edge) =>
               this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
-            color: (edge) => (edge.label ? edge.meta.color : "black"),
+            color: (edge) => (edge.label ? edge.color : "black"),
             dasharray: "0",
           },
           hover: {
             width: (edge) =>
               this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
-            color: (edge) => (edge.label ? edge.meta.color : "black"),
+            color: (edge) => (edge.label ? edge.color : "black"),
             dasharray: "0",
           },
           label: {
@@ -674,9 +674,5 @@ export default {
 
 .slider {
   margin-left: 100px;
-}
-
-.testClass {
-  fill: #00549f;
 }
 </style>

@@ -204,6 +204,7 @@ export default {
   },
   data() {
     return {
+      color: "red",
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -253,16 +254,18 @@ export default {
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",
-            height: "50",
+            height: "500",
           },
           hover: {
             strokeWidth: 6,
+            color: (node) => node.meta.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
           },
           selected: {
             strokeWidth: 6,
+            color: (node) => node.meta.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
@@ -274,7 +277,7 @@ export default {
               edge.label &&
               !this.edgeLabelHidden(edge) &&
               !this.edgeHidden(edge)
-                ? "#BA33E2"
+                ? edge.meta.color
                 : edge.label &&
                   (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
                 ? "white"

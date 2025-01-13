@@ -274,7 +274,7 @@ export default {
               edge.label &&
               !this.edgeLabelHidden(edge) &&
               !this.edgeHidden(edge)
-                ? "pink"
+                ? "#BA33E2"
                 : edge.label &&
                   (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
                 ? "white"

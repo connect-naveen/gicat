@@ -95,6 +95,7 @@
               width="0"
               height="0"
               :fill="nodes[nodeId].color"
+              !important
               v-bind="slotProps"
               x="-100"
               y="-25"
@@ -249,6 +250,7 @@ export default {
         node: {
           selectable: 12,
           normal: {
+            color: (node) => node.color,
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",

@@ -76,7 +76,7 @@
                   : Math.max(nodes[nodeId].name.length * 12, 200)
               "
               :height="config.height"
-              :fill="nodes[nodeId].color"
+              :fill="config.color"
               :stroke="config.strokeColor"
               :stroke-width="config.strokeWidth"
               v-bind="slotProps"
@@ -94,8 +94,7 @@
             <div
               width="0"
               height="0"
-              :fill="nodes[nodeId].color"
-              !important
+              fill="white"
               v-bind="slotProps"
               x="-100"
               y="-25"
@@ -250,7 +249,7 @@ export default {
         node: {
           selectable: 12,
           normal: {
-            color: (node) => node.color,
+            color: (node) => node.meta.color,
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",

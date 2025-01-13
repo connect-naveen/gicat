@@ -77,7 +77,7 @@
                   : Math.max(nodes[nodeId].name.length * 12, 200)
               "
               :height="config.height"
-              :fill="config.color"
+              :fill="nodes[nodeId].color"
               :stroke="config.strokeColor"
               :stroke-width="config.strokeWidth"
               v-bind="slotProps"
@@ -205,7 +205,6 @@ export default {
   },
   data() {
     return {
-      color: "red",
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -278,7 +277,7 @@ export default {
               edge.label &&
               !this.edgeLabelHidden(edge) &&
               !this.edgeHidden(edge)
-                ? edge.meta.color
+                ? edge.color
                 : edge.label &&
                   (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
                 ? "white"

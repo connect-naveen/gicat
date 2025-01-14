@@ -270,6 +270,9 @@ export default {
             width: "300",
             height: "50",
           },
+          focusring: {
+            visible: false,
+          },
         },
         edge: {
           normal: {

@@ -450,7 +450,7 @@ export default {
       console.log(node.label + " is active: " + selectedNode.meta.active);
     },
     collapseChildren(hitNode) {
-      console.warn("colapse children");
+      console.warn("collapse children");
       if (hitNode.childrenCollapsed) {
         hitNode.childrenCollapsed = false;
       } else {

@@ -23,9 +23,9 @@
         <v-btn
           id="startVisButton"
           prepend-icon="$folderArrowDown"
-          @click="startVisualisation()"
+          @click="startVisualization()"
           :disabled="!isRepoPathEmpty"
-          >Start Visualisation
+          >Start Visualization
         </v-btn>
       </div>
     </div>
@@ -115,7 +115,7 @@ export default {
       this.resetFilters();
     },
     // -----
-    async startVisualisation() {
+    async startVisualization() {
       if (this.getRepoPath != "") {
         //console.log(`The Path of the repository is: ${this.getRepoPath}`);
 

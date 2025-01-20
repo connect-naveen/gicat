@@ -134,6 +134,7 @@
               :fill-opacity="edgeLabelHidden(edge) ? 0 : 1"
               vertical-align="above"
               v-bind="slotProps"
+              align="center"
             />
           </template>
           <template
@@ -208,7 +209,7 @@ export default {
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
-          console.log(type, event);
+          //console.log(type, event);
           if (event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
@@ -552,7 +553,6 @@ export default {
       }
     },
     computePhysics() {
-      console.log("Distance parameter is equal to " + this.dist);
       let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,
         positionFixedByClickWithAltKey: true,

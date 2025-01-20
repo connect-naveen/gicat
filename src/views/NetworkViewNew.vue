@@ -70,6 +70,7 @@
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
+              class="testClass"
               :width="
                 this.isFolder(nodes[nodeId])
                   ? Math.max(nodes[nodeId].name.length * 20, 200)
@@ -94,7 +95,7 @@
             <div
               width="0"
               height="0"
-              :fill="nodes[nodeId].color"
+              fill="white"
               v-bind="slotProps"
               x="-100"
               y="-25"
@@ -133,6 +134,7 @@
               :fill-opacity="edgeLabelHidden(edge) ? 0 : 1"
               vertical-align="above"
               v-bind="slotProps"
+              align="center"
             />
           </template>
           <template
@@ -151,9 +153,17 @@
               class="marker"
               :class="{ hovered, selected }"
               d="M-5 -5 L5 0 L-5 5 Z"
-              :transform="makeTransform(center, position, scale)"
-              :fill="this.edgeHidden(edge) ? 'white' : 'black'"
-              :fill-opacity="this.edgeHidden(edge) ? 0 : 1"
+              :transform="
+                makeTransform(center, position, scale, hovered, selected)
+              "
+              :fill="
+                this.edgeHidden(edge) || this.edgeLabelHidden(edge)
+                  ? 'white'
+                  : 'black'
+              "
+              :fill-opacity="
+                this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 1
+              "
               v-bind="slotProps"
             />
           </template>
@@ -199,7 +209,7 @@ export default {
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
-          console.log(type, event);
+          //console.log(type, event);
           if (event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
@@ -240,13 +250,8 @@ export default {
         },
         node: {
           selectable: 12,
-          focusring: {
-            visible: false,
-            width: 4,
-            padding: 13,
-            color: "#eebb00",
-          },
           normal: {
+            color: (node) => node.color,
             strokeWidth: 1,
             strokeColor: "#000000",
             width: "300",
@@ -254,34 +259,49 @@ export default {
           },
           hover: {
             strokeWidth: 6,
+            color: (node) => node.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
           },
           selected: {
-            strokeWidth: 8,
+            strokeWidth: 6,
+            color: (node) => node.color,
             strokeColor: "#000000",
             width: "300",
             height: "50",
+          },
+          focusring: {
+            visible: false,
           },
         },
         edge: {
           normal: {
             color: (edge) =>
-              edge.label && !this.edgeLabelHidden(edge)
-                ? edge.meta.color
+              edge.label &&
+              !this.edgeLabelHidden(edge) &&
+              !this.edgeHidden(edge)
+                ? edge.color
+                : edge.label &&
+                  (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
+                ? "white"
                 : "black",
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 2),
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 2,
+            dasharray: "0",
           },
-          selectable: 25,
+          selectable: 12,
           selected: {
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
-            color: (edge) => (edge.label ? edge.meta.color : "black"),
-            dasharray: false,
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
+            color: (edge) => (edge.label ? edge.color : "black"),
+            dasharray: "0",
           },
           hover: {
-            width: (edge) => (this.edgeHidden(edge) ? 0 : 6),
-            color: (edge) => (edge.label ? edge.meta.color : "black"),
+            width: (edge) =>
+              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
+            color: (edge) => (edge.label ? edge.color : "black"),
+            dasharray: "0",
           },
           label: {
             fontSize: 30,
@@ -315,13 +335,20 @@ export default {
     // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
     // |                                                                 |
     // |=================================================================|
-    makeTransform(center, edgePos, scale) {
+    makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
         edgePos.target.x - edgePos.source.x
       );
       const degree = (radian * 180.0) / Math.PI;
 
+      if (hovered || selected) {
+        return [
+          `translate(${center.x} ${center.y})`,
+          `scale(${scale * 3.5}, ${scale * 3.5})`,
+          `rotate(${degree})`,
+        ].join(" ");
+      }
       return [
         `translate(${center.x} ${center.y})`,
         `scale(${scale * 2.5}, ${scale * 2.5})`,
@@ -427,7 +454,7 @@ export default {
       console.log(node.label + " is active: " + selectedNode.meta.active);
     },
     collapseChildren(hitNode) {
-      console.warn("colapse children");
+      console.warn("collapse children");
       if (hitNode.childrenCollapsed) {
         hitNode.childrenCollapsed = false;
       } else {
@@ -526,7 +553,6 @@ export default {
       }
     },
     computePhysics() {
-      console.log("Distance parameter is equal to " + this.dist);
       let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,
         positionFixedByClickWithAltKey: true,

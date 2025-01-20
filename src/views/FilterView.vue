@@ -68,7 +68,7 @@ export default {
       if (path && path != "") {
         this.loadFilterPackage(path);
       }
-      console.log(this.getFilters);
+      //console.log(this.getFilters);
     },
     resetFiltersButton() {
       this.resetFilters();
@@ -79,9 +79,9 @@ export default {
         console.warn("No path assigned");
         return;
       }
-      console.log("loading filter package");
+      //console.log("loading filter package");
       const filterPackage = await ce.loadJSON(filterPackagePath);
-      console.log(filterPackage);
+      //console.log(filterPackage);
       for (const nodeFilter of filterPackage.nodeFilterList) {
         await this.addNodeFilter(nodeFilter);
       }

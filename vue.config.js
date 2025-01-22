@@ -24,17 +24,17 @@ module.exports = defineConfig({
           target: ["dmg"],
           icon: "buildResources/icon.png",
         },
+        appImage: {
+          license: "license.md",
+        },
         dmg: {},
         linux: {
           target: ["appImage"],
         },
         directories: {
-          buildResources: "buildResources",
+          buildResources: "resources",
         },
-        files: ["buildResources/**/*"],
-        appImage: {
-          license: "license.md",
-        },
+        extraResources: ["resources/*"],
       },
     },
   },

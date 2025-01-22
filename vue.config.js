@@ -8,9 +8,7 @@ module.exports = defineConfig({
       preload: "public/preload.js",
       builderOptions: {
         win: {
-          target: [
-            "nsis"
-          ]
+          target: ["nsis"],
         },
         nsis: {
           allowToChangeInstallationDirectory: true,
@@ -19,25 +17,25 @@ module.exports = defineConfig({
           uninstallDisplayName: "GICAT-Uninstaller",
           license: "license.md",
           menuCategory: true,
-          oneClick: false
+          oneClick: false,
         },
         mac: {
-          "darkModeSupport": true,
-          target: [
-            "dmg"
-          ]
+          darkModeSupport: true,
+          target: ["dmg"],
+          icon: "buildResources/icon.png",
         },
-        dmg: {
-        },
+        dmg: {},
         linux: {
-          target: [
-            "appImage"
-          ]
+          target: ["appImage"],
         },
+        directories: {
+          buildResources: "buildResources",
+        },
+        files: ["buildResources/**/*"],
         appImage: {
-          license: "license.md"
-        }
-      }
-    }
-  }
+          license: "license.md",
+        },
+      },
+    },
+  },
 });

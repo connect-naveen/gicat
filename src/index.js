@@ -28,14 +28,14 @@ const createWindow = () => {
 
   // Close warning
   mainWindow.onbeforeunload = (e) => {
-    console.log('I do not want to be closed')
-  
+    console.log("I do not want to be closed");
+
     // Unlike usual browsers that a message box will be prompted to users, returning
     // a non-void value will silently cancel the close.
     // It is recommended to use the dialog API to let the user confirm closing the
     // application.
-    e.returnValue = false
-  }
+    e.returnValue = false;
+  };
 };
 
 // This method will be called when Electron has finished

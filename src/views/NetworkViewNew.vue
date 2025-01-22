@@ -249,7 +249,7 @@ export default {
           layoutHandler: getForcedLayout,
         },
         node: {
-          selectable: 12,
+          selectable: true,
           normal: {
             color: (node) => node.color,
             strokeWidth: 1,
@@ -266,9 +266,9 @@ export default {
           },
           selected: {
             strokeWidth: 6,
-            color: (node) => node.color,
             strokeColor: "#000000",
-            width: "300",
+            color: (node) => node.color,
+            width: "0",
             height: "50",
           },
           focusring: {

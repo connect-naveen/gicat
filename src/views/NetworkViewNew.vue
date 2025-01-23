@@ -268,7 +268,7 @@ export default {
             strokeWidth: 6,
             color: (node) => node.color,
             strokeColor: "#000000",
-            width: "300",
+            width: "0",
             height: "50",
           },
           focusring: {

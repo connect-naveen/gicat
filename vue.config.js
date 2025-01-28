@@ -23,6 +23,11 @@ module.exports = defineConfig({
           darkModeSupport: true,
           target: ["dmg"],
           icon: "buildResources/icon.png",
+          entitlements: "/build/entitlements.mac.plist",
+          extendInfo: {
+            NSAppleEventsUsageDescription:
+              "Please grant us access to your Events so we can open your chosen Code Editor through GICAT.",
+          },
         },
         appImage: {
           license: "license.md",

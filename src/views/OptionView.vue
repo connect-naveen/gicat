@@ -18,6 +18,7 @@
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
 import * as path from "path";
+//const { systemPreferences } = require("@electron/remote");
 
 export default {
   data() {
@@ -46,6 +47,7 @@ export default {
         this.setEditorPath("");
         this.setIsVsCode(false);
       }
+      console.log(editorPath);
     },
   },
   computed: {

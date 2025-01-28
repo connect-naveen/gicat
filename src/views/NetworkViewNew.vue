@@ -530,10 +530,14 @@ export default {
 
       try {
         if (this.getIsVsCode) {
+          console.log("VS Code is Code Editor");
           path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
           spawn(editorPath, ["--goto", path], opts);
         } else {
-          spawn(editorPath, [path], opts);
+          console.log("VS Code is not Code Editor");
+          let ep = editorPath + "/Contents/MacOS/Electron";
+          console.log("PATH: " + ep);
+          spawn(ep, [path], opts);
         }
       } catch (error) {
         console.error("editor not found");

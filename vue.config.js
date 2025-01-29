@@ -9,6 +9,7 @@ module.exports = defineConfig({
       builderOptions: {
         win: {
           target: ["nsis"],
+          icon: "buildResources/icon.png",
         },
         nsis: {
           allowToChangeInstallationDirectory: true,
@@ -23,19 +24,15 @@ module.exports = defineConfig({
           darkModeSupport: true,
           target: ["dmg"],
           icon: "buildResources/icon.png",
-          entitlements: "/build/entitlements.mac.plist",
-          extendInfo: {
-            NSAppleEventsUsageDescription:
-              "Please grant us access to your Events so we can open your chosen Code Editor through GICAT.",
-          },
+        },
+        linux: {
+          target: ["appImage"],
+          icon: "buildResources/icon.png",
         },
         appImage: {
           license: "license.md",
         },
         dmg: {},
-        linux: {
-          target: ["appImage"],
-        },
         directories: {
           buildResources: "resources",
         },

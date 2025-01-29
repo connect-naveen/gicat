@@ -23,20 +23,14 @@ module.exports = defineConfig({
         mac: {
           darkModeSupport: true,
           target: ["dmg"],
-          icon: "buildResources/icon.png",
         },
         linux: {
           target: ["appImage"],
-          icon: "buildResources/",
         },
         appImage: {
           license: "license.md",
         },
         dmg: {},
-        directories: {
-          buildResources: "resources",
-        },
-        extraResources: ["resources/*"],
       },
     },
   },

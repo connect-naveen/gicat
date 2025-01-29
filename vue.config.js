@@ -27,7 +27,7 @@ module.exports = defineConfig({
         },
         linux: {
           target: ["appImage"],
-          icon: "buildResources/icon.png",
+          icon: "buildResources/",
         },
         appImage: {
           license: "license.md",

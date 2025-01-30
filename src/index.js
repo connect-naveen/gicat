@@ -11,7 +11,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: "/logo.png",
+    icon: path.join(`${__dirname}/build/512x512.png`),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       spellcheck: false,
@@ -19,10 +19,6 @@ const createWindow = () => {
       nodeIntegrationInWorker: true,
     },
   });
-
-  if (process.platform === "linux") {
-    options.icon = path.join(`${__dirname}/build/512x512.png`);
-  }
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "index.html"));

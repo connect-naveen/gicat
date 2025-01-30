@@ -20,6 +20,10 @@ const createWindow = () => {
     },
   });
 
+  if (process.platform === "linux") {
+    options.icon = path.join(`${__dirname}/build/512x512.png`);
+  }
+
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, "index.html"));
 

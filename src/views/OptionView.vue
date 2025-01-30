@@ -17,6 +17,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
+const os = require("node:os");
 import * as path from "path";
 //const { systemPreferences } = require("@electron/remote");
 
@@ -35,10 +36,18 @@ export default {
       let editorPath = await dialog.showOpenDialog({
         properties: ["openFile"],
       });
-      console.log(editorPath);
+      let platform = os.platform();
       if (!editorPath.canceled && editorPath.filePaths[0]) {
         this.setEditorPath(editorPath.filePaths[0]);
+        // Editor Path for VS Code and Platform is not MacOS
         if (path.basename(this.getEditorPath).split(".")[0] === "code") {
+          this.setIsVsCode(true);
+          // Platform is Mac OS and VS Code is Editor
+        } else if (
+          platform === "darwin" &&
+          path.basename(this.getEditorPath).split(".")[0] ===
+            "Visual Studio Code"
+        ) {
           this.setIsVsCode(true);
         } else {
           this.setIsVsCode(false);

@@ -178,6 +178,7 @@ import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
+const os = require("node:os");
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
@@ -202,7 +203,6 @@ export default {
   },
   mounted() {
     this.initGraph();
-    console.log(this.graph);
   },
   data() {
     return {
@@ -529,15 +529,25 @@ export default {
       };
 
       try {
-        if (this.getIsVsCode) {
-          console.log("VS Code is Code Editor");
+        let platform = os.platform();
+        if (this.getIsVsCode && platform !== "darwin") {
           path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
           spawn(editorPath, ["--goto", path], opts);
-        } else {
-          console.log("VS Code is not Code Editor");
+        } else if (this.getIsVsCode && platform === "darwin") {
           let ep = editorPath + "/Contents/MacOS/Electron";
-          console.log("PATH: " + ep);
           spawn(ep, [path], opts);
+        } else if (!this.getVsCode && platform === "darwin") {
+          let macOSPath = function (applicationPath) {
+            let regexp = /\/([aA-zZ +]*)\.app/g;
+            const array = [...applicationPath.matchAll(regexp)];
+            const appName = array[0][1];
+            return applicationPath + "/Contents/MacOS/" + appName;
+          };
+          console.log(macOSPath(editorPath));
+          // TODO
+          spawn(macOSPath, [path], opts);
+        } else {
+          spawn(editorPath, [path], opts);
         }
       } catch (error) {
         console.error("editor not found");

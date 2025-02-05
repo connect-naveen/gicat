@@ -267,7 +267,6 @@ export default {
           selected: {
             strokeWidth: 6,
             strokeColor: "#000000",
-            color: (node) => node.color,
             width: "0",
             height: "50",
           },

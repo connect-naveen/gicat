@@ -46,7 +46,7 @@
       <br />
     </div>
     <br />
-    <div class="usecase">
+    <div class="use case">
       <h1>Use case</h1>
       <p>
         Xgaltool is a program from computational astrophysics. It analyzes data
@@ -105,7 +105,7 @@
         </figure>
       </div>
       <br />
-      <div class="usecase">
+      <div class="use case">
         <p>
           After getting an overview of the whole project, you can go deeper into
           the fine structure of the code to identify concepts that are relevant
@@ -114,10 +114,10 @@
         </p>
         <br />
         <p>
-          For this, the use of <b>edgefilters</b> is strongly recommended.
+          For this, the use of <b>edge filters</b> is strongly recommended.
           Figure 2.1 applies this to our example. Most of the information in
           astrophysics depends on spectral analysis - the information the
-          astrophysicist seeks is encoded in thelight the telescope catches.
+          astrophysicist seeks is encoded in the light the telescope catches.
         </p>
         <br />
         <p>
@@ -164,9 +164,11 @@
         <a href="https://code.visualstudio.com/" target="_blank">
           Visual Studio Code</a
         >
-        with its build in syntax-highlighting. Of course, this interaction can
-        be applied to different edge-node-filters for different outcomes. Help
-        in creating your own filter files in the <b>Filter Generation</b>
+        because our features have been tested and implemented to work with it.
+        We cannot guarantee correct functioning with other editors. Of course,
+        this interaction can be applied to different edge-node-filters for
+        different outcomes. Help in creating your own filter files in the
+        <b>Filter Generation</b>
         section of the guide.
         <br />
         You can also export the rendered graph as a scalable vector graphic
@@ -188,7 +190,7 @@
       For that purpose, we have implemented a <b>Regex generator</b> to assist
       you in generating a syntactical correct regular expression.<br />
       A regular expression is a string of characters that fulfils certain
-      criteria. When wpplied to text search (in our case program code), the
+      criteria. When applied to text search (in our case program code), the
       regular expression filters the text and finds all patterns matching the
       criteria.<br />
     </p>
@@ -236,7 +238,7 @@
           <i>{min,max}</i> for at least <i>min</i> and at most
           <i>max</i> occurrences
         </li>
-        <li><i>{n}</i> for exactliy <i>n</i> occurrences</li>
+        <li><i>{n}</i> for exactly <i>n</i> occurrences</li>
         <li>
           <i>?</i> for none or one occurrence (equivalent to <i>{0,1}</i>)
         </li>
@@ -275,7 +277,7 @@
     </p>
     <br />
     <p>
-      Therefore, it is mandatory to name each of your specifified capture groups
+      Therefore, it is mandatory to name each of your specified capture groups
       by filling out the <i>Capture group name</i> field. To assign a named
       capture group to an actual capture group in your Regex, simply write down
       its index inside the <i>Set capture groups</i> field (starting at 1 from

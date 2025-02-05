@@ -34,7 +34,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
     height: 720,
-    icon: "/logo.png",
+    icon: "/buildResources/icon.png",
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info

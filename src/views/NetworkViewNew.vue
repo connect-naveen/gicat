@@ -178,6 +178,7 @@ import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
+const os = require("node:os");
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,
@@ -202,7 +203,6 @@ export default {
   },
   mounted() {
     this.initGraph();
-    console.log(this.graph);
   },
   data() {
     return {
@@ -249,7 +249,7 @@ export default {
           layoutHandler: getForcedLayout,
         },
         node: {
-          selectable: 12,
+          selectable: true,
           normal: {
             color: (node) => node.color,
             strokeWidth: 1,
@@ -266,7 +266,6 @@ export default {
           },
           selected: {
             strokeWidth: 6,
-            color: (node) => node.color,
             strokeColor: "#000000",
             width: "0",
             height: "50",
@@ -451,7 +450,7 @@ export default {
     leftClick(node) {
       let selectedNode = this.nodes[node];
       selectedNode.meta.active = !selectedNode.meta.active;
-      console.log(node.label + " is active: " + selectedNode.meta.active);
+      //console.log(node.label + " is active: " + selectedNode.meta.active);
     },
     collapseChildren(hitNode) {
       console.warn("collapse children");
@@ -507,7 +506,7 @@ export default {
       return node.meta.file === true;
     },
     openFile(nodeIndex) {
-      console.warn("open file function");
+      //console.warn("open file function");
 
       const { spawn } = require("child_process");
       const fs = require("fs");
@@ -529,9 +528,27 @@ export default {
       };
 
       try {
-        if (this.getIsVsCode) {
+        let platform = os.platform();
+        if (this.getIsVsCode && platform !== "darwin") {
           path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
           spawn(editorPath, ["--goto", path], opts);
+        } else if (this.getIsVsCode && platform === "darwin") {
+          let ep = editorPath + "/Contents/MacOS/Electron";
+          path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
+          spawn(ep, ["--goto", path], opts);
+          // trying to guess the name of the code editors exe file on MacOS.
+          // Won't work in most cases! Only VS Code has guaranteed support!
+        } else if (!this.getVsCode && platform === "darwin") {
+          let macOSPath = function (applicationPath) {
+            let regexp = /\/([aA-zZ +]*)\.app/g;
+            const array = [...applicationPath.matchAll(regexp)];
+            const appName = array[0][1];
+            return applicationPath + "/Contents/MacOS/" + appName;
+          };
+          console.log(macOSPath(editorPath));
+          //path += ":" + (this.nodes[nodeIndex].meta.line ?? 0);
+          console.log(path);
+          spawn(macOSPath(editorPath) + " " + path, [], opts);
         } else {
           spawn(editorPath, [path], opts);
         }

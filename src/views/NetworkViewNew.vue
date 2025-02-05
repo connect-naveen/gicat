@@ -451,7 +451,7 @@ export default {
     leftClick(node) {
       let selectedNode = this.nodes[node];
       selectedNode.meta.active = !selectedNode.meta.active;
-      console.log(node.label + " is active: " + selectedNode.meta.active);
+      //console.log(node.label + " is active: " + selectedNode.meta.active);
     },
     collapseChildren(hitNode) {
       console.warn("collapse children");
@@ -507,7 +507,7 @@ export default {
       return node.meta.file === true;
     },
     openFile(nodeIndex) {
-      console.warn("open file function");
+      //console.warn("open file function");
 
       const { spawn } = require("child_process");
       const fs = require("fs");
@@ -535,7 +535,10 @@ export default {
           spawn(editorPath, ["--goto", path], opts);
         } else if (this.getIsVsCode && platform === "darwin") {
           let ep = editorPath + "/Contents/MacOS/Electron";
-          spawn(ep, [path], opts);
+          path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
+          spawn(ep, ["--goto", path], opts);
+          // trying to guess the name of the code editors exe file on MacOS.
+          // Won't work in most cases! Only VS Code has guaranteed support!
         } else if (!this.getVsCode && platform === "darwin") {
           let macOSPath = function (applicationPath) {
             let regexp = /\/([aA-zZ +]*)\.app/g;
@@ -544,8 +547,9 @@ export default {
             return applicationPath + "/Contents/MacOS/" + appName;
           };
           console.log(macOSPath(editorPath));
-          // TODO
-          spawn(macOSPath, [path], opts);
+          //path += ":" + (this.nodes[nodeIndex].meta.line ?? 0);
+          console.log(path);
+          spawn(macOSPath(editorPath) + " " + path, [], opts);
         } else {
           spawn(editorPath, [path], opts);
         }

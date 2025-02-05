@@ -56,7 +56,7 @@ export default {
         this.setEditorPath("");
         this.setIsVsCode(false);
       }
-      console.log(editorPath);
+      //console.log(editorPath);
     },
   },
   computed: {

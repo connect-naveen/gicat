@@ -278,29 +278,45 @@ export default {
           normal: {
             color: (edge) =>
               edge.label &&
-              !this.edgeLabelHidden(edge) &&
-              !this.edgeHidden(edge)
+              !(this.edgeHidden(edge) | this.edgeLabelHidden(edge))
                 ? edge.color
-                : edge.label &&
-                  (this.edgeLabelHidden(edge) || this.edgeHidden(edge))
-                ? "white"
-                : "black",
-            width: (edge) =>
-              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 2,
+                : this.edgeHidden(edge) | this.edgeLabelHidden(edge)
+                ? // here
+                  "#ffffff"
+                : "#000000",
+            // here
+            width: 2,
             dasharray: "0",
           },
-          selectable: 12,
+          selectable: 50,
           selected: {
-            width: (edge) =>
-              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
-            color: (edge) => (edge.label ? edge.color : "black"),
+            width: 6,
+            color: (edge) =>
+              edge.label &&
+              !(this.edgeHidden(edge) | this.edgeLabelHidden(edge))
+                ? edge.color
+                : this.edgeHidden(edge) | this.edgeLabelHidden(edge)
+                ? "#ffffff"
+                : "#000000",
             dasharray: "0",
           },
           hover: {
-            width: (edge) =>
-              this.edgeHidden(edge) || this.edgeLabelHidden(edge) ? 0 : 6,
-            color: (edge) => (edge.label ? edge.color : "black"),
+            width: 6,
+            color: (edge) =>
+              edge.label &&
+              !(this.edgeHidden(edge) | this.edgeLabelHidden(edge))
+                ? edge.color
+                : this.edgeHidden(edge) | this.edgeLabelHidden(edge)
+                ? "#ffffff"
+                : "#000000",
             dasharray: "0",
+          },
+          zOrder: {
+            enabled: true,
+            bringToFrontOnHover: false,
+            bringToFrontOnSelected: true,
+            zIndex: (edge) =>
+              this.edgeHidden(edge) | this.edgeLabelHidden(edge) ? 1 : 2,
           },
           label: {
             fontSize: 30,
@@ -396,6 +412,7 @@ export default {
       this.filters = appliedFilters;
       //this.filtersSelected = appliedFilters;
     },
+    removeEdges() {},
     getFilterItems() {
       return this.getFilters.map((filter) => {
         return {

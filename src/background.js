@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, dialog } from "electron";
+import { app, protocol, BrowserWindow, dialog, ipcMain } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
@@ -29,6 +29,7 @@ function registerLocalVideoProtocol() {
     }
   });
 }
+
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
@@ -38,8 +39,10 @@ async function createWindow() {
     webPreferences: {
       // Use pluginOptions.nodeIntegration, leave this alone
       // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
-      nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-      contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
+      nodeIntegration: false, //process.env.ELECTRON_NODE_INTEGRATION
+      contextIsolation: false, //!process.env.ELECTRON_NODE_INTEGRATION
+      //nodeIntegrationInWorker: true,
+      sandbox: false,
       preload: path.resolve(__dirname, "preload.js"),
       spellcheck: false,
     },
@@ -106,6 +109,9 @@ app.on("ready", async () => {
       console.error("Vue Devtools failed to install:", e.toString());
     }
   }
+  ipcMain.handle("app:getPath", () => {
+    return app.getPath("userData");
+  });
   createWindow();
   registerLocalVideoProtocol();
 });

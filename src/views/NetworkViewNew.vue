@@ -34,7 +34,7 @@
           v-model="dist"
           :step="50"
           :min="-1000"
-          :max="1000"
+          :max="2000"
           :end="computePhysics()"
           class="slider"
           label="Edge distance:"
@@ -188,8 +188,9 @@ const getForcedLayout = new ForceLayout({
     const forceLink = d3.forceLink(edges).id((d) => d.id);
     return d3
       .forceSimulation(nodes)
-      .force("edge", forceLink.distance(50).strength(5000))
+      .force("edge", forceLink.distance(500).strength(5000))
       .force("charge", d3.forceManyBody().strength(-7000))
+      .force("collide", d3.forceCollide(5).iterations(10))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
       .alphaMin(0.0001);

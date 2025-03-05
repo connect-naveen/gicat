@@ -10,6 +10,9 @@
       <v-btn id="codeEditorFinder" @click="openEditor()">
         Find Code Editor
       </v-btn>
+      <br />
+      <br />
+      <v-btn id="savePreferences" @click="savePreferences()"> SAVE </v-btn>
     </div>
   </v-main>
 </template>
@@ -18,6 +21,8 @@
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
 const os = require("node:os");
+//const ipcRenderer = require("electron");
+//const { app } = require("@electron/remote");
 import * as path from "path";
 //const { systemPreferences } = require("@electron/remote");
 
@@ -32,6 +37,12 @@ export default {
     ...mapActions(["setEditorPath", "setIsVsCode"]),
 
     // functions
+    async savePreferences() {
+      console.log(window);
+      console.log(window.contextIsolationOff.doSomething());
+      //const filePath = await window.electronAPI.getPath();
+      //console.log(filePath);
+    },
     async openEditor() {
       let editorPath = await dialog.showOpenDialog({
         properties: ["openFile"],

@@ -27,6 +27,7 @@
     "d3-force": "^3.0.0",
     "directory-tree": "^3.5.1",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "string.prototype.matchall": "^4.0.8",
     "v-network-graph": "^0.9.14",
     "vue": "^3.2.13",

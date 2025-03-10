@@ -4,14 +4,3 @@
 //const { contextBridge, ipcRenderer } = require("electron");
 const ce = require('./codeextractor/index');
 window.ce = ce;
-/*contextBridge.exposeInMainWorld("electronAPI", {
-    getPath: () => ipcRenderer.invoke("app:getPath"),
-})
-contextBridge.exposeInMainWorld("myAPI", {
-    desktop: true
-})*/
-
-window.contextIsolationOff = {
-    doSomething: () => { console.log("Context isolation off!") }
-}
-

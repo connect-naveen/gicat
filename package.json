@@ -1,6 +1,6 @@
 {
   "name": "GICAT",
-  "version": "0.9.1",
+  "version": "0.9.3",
   "description": "The GICAT visualizes the class structure of an object-oriented programmed software project. It shows the genealogy based on Git, as well as the software project's heredity of classes. For more information visit https://www.css-lab.rwth-aachen.de/tools/overview",
   "author": "CSS Lab RWTH Aachen",
   "private": true,
@@ -27,6 +27,7 @@
     "d3-force": "^3.0.0",
     "directory-tree": "^3.5.1",
     "pinia": "^2.1.7",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "string.prototype.matchall": "^4.0.8",
     "v-network-graph": "^0.9.14",
     "vue": "^3.2.13",

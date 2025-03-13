@@ -5,6 +5,7 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import { createPinia } from "pinia";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 
 // Vuetify
 import "vuetify/styles";
@@ -76,9 +77,12 @@ const vuetify = createVuetify({
   directives,
 });
 
+const pinia = createPinia();
+pinia.use(piniaPluginPersistedstate);
+
 createApp(App)
   .use(VNetworkGraph)
-  .use(createPinia())
+  .use(pinia)
   .use(store)
   .use(router)
   .use(vuetify)

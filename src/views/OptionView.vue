@@ -19,9 +19,6 @@
       <v-btn id="codeEditorFinder" @click="openEditor()">
         Find Code Editor
       </v-btn>
-      <br />
-      <br />
-      <v-btn id="savePreferences" @click="savePreferences()"> SAVE </v-btn>
     </div>
   </v-main>
 </template>
@@ -53,7 +50,6 @@ export default {
     ...mapActions(["setEditorPath", "setIsVsCode"]),
 
     // functions
-    async savePreferences() {},
     async openEditor() {
       let editorPath = await dialog.showOpenDialog({
         properties: ["openFile"],

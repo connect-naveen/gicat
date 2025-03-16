@@ -57,7 +57,7 @@ async function createWindow() {
     dialog
       .showMessageBox({
         type: "question",
-        buttons: ["A", "B"],
+        buttons: [" No ", " Yes "],
         title: "Closing the program!",
         message: "Do you really want to close the program?",
         defaultId: 0,

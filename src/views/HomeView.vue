@@ -4,40 +4,52 @@
       <h1 id="header">GICAT</h1>
       <h4>General Isomorphic Code Analysis Tool</h4>
       <h6>v 0.9.3</h6>
-      <ImageExplorer
-        source="./assets/2_1_class_extension.jpg"
-        caption="Caption"
-      />
+      <figure>
+        <div id="zoomContainer">
+          <img id="zoomImage" src="../assets/gicat_structure.svg" />
+        </div>
+        <figcaption>
+          Project structure of the official GICAT Repository.
+        </figcaption>
+      </figure>
     </div>
-    <h6>Copyright text</h6>
+    <br />
+    <br />
+    <h6>&#169; 2025, CSS Lab RWTH Aachen University</h6>
   </v-main>
 </template>
 
-<script>
-// @ is an alias to /src
-import ImageExplorer from "@/components/ImageExplorer.vue";
-
-export default {
-  name: "HomeView",
-  components: {
-    ImageExplorer,
-  },
-};
+<script setup>
+import { onMounted } from "vue";
+let scale = 1;
+onMounted(() => {
+  const zoomImage = document.getElementById("zoomImage");
+  document.getElementById("zoomImage").addEventListener("wheel", function (e) {
+    if (e.ctrlKey) {
+      scale += e.deltaY * 0.01;
+      scale = Math.min(Math.max(0.5, scale), 4);
+      //console.log(scale);
+      zoomImage.style.transform = `scale(${scale})`;
+      zoomImage.style.width += scale;
+      zoomImage.style.height += scale;
+    }
+  });
+});
 </script>
-<style>
-.home {
-  width: 100%;
-  height: 100%;
+<style scoped>
+#zoomContainer {
+  width: 400px;
+  height: 400px;
+  overflow: auto;
+  border: solid black;
+  margin: 0 auto;
 }
-#header {
-  margin-top: 20px;
-  font-weight: bold;
-  font-size: 300%;
-  color: #407fb7;
-  font-family: Georgia, "Times New Roman", Times, serif;
+#zoomContainer img {
+  width: 1200px;
+  height: 1200px;
+  transform: scale(0.7);
 }
-
-h6 {
-  color: grey;
+#home figcaption {
+  color: rebeccapurple;
 }
 </style>

@@ -783,7 +783,7 @@ export default {
             this.main.getJson.nodeFilterList[i].exclude[0].length - 4
           );*/
           this.labelAttributeSelection =
-            this.main.getJson.nodeFilterList[i].labelAttribue;
+            this.main.getJson.nodeFilterList[i].labelAttribute; //???
           this.nodeColor = this.main.getJson.nodeFilterList[i].style.color;
           this.main.setAttributes(
             this.main.getJson.nodeFilterList[i].attributes
@@ -839,8 +839,6 @@ export default {
             .map((e) => Number(e)),
         });
       } else {
-        //console.log("Attributes nicht leer");
-        //console.log(this.main.getAttributes);
         this.main.setAttributesByElement(
           this.main.getNodeAttributes,
           this.main.getNodeCaptureGroups

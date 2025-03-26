@@ -6,16 +6,18 @@
       <h6>v 0.9.3</h6>
       <figure>
         <div id="zoomContainer">
-          <img id="zoomImage" src="../assets/2_1_class_extension.jpg" />
+          <img id="zoomImage" src="../assets/gicat_structure.svg" />
         </div>
-        <figcaption>Caption</figcaption>
+        <figcaption>
+          Project structure of the official GICAT Repository.
+        </figcaption>
       </figure>
     </div>
-    <h6>Copyright text</h6>
+    <br />
+    <br />
+    <h6>&#169; 2025, CSS Lab RWTH Aachen University</h6>
   </v-main>
 </template>
-
-// @ is an alias to /src
 
 <script setup>
 import { onMounted } from "vue";
@@ -26,7 +28,7 @@ onMounted(() => {
     if (e.ctrlKey) {
       scale += e.deltaY * 0.01;
       scale = Math.min(Math.max(0.5, scale), 4);
-      console.log(scale);
+      //console.log(scale);
       zoomImage.style.transform = `scale(${scale})`;
       zoomImage.style.width += scale;
       zoomImage.style.height += scale;
@@ -40,11 +42,14 @@ onMounted(() => {
   height: 400px;
   overflow: auto;
   border: solid black;
-  margin-left: 5px;
+  margin: 0 auto;
 }
 #zoomContainer img {
   width: 1200px;
   height: 1200px;
-  transform: scale(1);
+  transform: scale(0.7);
+}
+#home figcaption {
+  color: rebeccapurple;
 }
 </style>

@@ -282,10 +282,8 @@ export default {
               !(this.edgeHidden(edge) | this.edgeLabelHidden(edge))
                 ? edge.color
                 : this.edgeHidden(edge) | this.edgeLabelHidden(edge)
-                ? // here
-                  "#ffffff"
+                ? "#ffffff"
                 : "#000000",
-            // here
             width: 2,
             dasharray: "0",
           },

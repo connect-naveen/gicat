@@ -82,7 +82,7 @@
       <div class="images">
         <figure>
           <img
-            src="../assets/xgaltool_old.jpg"
+            src="../assets/xgaltool_old.svg"
             alt="Figure 1.1 old code base"
             height="70%"
             width="70%"
@@ -94,7 +94,7 @@
         <br />
         <figure>
           <img
-            src="../assets/xgaltool_new.jpg"
+            src="../assets/xgaltool_new.svg"
             alt="Figure 1.2 new code base"
             height="70%"
             width="70%"
@@ -147,9 +147,10 @@
       <br />
       <figure>
         <img
-          src="../assets/2_1_class_extension.jpg"
+          src="../assets/class_extension.png"
           alt="Figure 2.1"
           height="50%"
+          width="50%"
         />
         <figcaption>
           Figure 2.1 analysis_tools class after edge and node filter application
@@ -334,14 +335,24 @@
     </p>
     <br />
     <figure>
-      <img src="../assets/capture_1.jpg" alt="Figure 3.1" />
+      <img
+        src="../assets/capture_1.jpg"
+        alt="Figure 3.1"
+        height="70%"
+        width="70%"
+      />
       <figcaption>
         Figure 3.1 - assignment of the first capture group
       </figcaption>
     </figure>
     <br />
     <figure>
-      <img src="../assets/capture_2.jpg" alt="Figure 3.2" />
+      <img
+        src="../assets/capture_2.jpg"
+        alt="Figure 3.2"
+        height="70%"
+        width="70%"
+      />
       <figcaption>
         Figure 3.2 - assignment of the second capture group
       </figcaption>
@@ -404,18 +415,20 @@
     <br />
     <figure>
       <img
-        src="../assets/no-edge-filter-applied.jpg"
+        src="../assets/no-edge-filter-applied.png"
         alt="Figure 4.3"
-        width="90%"
+        height="70%"
+        width="70%"
       />
       <figcaption>Figure 4.3 - Edge filter inactive</figcaption>
     </figure>
     <br />
     <figure>
       <img
-        src="../assets/edge-filter-applied.jpg"
+        src="../assets/edge-filter-applied.png"
         alt="Figure 4.4"
-        width="90%"
+        height="70%"
+        width="70%"
       />
       <figcaption>Figure 4.4 - Edge filter active</figcaption>
     </figure>

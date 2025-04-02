@@ -178,6 +178,7 @@ import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
+import { persistentStore } from "../store/persistentStore";
 const os = require("node:os");
 
 const getForcedLayout = new ForceLayout({
@@ -522,13 +523,14 @@ export default {
       return node.meta.file === true;
     },
     openFile(nodeIndex) {
-      //console.warn("open file function");
+      console.warn("open file function");
 
       const { spawn } = require("child_process");
       const fs = require("fs");
-      const editorPath = this.getEditorPath;
+      const persStore = persistentStore();
+      console.log(persStore.getIsVsCode);
 
-      if (editorPath === "") {
+      if (persStore.getEditorPath === "") {
         return;
       }
 
@@ -536,6 +538,7 @@ export default {
 
       const exists = fs.existsSync(path);
       if (!exists) {
+        console.log("editor" + persStore.getEditorPath + " not found");
         console.error("editor not found");
       }
 
@@ -545,12 +548,14 @@ export default {
 
       try {
         let platform = os.platform();
-        if (this.getIsVsCode && platform !== "darwin") {
+        if (persStore.getIsVsCode && platform !== "darwin") {
           path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
-          spawn(editorPath, ["--goto", path], opts);
-        } else if (this.getIsVsCode && platform === "darwin") {
-          let ep = editorPath + "/Contents/MacOS/Electron";
+          spawn(persStore.getEditorPath, ["--goto", path], opts);
+        } else if (persStore.getIsVsCode && platform === "darwin") {
+          console.log("VS Code erkannt:");
+          let ep = persStore.getEditorPath + "/Contents/MacOS/Electron";
           path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
+          console.log("Spawn VS Code path: " + ep);
           spawn(ep, ["--goto", path], opts);
           // trying to guess the name of the code editors exe file on MacOS.
           // Won't work in most cases! Only VS Code has guaranteed support!
@@ -561,14 +566,15 @@ export default {
             const appName = array[0][1];
             return applicationPath + "/Contents/MacOS/" + appName;
           };
-          console.log(macOSPath(editorPath));
+          console.log(macOSPath(persStore.getEditorPath));
           //path += ":" + (this.nodes[nodeIndex].meta.line ?? 0);
           console.log(path);
-          spawn(macOSPath(editorPath) + " " + path, [], opts);
+          spawn(macOSPath(persStore.getEditorPath) + " " + path, [], opts);
         } else {
-          spawn(editorPath, [path], opts);
+          spawn(persStore.getEditorPath, [path], opts);
         }
       } catch (error) {
+        console.log("editor" + persStore.getEditorPath + " not found");
         console.error("editor not found");
         return;
       }

@@ -62,21 +62,21 @@ export default {
         if (
           path.basename(this.persStore.getEditorPath).split(".")[0] === "code"
         ) {
-          this.setIsVsCode(true);
+          this.persStore.setIsVsCode(true);
           // Platform is Mac OS and VS Code is Editor
         } else if (
           platform === "darwin" &&
           path.basename(this.persStore.getEditorPath).split(".")[0] ===
             "Visual Studio Code"
         ) {
-          this.setIsVsCode(true);
+          this.persStore.setIsVsCode(true);
         } else {
-          this.setIsVsCode(false);
+          this.persStore.setIsVsCode(false);
         }
       } else {
         this.setEditorPath("");
         this.persStore.setEditorPath("");
-        this.setIsVsCode(false);
+        this.persStore.setIsVsCode(false);
       }
       //console.log(editorPath);
     },

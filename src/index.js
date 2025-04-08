@@ -17,6 +17,8 @@ const createWindow = () => {
       spellcheck: false,
       enableRemoteModule: true,
       nodeIntegrationInWorker: true,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
     },
   });
 

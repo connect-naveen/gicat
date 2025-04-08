@@ -1,6 +1,6 @@
 "use strict";
 
-import { app, protocol, BrowserWindow, dialog, ipcMain } from "electron";
+import { app, protocol, BrowserWindow, dialog, ipcMain, shell } from "electron";
 import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
@@ -45,6 +45,9 @@ async function createWindow() {
       sandbox: false,
       preload: path.resolve(__dirname, "preload.js"),
       spellcheck: false,
+      allowRunningInsecureContent: false,
+      experimentalFeatures: false,
+      enableBlinkFeatures: false,
     },
   });
 
@@ -134,3 +137,22 @@ if (isDevelopment) {
     });
   }
 }
+
+app.on("web-contents-created", (event, contents) => {
+  contents.setWindowOpenHandler(({ url }) => {
+    // ask the operating system to open this event's url in the default browser.
+    //
+    // See the following for considerations regarding what URLs should be allowed
+    if (
+      url == "https://www.css-lab.rwth-aachen.de/tools/manuals" ||
+      url ==
+        "https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
+    ) {
+      setImmediate(() => {
+        shell.openExternal(url);
+      });
+    }
+
+    return { action: "deny" };
+  });
+});

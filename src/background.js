@@ -143,6 +143,7 @@ app.on("web-contents-created", (event, contents) => {
     // ask the operating system to open this event's url in the default browser.
     //
     // See the following for considerations regarding what URLs should be allowed
+    // Only open trusted contend through shell!
     if (
       url == "https://www.css-lab.rwth-aachen.de/tools/manuals" ||
       url ==

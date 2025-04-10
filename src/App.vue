@@ -1,4 +1,10 @@
 <template>
+  <head>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; img-src 'self' data:; media-src local-video:"
+    />
+  </head>
   <v-app>
     <v-app-bar>
       <v-toolbar>

@@ -97,7 +97,7 @@
         facility is invoked), then you may convey a copy of the modified
         version:
       </p>
-      <ul style="list-style-type: disc">
+      <ul>
         <li>
           <p>
             a) under this License, provided that you make a good faith effort to
@@ -124,7 +124,7 @@
         accessors, or small macros, inline functions and templates (ten or fewer
         lines in length), you do both of the following:
       </p>
-      <ul style="list-style-type: disc">
+      <ul>
         <li>
           <p>
             a) Give prominent notice with each copy of the object code that the
@@ -148,7 +148,7 @@
         the Library contained in the Combined Work and reverse engineering for
         debugging such modifications, if you also do each of the following:
       </p>
-      <ul style="list-style-type: disc">
+      <ul>
         <li>
           <p>
             a) Give prominent notice with each copy of the Combined Work that
@@ -172,7 +172,7 @@
         </li>
         <li>
           <p>d) Do one of the following:</p>
-          <ul style="list-style-type: circle">
+          <ul>
             <li>
               <p>
                 0) Convey the Minimal Corresponding Source under the terms of
@@ -222,7 +222,7 @@
       a combined library under terms of your choice, if you do both of the
       following:
     </p>
-    <ul style="list-style-type: disc">
+    <ul>
       <li>
         <p>
           a) Accompany the combined library with a copy of the same work based
@@ -281,6 +281,9 @@ export default {
 
 <style scoped>
 /* version */
+ul {
+  list-style-type: disc;
+}
 #version {
   position: absolute;
   width: 75px;

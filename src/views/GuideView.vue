@@ -443,7 +443,7 @@ export default {
   components: {},
   methods: {
     openNewWindow() {
-      window.open("https://www.css-lab.rwth-aachen.de/tools/manuals");
+      window.open("https://www.css-lab.rwth-aachen.de/tools/overview");
     },
   },
 };

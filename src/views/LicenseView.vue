@@ -404,18 +404,20 @@
           Reciprocity (LiLiQ-R+).
         </li>
       </ul>
+      <ul class="dashed" id="leftPos">
+        <li>
+          The European Commission may update this Appendix to later versions of
+          the above licences without producing a new version of the EUPL, as
+          long as they provide the rights granted in Article 2 of this Licence
+          and protect the covered Source Code from exclusive appropriation.
+        </li>
+        <li>
+          All other changes or additions to this Appendix require the production
+          of a new EUPL version.
+        </li>
+      </ul>
       <br />
-      <p>
-        The European Commission may update this Appendix to later versions of
-        the above licences without producing a new version of the EUPL, as long
-        as they provide the rights granted in Article 2 of this Licence and
-        protect the covered Source Code from exclusive appropriation.
-      </p>
       <br />
-      <p>
-        All other changes or additions to this Appendix require the production
-        of a new EUPL version.
-      </p>
     </section>
   </div>
 </template>
@@ -455,16 +457,28 @@ ul.dashed > li {
   text-indent: -25px;
 }
 
+#leftPos {
+  margin-left: -5%;
+}
+
 ul.dashed > li:before {
   content: "— ";
   text-indent: -5px;
 }
 
 li {
+  margin-left: 20%;
+  margin-right: 15%;
   margin-top: 15px;
 }
 
 section {
   margin-top: 5%;
+}
+
+p {
+  margin-left: 15%;
+  margin-right: 15%;
+  text-align: left;
 }
 </style>

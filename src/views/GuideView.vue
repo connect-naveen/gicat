@@ -481,7 +481,7 @@ video {
 p {
   margin-left: 15%;
   margin-right: 15%;
-  text-align: start;
+  text-align: left;
 }
 
 button {

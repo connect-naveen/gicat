@@ -1,11 +1,12 @@
-# vue3gicat
+# GICAT
 
 ## Project setup
-you need yarn:
+Install yarn through npm:
 ```
 npm install -g yarn
 ```
 
+## Run in project folder
 ```
 yarn
 ```
@@ -32,7 +33,7 @@ yarn lint
 
 ## Icons
 
-For icons look [here](https://pictogrammers.com/library/mdi/) (under vue)
+For icons look [here](https://pictogrammers.com/library/mdi/).
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

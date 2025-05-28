@@ -1,0 +1,182 @@
+{
+	"nodes": [
+		{
+			"id": "testing/testfiles/class.js",
+			"label": "class.js",
+			"group": "testing/testfiles/class.js",
+			"meta": {
+				"extension": ".js",
+				"size": 225,
+				"file": true,
+				"filterID": null
+			}
+		},
+		{
+			"id": "testing/testfiles/someCode.js",
+			"label": "someCode.js",
+			"group": "testing/testfiles/someCode.js",
+			"meta": {
+				"extension": ".js",
+				"size": 171,
+				"file": true,
+				"filterID": null
+			}
+		},
+		{
+			"id": "testing/testfiles/someOtherCode.py",
+			"label": "someOtherCode.py",
+			"group": "testing/testfiles/someOtherCode.py",
+			"meta": {
+				"extension": ".py",
+				"size": 369,
+				"file": true,
+				"filterID": null
+			}
+		},
+		{
+			"id": "testing/testfiles/subclass.js",
+			"label": "subclass.js",
+			"group": "testing/testfiles/subclass.js",
+			"meta": {
+				"extension": ".js",
+				"size": 193,
+				"file": true,
+				"filterID": null
+			}
+		},
+		{
+			"id": "./testing/testfiles",
+			"label": "testfiles",
+			"meta": {
+				"size": 958,
+				"filterID": null
+			}
+		},
+		{
+			"id": "testing/testfiles/class.js|commentFilter",
+			"label": "class.js | Comment Filter",
+			"group": "testing/testfiles/class.js",
+			"meta": {
+				"filterID": "commentFilter",
+				"matches": [
+					{
+						"comments": "the name of the shape"
+					},
+					{
+						"comments": "the name of the form"
+					}
+				]
+			}
+		},
+		{
+			"id": "testing/testfiles/someCode.js|commentFilter",
+			"label": "someCode.js | Comment Filter",
+			"group": "testing/testfiles/someCode.js",
+			"meta": {
+				"filterID": "commentFilter",
+				"matches": [
+					{
+						"comments": "testing"
+					}
+				]
+			}
+		},
+		{
+			"id": "testing/testfiles/subclass.js|commentFilter",
+			"label": "subclass.js | Comment Filter",
+			"group": "testing/testfiles/subclass.js",
+			"meta": {
+				"filterID": "commentFilter",
+				"matches": [
+					{
+						"comments": "height/width of rectangle"
+					}
+				]
+			}
+		},
+		{
+			"id": "testing/testfiles/subclass.js|classFilter",
+			"label": "subclass.js | Class Filter",
+			"group": "testing/testfiles/subclass.js",
+			"meta": {
+				"filterID": "classFilter",
+				"matches": [
+					{
+						"className": "Rectangle",
+						"extends": "Shape"
+					}
+				]
+			}
+		},
+		{
+			"id": "testing/testfiles/class.js|classFilter",
+			"label": "class.js | Class Filter",
+			"group": "testing/testfiles/class.js",
+			"meta": {
+				"filterID": "classFilter",
+				"matches": [
+					{
+						"className": "Shape"
+					},
+					{
+						"className": "Form"
+					}
+				]
+			}
+		},
+		{
+			"id": "testing/testfiles/someCode.js|classFilter",
+			"label": "someCode.js | Class Filter",
+			"group": "testing/testfiles/someCode.js",
+			"meta": {
+				"filterID": "classFilter",
+				"matches": []
+			}
+		}
+	],
+	"edges": [
+		{
+			"from": "testing/testfiles/class.js",
+			"to": "./testing/testfiles",
+			"label": "class.js is a child of testfiles",
+			"meta": {
+				"filterID": null
+			}
+		},
+		{
+			"from": "testing/testfiles/someCode.js",
+			"to": "./testing/testfiles",
+			"label": "someCode.js is a child of testfiles",
+			"meta": {
+				"filterID": null
+			}
+		},
+		{
+			"from": "testing/testfiles/someOtherCode.py",
+			"to": "./testing/testfiles",
+			"label": "someOtherCode.py is a child of testfiles",
+			"meta": {
+				"filterID": null
+			}
+		},
+		{
+			"from": "testing/testfiles/subclass.js",
+			"to": "./testing/testfiles",
+			"label": "subclass.js is a child of testfiles",
+			"meta": {
+				"filterID": null
+			}
+		},
+		{
+			"from": "testing/testfiles/subclass.js|classFilter",
+			"to": "testing/testfiles/class.js|classFilter",
+			"label": "extends",
+			"meta": {
+				"filter": "classEdgeFilter"
+			}
+		}
+	],
+	"meta": {
+		"size": 958
+	}
+}

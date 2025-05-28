@@ -1,0 +1,21 @@
+{
+  "id": "classEdgeFilter",
+  "spec": "edge",
+  "name": "Class-Edge Filter",
+  "extension": ".js",
+  "desc": "",
+  "allow-loop": true,
+  "from": {
+    "nodeFilterID": "classFilter",
+    "attribute": "extends"
+  },
+  "to": {
+    "nodeFilterID": "classFilter",
+    "attribute": "className"
+  },
+  "label": "extends",
+  "style": {
+    "dashes": false,
+    "color": "#00ffff"
+  }
+}

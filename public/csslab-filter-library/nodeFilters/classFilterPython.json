@@ -1,0 +1,18 @@
+{
+  "id": "classFilterPython",
+  "spec": "node",
+  "name": "Class Filter Python",
+  "extension": ".py",
+  "regex": "/(?:class )([A-z]+)(?:\\((.*)\\))*:/gm",
+  "attributes": {
+    "className": [1],
+    "extends": [2]
+  },
+  "mode": "contains",
+  "excludes": null,
+  "desc": "",
+  "failures": [""],
+  "tech-desc": "",
+  "label": "Class",
+  "labelAttribute": "className"
+}

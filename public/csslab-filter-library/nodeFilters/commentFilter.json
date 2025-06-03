@@ -1,0 +1,17 @@
+{
+  "id": "commentFilter",
+  "spec": "node",
+  "name": "Comment Filter",
+  "extension": ".js",
+  "regex": "/(?:\\/\\/\\s*(.*))|(?:\\/\\*\\s*([\\s\\S]*?)\\s*\\*\\/)/gm",
+  "attributes": {
+    "comments": [1, 2]
+  },
+  "mode": "contains",
+  "excludes": null,
+  "desc": "This filter allows for extracting the comments out of Javascript code.",
+  "failures": ["This filter will not check wether a comment is inside a string which should not be a comment."],
+  "tech-desc": "Matches // until the end of the line or /* until */. No matching groups defined.",
+  "label": "Comment",
+  "labelAttribute": null
+}

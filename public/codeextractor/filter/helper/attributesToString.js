@@ -1,0 +1,1 @@
+// TODO copy attributes to string function from filter/nodes.js here

@@ -427,7 +427,7 @@
             <v-select
               v-model="toAttributeSelection"
               label="Select target attribute"
-              :items="getFromAttributes"
+              :items="getToAttributes"
             ></v-select>
           </v-col>
         </v-row>
@@ -751,7 +751,36 @@ export default {
           for (const [key] of Object.entries(
             this.main.getJson["nodeFilterList"][i].attributes
           )) {
-            opt.push(key);
+            if (
+              this.main.getJson["nodeFilterList"][i].name ===
+              this.main.fromSelection
+            ) {
+              opt.push(key);
+            }
+          }
+          i++;
+        }
+      }
+      //console.log(opt)
+      return opt;
+    },
+    getToAttributes() {
+      const opt = [];
+      let i = 0;
+      if (
+        this.main.getJson != null &&
+        Object.keys(this.main.getJson["nodeFilterList"]).length > 0
+      ) {
+        while (i < Object.keys(this.main.getJson["nodeFilterList"]).length) {
+          for (const [key] of Object.entries(
+            this.main.getJson["nodeFilterList"][i].attributes
+          )) {
+            if (
+              this.main.getJson["nodeFilterList"][i].name ===
+              this.main.toSelection
+            ) {
+              opt.push(key);
+            }
           }
           i++;
         }

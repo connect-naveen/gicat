@@ -58,6 +58,31 @@
           label="Graph strength:"
         ></v-slider>
       </div>
+      <div class="graph-metrics-section">
+        <v-list>
+          <v-list-item
+            value="metrics"
+            title="Node Metrics"
+            color="#00549f"
+          ></v-list-item>
+          <v-list-group v-for="i in this.getParsedNodeFilterList()" :key="i">
+            <template v-slot:activator="{ props }">
+              <v-list-item
+                v-bind="props"
+                :title="i.name"
+                elevation="2"
+              ></v-list-item>
+            </template>
+            <v-list-item :title="this.getNodeFilterNumbers(i.id)"></v-list-item>
+            <v-list-item :title="this.getFrequentNodes()"></v-list-item>
+          </v-list-group>
+          <v-list-item
+            value="metrics"
+            title="Edge Metrics"
+            color="#00549f"
+          ></v-list-item>
+        </v-list>
+      </div>
       <div class="renderer">
         <v-network-graph
           ref="graph"
@@ -341,15 +366,6 @@ export default {
       "addFilter",
     ]),
 
-    // |=================================================================|
-    // |   ______ _    _ _   _  _____ _______ _____ ____  _   _  _____   |
-    // |  |  ____| |  | | \ | |/ ____|__   __|_   _/ __ \| \ | |/ ____|  |
-    // |  | |__  | |  | |  \| | |       | |    | || |  | |  \| | (___    |
-    // |  |  __| | |  | | . ` | |       | |    | || |  | | . ` |\___ \   |
-    // |  | |    | |__| | |\  | |____   | |   _| || |__| | |\  |____) |  |
-    // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
-    // |                                                                 |
-    // |=================================================================|
     makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
@@ -371,6 +387,34 @@ export default {
       ].join(" ");
     },
 
+    getParsedNodeFilterList() {
+      return JSON.parse(JSON.stringify(this.getNodeFilters));
+    },
+    getFrequentNodes() {
+      const occ = {};
+      for (let node of this.getNodes) {
+        //console.log(node.meta.filterID);
+        occ[node.label] = (occ[node.label] || 0) + 1;
+      }
+
+      const filteredOcc = {};
+      for (let el in occ) {
+        if (occ[el] > 1) {
+          filteredOcc[el] = occ[el];
+        }
+      }
+      console.log(filteredOcc);
+      return JSON.stringify(filteredOcc);
+    },
+    getNodeFilterNumbers(i) {
+      var j = 0;
+      for (let k = 0; k < this.getNodes.length; k++) {
+        if (this.getNodes[k].meta.filterID === i) {
+          j++;
+        }
+      }
+      return "Quantity: " + j;
+    },
     initGraph() {
       // making deep copy of nodes and edges
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
@@ -673,8 +717,13 @@ export default {
 <style>
 .renderer {
   height: 100%;
+  width: 80%;
 }
 
+.graph-metrics-section {
+  width: 20%;
+  float: right;
+}
 .network-nav {
   /* height: 50px; */
   margin-top: 15px;

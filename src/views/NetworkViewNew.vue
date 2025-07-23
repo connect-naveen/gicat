@@ -58,32 +58,41 @@
           label="Graph strength:"
         ></v-slider>
       </div>
-      <div class="graph-metrics-section">
-        <v-list>
-          <v-list-item
-            value="metrics"
-            title="Node Metrics"
-            color="#00549f"
-          ></v-list-item>
-          <v-list-group v-for="i in this.getParsedNodeFilterList()" :key="i">
-            <template v-slot:activator="{ props }">
-              <v-list-item
-                v-bind="props"
-                :title="i.name"
-                elevation="2"
-              ></v-list-item>
-            </template>
-            <v-list-item :title="this.getNodeFilterNumbers(i.id)"></v-list-item>
-            <v-list-item :title="this.getFrequentNodes()"></v-list-item>
-          </v-list-group>
-          <v-list-item
-            value="metrics"
-            title="Edge Metrics"
-            color="#00549f"
-          ></v-list-item>
-        </v-list>
-      </div>
+
       <div class="renderer">
+        <v-btn
+          icon
+          @click.stop="drawer = !drawer"
+          class="position-fixed"
+          :style="{ right: drawer ? '250px' : '0', zIndex: 10 }"
+          variant="text"
+        >
+          <v-icon>{{ drawer ? "$outRight" : "$outLeft" }}</v-icon>
+        </v-btn>
+        <v-navigation-drawer
+          v-model="drawer"
+          v-if="drawer !== null"
+          location="right"
+          rounded="lg"
+        >
+          <v-list>
+            <v-list-subheader class="text-center justify-center"
+              >NODE METRICS</v-list-subheader
+            >
+            <v-list-item>
+              <v-slider
+                v-model="frequencySlider"
+                label="Node Frequency:"
+                step="1"
+                :max="10"
+                :min="2"
+              ></v-slider>
+            </v-list-item>
+            <v-list-subheader class="text-center justify-center"
+              >EDGE METRICS</v-list-subheader
+            >
+          </v-list>
+        </v-navigation-drawer>
         <v-network-graph
           ref="graph"
           class="graph"
@@ -230,9 +239,12 @@ export default {
   },
   mounted() {
     this.initGraph();
+    this.drawer = false;
   },
   data() {
     return {
+      frequencySlider: 2,
+      drawer: null,
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -717,23 +729,16 @@ export default {
 <style>
 .renderer {
   height: 100%;
-  width: 80%;
+  width: 100%;
 }
 
 .graph-metrics-section {
-  width: 20%;
+  width: 4%;
   float: right;
 }
 .network-nav {
   /* height: 50px; */
   margin-top: 15px;
-}
-
-.network-nav-divider {
-  /* width: 1px; */
-  /* background-color: lightgrey; */
-  border: 0.5px solid rgb(230, 230, 230);
-  border-radius: 50px;
 }
 
 .filter-selector {
@@ -759,7 +764,7 @@ export default {
 .graph {
   width: 100%;
   height: 100%;
-  border: 1px solid #000;
+  /*border: 1px solid #000;*/
 }
 
 .slider {

@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-main style="border-right: 4px solid">
     <div class="network">
       <div class="network-nav">
         <!-- put visualization controls here -->
@@ -62,7 +62,7 @@
       <div class="renderer">
         <v-btn
           icon
-          @click.stop="drawer = !drawer"
+          @click.stop="handleMetricsDrawer()"
           class="position-fixed"
           :style="{ right: drawer ? '250px' : '0', zIndex: 10 }"
           variant="text"
@@ -73,7 +73,6 @@
           v-model="drawer"
           v-if="drawer !== null"
           location="right"
-          rounded="lg"
         >
           <v-list>
             <v-list-subheader class="text-center justify-center"
@@ -399,6 +398,10 @@ export default {
       ].join(" ");
     },
 
+    handleMetricsDrawer() {
+      this.drawer = !this.drawer;
+    },
+
     getParsedNodeFilterList() {
       return JSON.parse(JSON.stringify(this.getNodeFilters));
     },
@@ -468,7 +471,6 @@ export default {
       this.filters = appliedFilters;
       //this.filtersSelected = appliedFilters;
     },
-    removeEdges() {},
     getFilterItems() {
       return this.getFilters.map((filter) => {
         return {
@@ -732,10 +734,6 @@ export default {
   width: 100%;
 }
 
-.graph-metrics-section {
-  width: 4%;
-  float: right;
-}
 .network-nav {
   /* height: 50px; */
   margin-top: 15px;

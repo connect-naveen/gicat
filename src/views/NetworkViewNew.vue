@@ -76,20 +76,39 @@
         >
           <v-list>
             <v-list-subheader class="text-center justify-center"
-              >NODE METRICS</v-list-subheader
+              >FREQUENT MATCHES</v-list-subheader
             >
             <v-list-item>
               <v-slider
                 v-model="frequencySlider"
-                label="Node Frequency:"
+                label="Frequency:"
                 step="1"
-                :max="10"
+                :max="25"
                 :min="2"
+                @update:model-value="getFrequentNodes(frequencySlider)"
               ></v-slider>
             </v-list-item>
-            <v-list-subheader class="text-center justify-center"
-              >EDGE METRICS</v-list-subheader
+            <v-list-item
+              v-for="(value, key) in getFrequentNodes(frequencySlider)"
+              :key="key"
             >
+              <v-list-item-content>
+                <v-list-item-title>{{ key }}</v-list-item-title>
+                <v-list-item-subtitle
+                  >Frequency: {{ value }}</v-list-item-subtitle
+                >
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              v-for="target in getFrequentTargets()"
+              :key="target.node"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ target.node }} — {{ target.count }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-navigation-drawer>
         <v-network-graph
@@ -402,10 +421,27 @@ export default {
       this.drawer = !this.drawer;
     },
 
-    getParsedNodeFilterList() {
-      return JSON.parse(JSON.stringify(this.getNodeFilters));
+    getFrequentTargets() {
+      let edges = this.getEdges;
+
+      const counts = {};
+
+      edges.forEach((edge) => {
+        const target = edge.to;
+        counts[target] = (counts[target] || 0) + 1;
+      });
+
+      const result = Object.entries(counts).map(([node, count]) => ({
+        node,
+        count,
+      }));
+
+      result.sort((a, b) => b.count - a.count);
+
+      return result;
     },
-    getFrequentNodes() {
+
+    getFrequentNodes(i) {
       const occ = {};
       for (let node of this.getNodes) {
         //console.log(node.meta.filterID);
@@ -414,12 +450,11 @@ export default {
 
       const filteredOcc = {};
       for (let el in occ) {
-        if (occ[el] > 1) {
+        if (occ[el] > i) {
           filteredOcc[el] = occ[el];
         }
       }
-      console.log(filteredOcc);
-      return JSON.stringify(filteredOcc);
+      return filteredOcc;
     },
     getNodeFilterNumbers(i) {
       var j = 0;

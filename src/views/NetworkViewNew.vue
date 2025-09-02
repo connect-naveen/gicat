@@ -73,11 +73,26 @@
           v-model="drawer"
           v-if="drawer !== null"
           location="right"
+          temporary
+          scrim
         >
           <v-list>
-            <v-list-subheader class="text-center justify-center"
-              >FREQUENT MATCHES</v-list-subheader
-            >
+            <v-tooltip location="top">
+              <template #activator="{ props }">
+                <v-list-subheader
+                  v-bind="props"
+                  class="text-center justify-center"
+                >
+                  NODE FREQUENCY THRESHOLD
+                </v-list-subheader>
+              </template>
+              <span>
+                This shows the node labels that appear most frequently in the
+                graph. You can adjust the slider to increase or decrease the
+                threshold.
+              </span>
+            </v-tooltip>
+
             <v-list-item>
               <v-slider
                 v-model="frequencySlider"
@@ -99,9 +114,21 @@
                 >
               </v-list-item-content>
             </v-list-item>
-            <v-list-subheader class="text-center justify-center"
-              >FREQUENT TARGET NODES</v-list-subheader
-            >
+            <v-tooltip location="top">
+              <template #activator="{ props }">
+                <v-list-subheader
+                  v-bind="props"
+                  class="text-center justify-center"
+                >
+                  FREQUENT TARGET NODES
+                </v-list-subheader>
+              </template>
+              <span>
+                These are nodes that are most frequently targeted by edges (i.e.
+                most incoming connections).
+              </span>
+            </v-tooltip>
+
             <v-list-item
               v-for="target in getFrequentTargets()"
               :key="target.node"
@@ -809,9 +836,9 @@ export default {
 }
 
 .graph {
-  width: 100%;
+  width: 97%;
   height: 100%;
-  /*border: 1px solid #000;*/
+  border: 1px solid #000;
 }
 
 .slider {

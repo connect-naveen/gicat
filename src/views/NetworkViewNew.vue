@@ -99,13 +99,16 @@
                 >
               </v-list-item-content>
             </v-list-item>
+            <v-list-subheader class="text-center justify-center"
+              >FREQUENT TARGET NODES</v-list-subheader
+            >
             <v-list-item
               v-for="target in getFrequentTargets()"
               :key="target.node"
             >
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ target.node }} — {{ target.count }}
+                  {{ target.label }}: {{ target.count }}
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -422,23 +425,34 @@ export default {
     },
 
     getFrequentTargets() {
-      let edges = this.getEdges;
+      const edges = this.getEdges;
+      const nodes = this.getNodes;
 
       const counts = {};
 
+      // Count each target node
       edges.forEach((edge) => {
         const target = edge.to;
         counts[target] = (counts[target] || 0) + 1;
       });
 
-      const result = Object.entries(counts).map(([node, count]) => ({
-        node,
-        count,
-      }));
+      // Map counts to objects with node ID, label, and count
+      const result = Object.entries(counts).map(([nodeId, count]) => {
+        const match = nodes.find((n) => n.id === nodeId);
+        return {
+          node: nodeId,
+          label: match ? match.label : nodeId,
+          count: count,
+        };
+      });
 
-      result.sort((a, b) => b.count - a.count);
+      // Filter by count > 2 returning only nodes that are not trivial
+      const filtered = result.filter((entry) => entry.count > 2);
 
-      return result;
+      // Sort descending
+      filtered.sort((a, b) => b.count - a.count);
+
+      return filtered;
     },
 
     getFrequentNodes(i) {

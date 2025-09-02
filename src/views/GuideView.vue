@@ -432,6 +432,44 @@
       />
       <figcaption>Figure 4.4 - Edge filter active</figcaption>
     </figure>
+    <br />
+    <br />
+    <h3>Metrics Section</h3>
+    <p>
+      On the right side of the rendering page, you will find a metrics drawer.
+      Opening it provides you with helpful metrics about your generated graph,
+      designed to assist you in understanding its structure and connections. The
+      Node Frequency section (Fig. 5.1) displays node labels that appear most
+      often in the graph. You can use the slider to adjust the minimum frequency
+      threshold.
+    </p>
+    <figure>
+      <img
+        src="../assets/nodeFrequencyThreshold.png"
+        alt="Figure 5.1"
+        height="20%"
+        width="20%"
+      />
+      <figcaption>Figure 5.1 - Node Frequency Section</figcaption>
+    </figure>
+    <br />
+    <br />
+    <p>
+      The Frequent Target Nodes section (Fig. 5.2) on the other hand highlights
+      nodes that receive the most incoming connections (edges), helping to
+      identify central or heavily referenced elements.
+    </p>
+    <br />
+    <br />
+    <figure>
+      <img
+        src="../assets/frequentTargetNodes.png"
+        alt="Figure 5.2"
+        height="20%"
+        width="20%"
+      />
+      <figcaption>Figure 5.2 - Frequent Target Nodes Section</figcaption>
+    </figure>
   </v-main>
 </template>
 <script>

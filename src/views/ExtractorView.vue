@@ -139,6 +139,12 @@ export default {
           message: "You have to have at least a repo.",
         });
       }
+      //let nodesTemp = JSON.parse(JSON.stringify(this.getNodes));
+      //let edgesTemp = JSON.parse(JSON.stringify(this.getEdges));
+      //console.log(nodesTemp[2]);
+      //console.log(edgesTemp[2]);
+      //let edgeFiltersTemp = JSON.parse(JSON.stringify(this.getNodeFilters));
+      //console.log(edgeFiltersTemp[0]);
     },
   },
   computed: {

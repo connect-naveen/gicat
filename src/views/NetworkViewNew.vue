@@ -1,5 +1,5 @@
 <template>
-  <v-main>
+  <v-main style="border-right: 4px solid">
     <div class="network">
       <div class="network-nav">
         <!-- put visualization controls here -->
@@ -58,7 +58,89 @@
           label="Graph strength:"
         ></v-slider>
       </div>
+
       <div class="renderer">
+        <v-btn
+          icon
+          @click.stop="handleMetricsDrawer()"
+          class="position-fixed"
+          :style="{ right: drawer ? '250px' : '0', zIndex: 10 }"
+          variant="text"
+        >
+          <v-icon>{{ drawer ? "$outRight" : "$outLeft" }}</v-icon>
+        </v-btn>
+        <v-navigation-drawer
+          v-model="drawer"
+          v-if="drawer !== null"
+          location="right"
+          temporary
+          scrim
+        >
+          <v-list>
+            <v-tooltip location="top">
+              <template #activator="{ props }">
+                <v-list-subheader
+                  v-bind="props"
+                  class="text-center justify-center"
+                >
+                  NODE FREQUENCY THRESHOLD
+                </v-list-subheader>
+              </template>
+              <span>
+                This shows the node labels that appear most frequently in the
+                graph. You can adjust the slider to increase or decrease the
+                threshold.
+              </span>
+            </v-tooltip>
+
+            <v-list-item>
+              <v-slider
+                v-model="frequencySlider"
+                label="Frequency:"
+                step="1"
+                :max="25"
+                :min="2"
+                @update:model-value="getFrequentNodes(frequencySlider)"
+              ></v-slider>
+            </v-list-item>
+            <v-list-item
+              v-for="(value, key) in getFrequentNodes(frequencySlider)"
+              :key="key"
+            >
+              <v-list-item-content>
+                <v-list-item-title>{{ key }}</v-list-item-title>
+                <v-list-item-subtitle
+                  >Frequency: {{ value }}</v-list-item-subtitle
+                >
+              </v-list-item-content>
+            </v-list-item>
+            <v-tooltip location="top">
+              <template #activator="{ props }">
+                <v-list-subheader
+                  v-bind="props"
+                  class="text-center justify-center"
+                >
+                  FREQUENT TARGET NODES
+                </v-list-subheader>
+              </template>
+              <span>
+                These are nodes that are most frequently targeted by edges (i.e.
+                most incoming connections).
+              </span>
+            </v-tooltip>
+
+            <v-list-item
+              v-for="target in getFrequentTargets()"
+              :key="target.node"
+            >
+              <v-list-item-content>
+                <v-list-item-title>
+                  {{ target.label }}: {{ target.count }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-navigation-drawer>
         <v-network-graph
           ref="graph"
           class="graph"
@@ -205,9 +287,12 @@ export default {
   },
   mounted() {
     this.initGraph();
+    this.drawer = false;
   },
   data() {
     return {
+      frequencySlider: 2,
+      drawer: null,
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -341,15 +426,6 @@ export default {
       "addFilter",
     ]),
 
-    // |=================================================================|
-    // |   ______ _    _ _   _  _____ _______ _____ ____  _   _  _____   |
-    // |  |  ____| |  | | \ | |/ ____|__   __|_   _/ __ \| \ | |/ ____|  |
-    // |  | |__  | |  | |  \| | |       | |    | || |  | |  \| | (___    |
-    // |  |  __| | |  | | . ` | |       | |    | || |  | | . ` |\___ \   |
-    // |  | |    | |__| | |\  | |____   | |   _| || |__| | |\  |____) |  |
-    // |  |_|     \____/|_| \_|\_____|  |_|  |_____\____/|_| \_|_____/   |
-    // |                                                                 |
-    // |=================================================================|
     makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
@@ -371,6 +447,65 @@ export default {
       ].join(" ");
     },
 
+    handleMetricsDrawer() {
+      this.drawer = !this.drawer;
+    },
+
+    getFrequentTargets() {
+      const edges = this.getEdges;
+      const nodes = this.getNodes;
+
+      const counts = {};
+
+      // Count each target node
+      edges.forEach((edge) => {
+        const target = edge.to;
+        counts[target] = (counts[target] || 0) + 1;
+      });
+
+      // Map counts to objects with node ID, label, and count
+      const result = Object.entries(counts).map(([nodeId, count]) => {
+        const match = nodes.find((n) => n.id === nodeId);
+        return {
+          node: nodeId,
+          label: match ? match.label : nodeId,
+          count: count,
+        };
+      });
+
+      // Filter by count > 2 returning only nodes that are not trivial
+      const filtered = result.filter((entry) => entry.count > 2);
+
+      // Sort descending
+      filtered.sort((a, b) => b.count - a.count);
+
+      return filtered;
+    },
+
+    getFrequentNodes(i) {
+      const occ = {};
+      for (let node of this.getNodes) {
+        //console.log(node.meta.filterID);
+        occ[node.label] = (occ[node.label] || 0) + 1;
+      }
+
+      const filteredOcc = {};
+      for (let el in occ) {
+        if (occ[el] > i) {
+          filteredOcc[el] = occ[el];
+        }
+      }
+      return filteredOcc;
+    },
+    getNodeFilterNumbers(i) {
+      var j = 0;
+      for (let k = 0; k < this.getNodes.length; k++) {
+        if (this.getNodes[k].meta.filterID === i) {
+          j++;
+        }
+      }
+      return "Quantity: " + j;
+    },
     initGraph() {
       // making deep copy of nodes and edges
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
@@ -412,7 +547,6 @@ export default {
       this.filters = appliedFilters;
       //this.filtersSelected = appliedFilters;
     },
-    removeEdges() {},
     getFilterItems() {
       return this.getFilters.map((filter) => {
         return {
@@ -673,18 +807,12 @@ export default {
 <style>
 .renderer {
   height: 100%;
+  width: 100%;
 }
 
 .network-nav {
   /* height: 50px; */
   margin-top: 15px;
-}
-
-.network-nav-divider {
-  /* width: 1px; */
-  /* background-color: lightgrey; */
-  border: 0.5px solid rgb(230, 230, 230);
-  border-radius: 50px;
 }
 
 .filter-selector {
@@ -708,7 +836,7 @@ export default {
 }
 
 .graph {
-  width: 100%;
+  width: 97%;
   height: 100%;
   border: 1px solid #000;
 }

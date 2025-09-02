@@ -27,6 +27,8 @@ import {
   mdiPlus,
   mdiPlayPause,
   mdiTagEditOutline,
+  mdiFormatHorizontalAlignLeft,
+  mdiFormatHorizontalAlignRight,
 } from "@mdi/js";
 
 // create Vuetify
@@ -68,6 +70,8 @@ const vuetify = createVuetify({
       plus: mdiPlus,
       playpause: mdiPlayPause,
       edit: mdiTagEditOutline,
+      outLeft: mdiFormatHorizontalAlignLeft,
+      outRight: mdiFormatHorizontalAlignRight,
     },
     sets: {
       mdi,

@@ -14,6 +14,9 @@ export default createStore({
     edgeFilters: [],
   },
   getters: {
+    getDrawer: (state) => {
+      return state.drawer;
+    },
     // general program
     getRepoPath: (state) => {
       return state.repoPath;

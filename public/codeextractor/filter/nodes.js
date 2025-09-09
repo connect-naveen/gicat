@@ -135,8 +135,11 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
     // Actual generation of a node
     // If a label Attribute exists in the filter file: generate the label as expected
     let generatedLabel = filter.labelAttribute
-      ? filter.label + ": " + attributes[filter.labelAttribute]
-      : filter.label;
+      ? (filter.label + ": " + attributes[filter.labelAttribute]).substring(
+          0,
+          16
+        )
+      : filter.label.substring(0, 16);
     //create new node
     let newNode = {
       id: idStringTemp,

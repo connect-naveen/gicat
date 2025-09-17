@@ -73,8 +73,11 @@
           v-model="drawer"
           v-if="drawer !== null"
           location="right"
-          temporary
-          scrim
+          :permanent="false"
+          :disable-resize-watcher="true"
+          :disable-route-watcher="true"
+          :touchless="true"
+          :scrim="false"
         >
           <v-list>
             <v-tooltip location="top">

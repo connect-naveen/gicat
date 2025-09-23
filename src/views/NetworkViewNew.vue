@@ -35,7 +35,7 @@
           :step="50"
           :min="-1000"
           :max="2000"
-          :end="computePhysics()"
+          :end="computePhysics"
           class="slider"
           label="Edge distance:"
         ></v-slider>
@@ -44,7 +44,7 @@
           :step="0.05"
           :min="0"
           :max="2"
-          :end="computePhysics()"
+          :end="computePhysics"
           class="slider"
           label="Edge strength:"
         ></v-slider>
@@ -53,7 +53,7 @@
           :step="500"
           :min="-20000"
           :max="0"
-          :end="computePhysics()"
+          :end="computePhysics"
           class="slider"
           label="Graph strength:"
         ></v-slider>
@@ -73,8 +73,11 @@
           v-model="drawer"
           v-if="drawer !== null"
           location="right"
-          temporary
-          scrim
+          :permanent="false"
+          :disable-resize-watcher="true"
+          :disable-route-watcher="true"
+          :touchless="true"
+          :scrim="false"
         >
           <v-list>
             <v-tooltip location="top">
@@ -288,6 +291,7 @@ export default {
   mounted() {
     this.initGraph();
     this.drawer = false;
+    this.configs.view.layoutHandler = this.computePhysics;
   },
   data() {
     return {
@@ -725,34 +729,6 @@ export default {
         this.playPause = "Pause";
       }
     },
-    computePhysics() {
-      let newForcedLayout = new ForceLayout({
-        positionFixedByDrag: true,
-        positionFixedByClickWithAltKey: true,
-        createSimulation: (d3, nodes, edges) => {
-          // d3-force parameters
-          const forceLink = d3.forceLink(edges).id((d) => d.id);
-          return (
-            d3
-              .forceSimulation(nodes)
-              .force(
-                "edge",
-                forceLink.distance(this.dist).strength(this.strength)
-              )
-              .force("charge", d3.forceManyBody().strength(this.charge))
-              .force("x", d3.forceX())
-              .force("y", d3.forceY())
-              //.stop() // tick manually,
-              .tick(1)
-              .alpha(1)
-              .velocityDecay(0.8)
-          );
-        },
-      });
-      this.configs.view.layoutHandler = newForcedLayout;
-      this.physicsEnabled = true;
-      this.playPause = "Pause";
-    },
     async downloadSVG() {
       // destructure proxy:
       const graph = { ...this.graph };
@@ -799,6 +775,51 @@ export default {
     },
     getPhysicsEnabled() {
       return this.physicsEnabled;
+    },
+    computePhysics() {
+      let newForcedLayout = new ForceLayout({
+        positionFixedByDrag: true,
+        positionFixedByClickWithAltKey: true,
+        createSimulation: (d3, nodes, edges) => {
+          console.log("nodes: ", nodes);
+          console.log("edges: ", edges);
+          // d3-force parameters
+          const forceLink = d3.forceLink(edges).id((d) => d.id);
+          return (
+            d3
+              .forceSimulation(nodes)
+              .force(
+                "edge",
+                forceLink.distance(this.dist).strength(this.strength)
+              )
+              .force("charge", d3.forceManyBody().strength(this.charge))
+              .force("x", d3.forceX())
+              .force("y", d3.forceY())
+              //.stop() // tick manually,
+              .tick(1)
+              .alpha(1)
+              .velocityDecay(0.8)
+          );
+        },
+      });
+      return newForcedLayout;
+    },
+  },
+  watch: {
+    dist() {
+      this.configs.view.layoutHandler = this.computePhysics;
+      this.physicsEnabled = true;
+      this.playPause = "Pause";
+    },
+    strength() {
+      this.configs.view.layoutHandler = this.computePhysics;
+      this.physicsEnabled = true;
+      this.playPause = "Pause";
+    },
+    charge() {
+      this.configs.view.layoutHandler = this.computePhysics;
+      this.physicsEnabled = true;
+      this.playPause = "Pause";
     },
   },
 };

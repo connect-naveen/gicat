@@ -209,7 +209,8 @@
                 !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
               "
             >
-              {{ text }}
+              {{ nodes[nodeId].meta?.fullLabel || text }}
+              <title>{{ nodes[nodeId].meta?.ogLabel || text }}</title>
             </text>
             <text v-else></text>
           </template>
@@ -527,6 +528,9 @@ export default {
         /* reformat for v-network-graph */
         this.changeObjectKey(node, "label", "name");
         node.color = node.meta.color;
+        node.fullLabel = node.name; // or node.label
+        node.meta = node.meta || {};
+        node.meta.fullLabel = node.fullLabel;
       });
 
       // formatting edges to fit v-network-graph standard

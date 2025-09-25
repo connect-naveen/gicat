@@ -134,6 +134,9 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
     // console.log(idStringTemp)
     // Actual generation of a node
     // If a label Attribute exists in the filter file: generate the label as expected
+    let ogLabel = filter.labelAttribute
+      ? filter.label + ": " + attributes[filter.labelAttribute]
+      : filter.label;
     let generatedLabel = filter.labelAttribute
       ? (filter.label + ": " + attributes[filter.labelAttribute]).substring(
           0,
@@ -150,6 +153,7 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
         filterID: filter.id,
         matches: attributes,
         line: match.lineIndex,
+        fullLabel: ogLabel,
       },
     };
     //create edge

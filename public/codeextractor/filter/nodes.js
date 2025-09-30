@@ -134,15 +134,11 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
     // console.log(idStringTemp)
     // Actual generation of a node
     // If a label Attribute exists in the filter file: generate the label as expected
-    let ogLabel = filter.labelAttribute
+    let generatedLabel = filter.labelAttribute
       ? filter.label + ": " + attributes[filter.labelAttribute]
       : filter.label;
-    let generatedLabel = filter.labelAttribute
-      ? (filter.label + ": " + attributes[filter.labelAttribute]).substring(
-          0,
-          16
-        )
-      : filter.label.substring(0, 16);
+    // Always substring to 16 chars
+    //generatedLabel = generatedLabel.substring(0, 16);
     //create new node
     let newNode = {
       id: idStringTemp,
@@ -153,7 +149,6 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
         filterID: filter.id,
         matches: attributes,
         line: match.lineIndex,
-        fullLabel: ogLabel,
       },
     };
     //create edge

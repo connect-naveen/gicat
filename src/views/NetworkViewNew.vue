@@ -205,8 +205,8 @@
                 !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
               "
             >
-              {{ nodes[nodeId].meta?.fullLabel || text }}
-              <title>{{ nodes[nodeId].meta?.ogLabel || text }}</title>
+              {{ nodes[nodeId].name || text }}
+              <title>{{ nodes[nodeId].fullLabel || text }}</title>
             </text>
             <text v-else></text>
           </template>
@@ -534,18 +534,15 @@ export default {
       // formatting nodes to fit v-network-graph standard
       // also sets default values for nodes
       inputNodes.forEach((node, index) => {
-        /* default values */
         node.childrenCollapsed = false;
         node.hidden = false;
         node.index = index;
-        // this is needed for hiding within nested folder
         node.hiddenCounter = 0;
-        /* reformat for v-network-graph */
-        this.changeObjectKey(node, "label", "name");
+        //this.changeObjectKey(node, "label", "name");
+        node.fullLabel = node.label;
+        node.name = node.label.substring(0, 16);
         node.color = node.meta.color;
-        node.fullLabel = node.name; // or node.label
         node.meta = node.meta || {};
-        node.meta.fullLabel = node.fullLabel;
       });
 
       // formatting edges to fit v-network-graph standard

@@ -2,7 +2,6 @@
   <v-main style="border-right: 4px solid">
     <div class="network">
       <div class="network-nav">
-        <!-- put visualization controls here -->
         <v-btn
           v-on:click="downloadSVG()"
           prepend-icon="$fileExport"
@@ -35,7 +34,6 @@
           :step="50"
           :min="-1000"
           :max="2000"
-          :end="computePhysics"
           class="slider"
           label="Edge distance:"
         ></v-slider>
@@ -44,7 +42,6 @@
           :step="0.05"
           :min="0"
           :max="2"
-          :end="computePhysics"
           class="slider"
           label="Edge strength:"
         ></v-slider>
@@ -53,7 +50,6 @@
           :step="500"
           :min="-20000"
           :max="0"
-          :end="computePhysics"
           class="slider"
           label="Graph strength:"
         ></v-slider>
@@ -290,9 +286,27 @@ export default {
     return { graph };
   },
   mounted() {
+    this.layoutHandler = new ForceLayout({
+      positionFixedByDrag: true,
+      positionFixedByClickWithAltKey: true,
+      createSimulation: (d3, nodes, edges) => {
+        const forceLink = d3.forceLink(edges).id((d) => d.id);
+        const sim = d3
+          .forceSimulation(nodes)
+          .force("edge", forceLink.distance(this.dist).strength(this.strength))
+          .force("charge", d3.forceManyBody().strength(this.charge))
+          .force("collide", d3.forceCollide(5).iterations(10))
+          .force("x", d3.forceX())
+          .force("y", d3.forceY())
+          .alphaMin(0.0001);
+        // Save reference for later updates
+        this.simulation = sim;
+        return sim;
+      },
+    });
+    this.configs.view.layoutHandler = this.layoutHandler;
     this.initGraph();
     this.drawer = false;
-    this.configs.view.layoutHandler = this.computePhysics;
   },
   data() {
     return {
@@ -335,6 +349,7 @@ export default {
       dist: 0,
       strength: 1,
       charge: -12000,
+      layoutHandler: null,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -723,12 +738,35 @@ export default {
     },
     toggleSimulation() {
       if (this.physicsEnabled) {
+        // Pause: switch to SimpleLayout, simulation reference is now invalid
         this.savedLayout = this.configs.view.layoutHandler;
         this.configs.view.layoutHandler = new vNG.SimpleLayout();
+        this.simulation = null; // simulation is stopped
         this.physicsEnabled = false;
         this.playPause = "Play";
       } else {
-        this.configs.view.layoutHandler = this.savedLayout;
+        // Resume: restore ForceLayout and re-create simulation
+        this.layoutHandler = new ForceLayout({
+          positionFixedByDrag: true,
+          positionFixedByClickWithAltKey: true,
+          createSimulation: (d3, nodes, edges) => {
+            const forceLink = d3.forceLink(edges).id((d) => d.id);
+            const sim = d3
+              .forceSimulation(nodes)
+              .force(
+                "edge",
+                forceLink.distance(this.dist).strength(this.strength)
+              )
+              .force("charge", d3.forceManyBody().strength(this.charge))
+              .force("collide", d3.forceCollide(5).iterations(10))
+              .force("x", d3.forceX())
+              .force("y", d3.forceY())
+              .alphaMin(0.0001);
+            this.simulation = sim; // update reference
+            return sim;
+          },
+        });
+        this.configs.view.layoutHandler = this.layoutHandler;
         this.physicsEnabled = true;
         this.playPause = "Pause";
       }
@@ -758,6 +796,15 @@ export default {
       a.download = filename + "_" + dateString + ".svg"; // filename to download
       a.click();
       window.URL.revokeObjectURL(url);
+    },
+    updatePhysicsForces() {
+      if (!this.simulation) return;
+      this.simulation
+        .force("edge")
+        ?.distance(this.dist)
+        .strength(this.strength);
+      this.simulation.force("charge")?.strength(this.charge);
+      this.simulation.alpha(1).restart();
     },
   },
 
@@ -811,17 +858,26 @@ export default {
   },
   watch: {
     dist() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     strength() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     charge() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },

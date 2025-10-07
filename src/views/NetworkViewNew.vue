@@ -105,6 +105,7 @@
             <v-list-item
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
+              @click="highlightNodeByLabel(key)"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -148,30 +149,29 @@
           :edges="edges"
           :configs="configs"
           :event-handlers="eventHandlers"
+          :selected="selectedNodes"
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
               class="testClass"
               :width="
-                this.isFolder(nodes[nodeId])
+                isFolder(nodes[nodeId])
                   ? Math.max(nodes[nodeId].name.length * 20, 200)
                   : Math.max(nodes[nodeId].name.length * 12, 200)
               "
               :height="config.height"
-              :fill="nodes[nodeId].color"
+              :fill="config.color"
               :stroke="config.strokeColor"
               :stroke-width="config.strokeWidth"
               v-bind="slotProps"
               :x="
-                this.isFolder(nodes[nodeId])
+                isFolder(nodes[nodeId])
                   ? -(nodes[nodeId].name.length * 20) / 2
                   : -(nodes[nodeId].name.length * 12) / 2
               "
               y="-25"
-              :rx="this.isFolder(nodes[nodeId]) ? 2 : 25"
-              v-if="
-                !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
-              "
+              :rx="isFolder(nodes[nodeId]) ? 2 : 25"
+              v-if="!nodes[nodeId].hidden && isFilterSelected(nodes[nodeId])"
             />
             <div
               width="0"
@@ -371,15 +371,18 @@ export default {
             width: "300",
             height: "50",
           },
+          selector: (node, { selected }) => selected,
           selected: {
             strokeWidth: 6,
-            strokeColor: "#000000",
-            width: "0",
+            strokeColor: "#ff9800", // highlight color
+            color: (node) => node.color,
+            width: "300",
             height: "50",
           },
           focusring: {
             visible: false,
           },
+          // Add this to tell v-network-graph which nodes are selected
         },
         edge: {
           normal: {
@@ -431,6 +434,7 @@ export default {
       }),
       physicsEnabled: true,
       savedLayout: null,
+      selectedNodes: [],
     };
   },
   name: "NetworkNewView",
@@ -527,45 +531,37 @@ export default {
       return "Quantity: " + j;
     },
     initGraph() {
-      // making deep copy of nodes and edges
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
       let inputEdges = JSON.parse(JSON.stringify(this.getEdges));
 
-      // formatting nodes to fit v-network-graph standard
-      // also sets default values for nodes
       inputNodes.forEach((node, index) => {
         node.childrenCollapsed = false;
         node.hidden = false;
         node.index = index;
         node.hiddenCounter = 0;
-        //this.changeObjectKey(node, "label", "name");
         node.fullLabel = node.label;
-        node.name = node.label.substring(0, 16);
+        node.name = node.label ? node.label.substring(0, 16) : "";
         node.color = node.meta.color;
         node.meta = node.meta || {};
+        node.selected = false;
       });
 
-      // formatting edges to fit v-network-graph standard
       inputEdges.forEach((edge) => {
         edge.hidden = false;
         edge.hiddenCounter = 0;
-        // this.changeObjectKey(edge, "from", "source");
-        edge.source = inputNodes
-          .findIndex((node) => edge.from === node.id)
-          .toString();
-        // this.changeObjectKey(edge, "to", "target");
-        edge.target = inputNodes
-          .findIndex((node) => edge.to === node.id)
-          .toString();
+        edge.source = edge.from; // Make sure edge.from is a valid node id
+        edge.target = edge.to; // Make sure edge.to is a valid node id
         edge.color = edge.meta.color;
       });
-      // this.nodes = Object.assign({}, inputNodes);
-      this.nodes = inputNodes;
-      this.edges = inputEdges;
+
+      // Use object for nodes, array for edges
+      this.nodes = Object.fromEntries(
+        inputNodes.map((node) => [node.id, node])
+      );
+      this.edges = inputEdges; // <-- Use array for edges
 
       let appliedFilters = this.getFilterItems();
       this.filters = appliedFilters;
-      //this.filtersSelected = appliedFilters;
     },
     getFilterItems() {
       return this.getFilters.map((filter) => {
@@ -802,6 +798,13 @@ export default {
         .strength(this.strength);
       this.simulation.force("charge")?.strength(this.charge);
       this.simulation.alpha(1).restart();
+    },
+    highlightNodeByLabel(label) {
+      const nodeIds = Object.values(this.nodes)
+        .filter((node) => node.label === label)
+        .map((node) => node.id);
+      console.log("Selected nodeIds:", nodeIds);
+      this.selectedNodes = nodeIds;
     },
   },
 

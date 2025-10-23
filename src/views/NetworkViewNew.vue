@@ -2,7 +2,6 @@
   <v-main style="border-right: 4px solid">
     <div class="network">
       <div class="network-nav">
-        <!-- put visualization controls here -->
         <v-btn
           v-on:click="downloadSVG()"
           prepend-icon="$fileExport"
@@ -35,7 +34,6 @@
           :step="50"
           :min="-1000"
           :max="2000"
-          :end="computePhysics"
           class="slider"
           label="Edge distance:"
         ></v-slider>
@@ -44,7 +42,6 @@
           :step="0.05"
           :min="0"
           :max="2"
-          :end="computePhysics"
           class="slider"
           label="Edge strength:"
         ></v-slider>
@@ -53,7 +50,6 @@
           :step="500"
           :min="-20000"
           :max="0"
-          :end="computePhysics"
           class="slider"
           label="Graph strength:"
         ></v-slider>
@@ -109,6 +105,7 @@
             <v-list-item
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
+              @click="$emit('label:click', { label: key })"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -152,30 +149,29 @@
           :edges="edges"
           :configs="configs"
           :event-handlers="eventHandlers"
+          :selected="selectedNodes"
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
               class="testClass"
               :width="
-                this.isFolder(nodes[nodeId])
+                isFolder(nodes[nodeId])
                   ? Math.max(nodes[nodeId].name.length * 20, 200)
                   : Math.max(nodes[nodeId].name.length * 12, 200)
               "
               :height="config.height"
-              :fill="nodes[nodeId].color"
+              :fill="config.color"
               :stroke="config.strokeColor"
               :stroke-width="config.strokeWidth"
               v-bind="slotProps"
               :x="
-                this.isFolder(nodes[nodeId])
+                isFolder(nodes[nodeId])
                   ? -(nodes[nodeId].name.length * 20) / 2
                   : -(nodes[nodeId].name.length * 12) / 2
               "
               y="-25"
-              :rx="this.isFolder(nodes[nodeId]) ? 2 : 25"
-              v-if="
-                !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
-              "
+              :rx="isFolder(nodes[nodeId]) ? 2 : 25"
+              v-if="!nodes[nodeId].hidden && isFilterSelected(nodes[nodeId])"
             />
             <div
               width="0"
@@ -209,7 +205,8 @@
                 !nodes[nodeId].hidden && this.isFilterSelected(nodes[nodeId])
               "
             >
-              {{ text }}
+              {{ nodes[nodeId].name || text }}
+              <title>{{ nodes[nodeId].fullLabel || text }}</title>
             </text>
             <text v-else></text>
           </template>
@@ -289,9 +286,27 @@ export default {
     return { graph };
   },
   mounted() {
+    this.layoutHandler = new ForceLayout({
+      positionFixedByDrag: true,
+      positionFixedByClickWithAltKey: true,
+      createSimulation: (d3, nodes, edges) => {
+        const forceLink = d3.forceLink(edges).id((d) => d.id);
+        const sim = d3
+          .forceSimulation(nodes)
+          .force("edge", forceLink.distance(this.dist).strength(this.strength))
+          .force("charge", d3.forceManyBody().strength(this.charge))
+          .force("collide", d3.forceCollide(5).iterations(10))
+          .force("x", d3.forceX())
+          .force("y", d3.forceY())
+          .alphaMin(0.0001);
+        // Save reference for later updates
+        this.simulation = sim;
+        return sim;
+      },
+    });
+    this.configs.view.layoutHandler = this.layoutHandler;
     this.initGraph();
     this.drawer = false;
-    this.configs.view.layoutHandler = this.computePhysics;
   },
   data() {
     return {
@@ -300,7 +315,6 @@ export default {
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
-          //console.log(type, event);
           if (event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
@@ -310,6 +324,18 @@ export default {
             }
             if (type == "node:click") {
               this.leftClick(event.node);
+            }
+            // Custom label click event
+            if (type == "label:click") {
+              const label = event.label;
+              // Highlight logic here:
+              const nodes = this.getNodes;
+              console.log("Label clicked: " + label);
+              this.selectedNodes = nodes
+                .filter((node) => node.label === label)
+                .map((node) => node.id);
+              console.log(this.selectedNodes);
+              this.$forceUpdate();
             }
           }
         },
@@ -334,6 +360,7 @@ export default {
       dist: 0,
       strength: 1,
       charge: -12000,
+      layoutHandler: null,
       configs: vNG.defineConfigs({
         view: {
           scalingObjects: true,
@@ -357,13 +384,15 @@ export default {
           },
           selected: {
             strokeWidth: 6,
-            strokeColor: "#000000",
-            width: "0",
+            strokeColor: "#000000", // highlight color
+            color: (node) => node.color,
+            width: "300",
             height: "50",
           },
           focusring: {
             visible: false,
           },
+          // Add this to tell v-network-graph which nodes are selected
         },
         edge: {
           normal: {
@@ -415,6 +444,7 @@ export default {
       }),
       physicsEnabled: true,
       savedLayout: null,
+      selectedNodes: [],
     };
   },
   name: "NetworkNewView",
@@ -511,45 +541,37 @@ export default {
       return "Quantity: " + j;
     },
     initGraph() {
-      // making deep copy of nodes and edges
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
       let inputEdges = JSON.parse(JSON.stringify(this.getEdges));
 
-      // formatting nodes to fit v-network-graph standard
-      // also sets default values for nodes
       inputNodes.forEach((node, index) => {
-        /* default values */
         node.childrenCollapsed = false;
         node.hidden = false;
         node.index = index;
-        // this is needed for hiding within nested folder
         node.hiddenCounter = 0;
-        /* reformat for v-network-graph */
-        this.changeObjectKey(node, "label", "name");
+        node.fullLabel = node.label;
+        node.name = node.label ? node.label.substring(0, 16) : "";
         node.color = node.meta.color;
+        node.meta = node.meta || {};
+        node.selected = false;
       });
 
-      // formatting edges to fit v-network-graph standard
       inputEdges.forEach((edge) => {
         edge.hidden = false;
         edge.hiddenCounter = 0;
-        // this.changeObjectKey(edge, "from", "source");
-        edge.source = inputNodes
-          .findIndex((node) => edge.from === node.id)
-          .toString();
-        // this.changeObjectKey(edge, "to", "target");
-        edge.target = inputNodes
-          .findIndex((node) => edge.to === node.id)
-          .toString();
+        edge.source = edge.from; // Make sure edge.from is a valid node id
+        edge.target = edge.to; // Make sure edge.to is a valid node id
         edge.color = edge.meta.color;
       });
-      // this.nodes = Object.assign({}, inputNodes);
-      this.nodes = inputNodes;
-      this.edges = inputEdges;
+
+      // Use object for nodes, array for edges
+      this.nodes = Object.fromEntries(
+        inputNodes.map((node) => [node.id, node])
+      );
+      this.edges = inputEdges; // <-- Use array for edges
 
       let appliedFilters = this.getFilterItems();
       this.filters = appliedFilters;
-      //this.filtersSelected = appliedFilters;
     },
     getFilterItems() {
       return this.getFilters.map((filter) => {
@@ -602,10 +624,22 @@ export default {
         console.log(node.label);
       });
     },
-    leftClick(node) {
-      let selectedNode = this.nodes[node];
+    leftClick(nodeId) {
+      let selectedNode = this.nodes[nodeId];
       selectedNode.meta.active = !selectedNode.meta.active;
-      //console.log(node.label + " is active: " + selectedNode.meta.active);
+      console.log(
+        selectedNode.label + " is active: " + selectedNode.meta.active
+      );
+
+      if (selectedNode.meta.active) {
+        // Add to selectedNodes if not already present
+        if (!this.selectedNodes.includes(nodeId)) {
+          this.selectedNodes.push(nodeId);
+        }
+      } else {
+        // Remove from selectedNodes
+        this.selectedNodes = this.selectedNodes.filter((id) => id !== nodeId);
+      }
     },
     collapseChildren(hitNode) {
       console.warn("collapse children");
@@ -719,12 +753,35 @@ export default {
     },
     toggleSimulation() {
       if (this.physicsEnabled) {
+        // Pause: switch to SimpleLayout, simulation reference is now invalid
         this.savedLayout = this.configs.view.layoutHandler;
         this.configs.view.layoutHandler = new vNG.SimpleLayout();
+        this.simulation = null; // simulation is stopped
         this.physicsEnabled = false;
         this.playPause = "Play";
       } else {
-        this.configs.view.layoutHandler = this.savedLayout;
+        // Resume: restore ForceLayout and re-create simulation
+        this.layoutHandler = new ForceLayout({
+          positionFixedByDrag: true,
+          positionFixedByClickWithAltKey: true,
+          createSimulation: (d3, nodes, edges) => {
+            const forceLink = d3.forceLink(edges).id((d) => d.id);
+            const sim = d3
+              .forceSimulation(nodes)
+              .force(
+                "edge",
+                forceLink.distance(this.dist).strength(this.strength)
+              )
+              .force("charge", d3.forceManyBody().strength(this.charge))
+              .force("collide", d3.forceCollide(5).iterations(10))
+              .force("x", d3.forceX())
+              .force("y", d3.forceY())
+              .alphaMin(0.0001);
+            this.simulation = sim; // update reference
+            return sim;
+          },
+        });
+        this.configs.view.layoutHandler = this.layoutHandler;
         this.physicsEnabled = true;
         this.playPause = "Pause";
       }
@@ -755,6 +812,24 @@ export default {
       a.click();
       window.URL.revokeObjectURL(url);
     },
+    updatePhysicsForces() {
+      if (!this.simulation) return;
+      this.simulation
+        .force("edge")
+        ?.distance(this.dist)
+        .strength(this.strength);
+      this.simulation.force("charge")?.strength(this.charge);
+      this.simulation.alpha(1).restart();
+    },
+    /** highlightNodeByLabel(label) {
+      const nodes = this.getNodes;
+      for (const node of nodes) {
+        if (node.label === label) {
+          this.selectedNodes.push(node);
+        }
+      }
+      this.$forceUpdate(); // Force Vue to re-render
+    },**/
   },
 
   computed: {
@@ -807,17 +882,26 @@ export default {
   },
   watch: {
     dist() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     strength() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     charge() {
-      this.configs.view.layoutHandler = this.computePhysics;
+      if (!this.physicsEnabled) {
+        this.toggleSimulation();
+      }
+      this.updatePhysicsForces();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },

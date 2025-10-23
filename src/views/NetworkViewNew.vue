@@ -105,7 +105,7 @@
             <v-list-item
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
-              @click="highlightNodeByLabel(key)"
+              @click="$emit('label:click', { label: key })"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -315,7 +315,6 @@ export default {
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
-          //console.log(type, event);
           if (event instanceof Object) {
             if (type == "node:dblclick") {
               this.doubleClick(event.node);
@@ -325,6 +324,18 @@ export default {
             }
             if (type == "node:click") {
               this.leftClick(event.node);
+            }
+            // Custom label click event
+            if (type == "label:click") {
+              const label = event.label;
+              // Highlight logic here:
+              const nodes = this.getNodes;
+              console.log("Label clicked: " + label);
+              this.selectedNodes = nodes
+                .filter((node) => node.label === label)
+                .map((node) => node.id);
+              console.log(this.selectedNodes);
+              this.$forceUpdate();
             }
           }
         },
@@ -371,10 +382,9 @@ export default {
             width: "300",
             height: "50",
           },
-          selector: (node, { selected }) => selected,
           selected: {
             strokeWidth: 6,
-            strokeColor: "#ff9800", // highlight color
+            strokeColor: "#000000", // highlight color
             color: (node) => node.color,
             width: "300",
             height: "50",
@@ -614,10 +624,22 @@ export default {
         console.log(node.label);
       });
     },
-    leftClick(node) {
-      let selectedNode = this.nodes[node];
+    leftClick(nodeId) {
+      let selectedNode = this.nodes[nodeId];
       selectedNode.meta.active = !selectedNode.meta.active;
-      //console.log(node.label + " is active: " + selectedNode.meta.active);
+      console.log(
+        selectedNode.label + " is active: " + selectedNode.meta.active
+      );
+
+      if (selectedNode.meta.active) {
+        // Add to selectedNodes if not already present
+        if (!this.selectedNodes.includes(nodeId)) {
+          this.selectedNodes.push(nodeId);
+        }
+      } else {
+        // Remove from selectedNodes
+        this.selectedNodes = this.selectedNodes.filter((id) => id !== nodeId);
+      }
     },
     collapseChildren(hitNode) {
       console.warn("collapse children");
@@ -799,13 +821,15 @@ export default {
       this.simulation.force("charge")?.strength(this.charge);
       this.simulation.alpha(1).restart();
     },
-    highlightNodeByLabel(label) {
-      const nodeIds = Object.values(this.nodes)
-        .filter((node) => node.label === label)
-        .map((node) => node.id);
-      console.log("Selected nodeIds:", nodeIds);
-      this.selectedNodes = nodeIds;
-    },
+    /** highlightNodeByLabel(label) {
+      const nodes = this.getNodes;
+      for (const node of nodes) {
+        if (node.label === label) {
+          this.selectedNodes.push(node);
+        }
+      }
+      this.$forceUpdate(); // Force Vue to re-render
+    },**/
   },
 
   computed: {

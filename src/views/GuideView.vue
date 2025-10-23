@@ -443,15 +443,26 @@
       often in the graph. You can use the slider to adjust the minimum frequency
       threshold.
     </p>
-    <figure>
-      <img
-        src="../assets/nodeFrequencyThreshold.png"
-        alt="Figure 5.1"
-        height="20%"
-        width="20%"
-      />
-      <figcaption>Figure 5.1 - Node Frequency Section</figcaption>
-    </figure>
+    <div class="figures-row">
+      <figure>
+        <img
+          src="../assets/nodeFrequencyThreshold.png"
+          alt="Figure 5.1"
+          height="20%"
+          width="100%"
+        />
+        <figcaption>Figure 5.1 - Node Frequency Section</figcaption>
+      </figure>
+      <figure>
+        <img
+          src="../assets/frequentTargetNodes.png"
+          alt="Figure 5.2"
+          height="20%"
+          width="100%"
+        />
+        <figcaption>Figure 5.2 - Frequent Target Nodes Section</figcaption>
+      </figure>
+    </div>
     <br />
     <br />
     <p>
@@ -461,15 +472,6 @@
     </p>
     <br />
     <br />
-    <figure>
-      <img
-        src="../assets/frequentTargetNodes.png"
-        alt="Figure 5.2"
-        height="20%"
-        width="20%"
-      />
-      <figcaption>Figure 5.2 - Frequent Target Nodes Section</figcaption>
-    </figure>
   </v-main>
 </template>
 <script>
@@ -524,5 +526,36 @@ p {
 
 button {
   top: 0;
+}
+
+.figures-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align captions at the bottom */
+  gap: 4em;
+  margin-bottom: 2em;
+  margin-top: 4em;
+}
+
+.figures-row figure {
+  width: 320px;
+  margin: 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.figures-row img {
+  width: 100%;
+  height: auto;
+  max-height: 380px; /* Ensure both images have the same max height */
+  object-fit: contain;
+}
+
+figcaption {
+  font-size: 0.8em;
+  font-weight: 600;
+  color: #333;
+  margin-top: 4em;
 }
 </style>

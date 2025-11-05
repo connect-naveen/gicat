@@ -138,7 +138,7 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
       ? filter.label + ": " + attributes[filter.labelAttribute]
       : filter.label;
     // Always substring to 16 chars
-    //generatedLabel = generatedLabel.substring(0, 16);
+    //generatedLabel = generatedLabel.substring(0, 20);
     //create new node
     let newNode = {
       id: idStringTemp,

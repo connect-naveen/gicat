@@ -55,7 +55,7 @@
         ></v-slider>
       </div>
 
-      <div class="renderer">
+      <div class="renderer" @click="handleRendererClick">
         <v-btn
           icon
           @click.stop="handleMetricsDrawer()"
@@ -373,7 +373,7 @@ export default {
           },
           selected: {
             strokeWidth: 6,
-            strokeColor: "#000000", // highlight color
+            strokeColor: "#000000",
             color: (node) => node.color,
             width: "300",
             height: "50",
@@ -381,7 +381,6 @@ export default {
           focusring: {
             visible: false,
           },
-          // Add this to tell v-network-graph which nodes are selected
         },
         edge: {
           normal: {
@@ -448,6 +447,19 @@ export default {
       "addEdgeFilter",
       "addFilter",
     ]),
+
+    handleRendererClick(event) {
+      if (event.target.classList.contains("v-ng-canvas")) {
+        console.log("Renderer background clicked, clearing selection");
+        this.selectedNodes = [];
+        // Set isActive to false for all nodes
+        Object.values(this.nodes).forEach((node) => {
+          if (node.meta) node.meta.active = false;
+        });
+      } else {
+        console.log("Clicked on graph element:", event.target);
+      }
+    },
 
     makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(

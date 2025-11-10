@@ -409,7 +409,7 @@
     <p>
       Figure 4.3 and 4.4 shows our recently generated Edge filter in action. We
       therefore activated only our previously generated Python Class Filter as
-      seen in figure 4.3. As shown in figure 4.4, you will see what it looks
+      seen in Figure 4.3. As shown in Figure 4.4, you will see what it looks
       like if you activate the Edge filter.
     </p>
     <br />
@@ -485,6 +485,20 @@ export default {
     openNewWindow() {
       window.open("https://www.css-lab.rwth-aachen.de/tools/overview");
     },
+  },
+  beforeRouteLeave(to, from, next) {
+    // Save scroll position before leaving
+    sessionStorage.setItem("guideScrollY", window.scrollY);
+    next();
+  },
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      // Restore scroll position after entering
+      const scrollY = sessionStorage.getItem("guideScrollY");
+      if (scrollY !== null) {
+        window.scrollTo(0, parseInt(scrollY, 10));
+      }
+    });
   },
 };
 </script>

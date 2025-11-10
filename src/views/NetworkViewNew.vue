@@ -105,7 +105,7 @@
             <v-list-item
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
-              @click="$emit('label:click', { label: key })"
+              @click="highlightNodesByLabel(key)"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -132,6 +132,7 @@
             <v-list-item
               v-for="target in getFrequentTargets()"
               :key="target.node"
+              @click="highlightNodesByLabel(target.label)"
             >
               <v-list-item-content>
                 <v-list-item-title>
@@ -149,7 +150,7 @@
           :edges="edges"
           :configs="configs"
           :event-handlers="eventHandlers"
-          :selected="selectedNodes"
+          :selected-nodes="selectedNodes"
         >
           <template #override-node="{ config, nodeId, ...slotProps }">
             <rect
@@ -324,18 +325,6 @@ export default {
             }
             if (type == "node:click") {
               this.leftClick(event.node);
-            }
-            // Custom label click event
-            if (type == "label:click") {
-              const label = event.label;
-              // Highlight logic here:
-              const nodes = this.getNodes;
-              console.log("Label clicked: " + label);
-              this.selectedNodes = nodes
-                .filter((node) => node.label === label)
-                .map((node) => node.id);
-              console.log(this.selectedNodes);
-              this.$forceUpdate();
             }
           }
         },
@@ -550,7 +539,7 @@ export default {
         node.index = index;
         node.hiddenCounter = 0;
         node.fullLabel = node.label;
-        node.name = node.label ? node.label.substring(0, 16) : "";
+        node.name = node.label ? node.label.substring(0, 20) : "";
         node.color = node.meta.color;
         node.meta = node.meta || {};
         node.selected = false;
@@ -640,6 +629,19 @@ export default {
         // Remove from selectedNodes
         this.selectedNodes = this.selectedNodes.filter((id) => id !== nodeId);
       }
+    },
+    highlightNodesByLabel(label) {
+      // Find matching nodes
+      const nodeIds = Object.keys(this.nodes);
+      const matchingNodeIds = nodeIds.filter((nodeId) => {
+        const node = this.nodes[nodeId];
+        return node && node.label === label;
+      });
+
+      // Trigger leftClick for each matching node to simulate actual clicks
+      matchingNodeIds.forEach((nodeId) => {
+        this.leftClick(nodeId);
+      });
     },
     collapseChildren(hitNode) {
       console.warn("collapse children");

@@ -106,6 +106,9 @@
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
               @click="highlightNodesByLabel(key)"
+              :class="{
+                'highlighted-entry': highlightedDrawerLabels.includes(key),
+              }"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
@@ -133,6 +136,11 @@
               v-for="target in getFrequentTargets()"
               :key="target.node"
               @click="highlightNodesByLabel(target.label)"
+              :class="{
+                'highlighted-entry': highlightedDrawerLabels.includes(
+                  target.label
+                ),
+              }"
             >
               <v-list-item-content>
                 <v-list-item-title>
@@ -313,6 +321,7 @@ export default {
     return {
       frequencySlider: 2,
       drawer: null,
+      highlightedDrawerLabels: [],
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -452,6 +461,7 @@ export default {
       if (event.target.classList.contains("v-ng-canvas")) {
         console.log("Renderer background clicked, clearing selection");
         this.selectedNodes = [];
+        this.highlightedDrawerLabels = [];
         // Set isActive to false for all nodes
         Object.values(this.nodes).forEach((node) => {
           if (node.meta) node.meta.active = false;
@@ -643,6 +653,12 @@ export default {
       }
     },
     highlightNodesByLabel(label) {
+      const idx = this.highlightedDrawerLabels.indexOf(label);
+      if (idx === -1) {
+        this.highlightedDrawerLabels.push(label);
+      } else {
+        this.highlightedDrawerLabels.splice(idx, 1);
+      }
       // Find matching nodes
       const nodeIds = Object.keys(this.nodes);
       const matchingNodeIds = nodeIds.filter((nodeId) => {
@@ -962,5 +978,9 @@ export default {
 
 .slider {
   margin-left: 100px;
+}
+
+.highlighted-entry {
+  background-color: #f3f3f3 !important;
 }
 </style>

@@ -336,10 +336,10 @@
     <br />
     <figure>
       <img
-        src="../assets/capture_1.jpg"
+        src="../assets/capture_1.png"
         alt="Figure 3.1"
-        height="70%"
-        width="70%"
+        height="50%"
+        width="50%"
       />
       <figcaption>
         Figure 3.1 - assignment of the first capture group
@@ -348,10 +348,10 @@
     <br />
     <figure>
       <img
-        src="../assets/capture_2.jpg"
+        src="../assets/capture_2.png"
         alt="Figure 3.2"
-        height="70%"
-        width="70%"
+        height="50%"
+        width="50%"
       />
       <figcaption>
         Figure 3.2 - assignment of the second capture group
@@ -385,12 +385,17 @@
       using the same node filter as source and target since our aim is to draw
       labeled edges between sub classes and their super class. Both of those
       capture groups are part of our previously generated
-      <i>Class Filter Python</i>. You can also draw edges between two different
+      <i>Class Node Filter</i>. You can also draw edges between two different
       node filters inside the <i>same package</i>.
     </p>
     <br />
     <figure>
-      <img src="../assets/edgefilter.jpg" alt="Figure 4.1" />
+      <img
+        src="../assets/edgefilter.png"
+        alt="Figure 4.1"
+        height="50%"
+        width="50%"
+      />
       <figcaption>Figure 4.1 - Edge filter</figcaption>
     </figure>
     <br />
@@ -402,7 +407,12 @@
     </p>
     <br />
     <figure>
-      <img src="../assets/edge_filter_meta.jpg" alt="Figure 4.2" />
+      <img
+        src="../assets/edge_filter_color.png"
+        alt="Figure 4.2"
+        height="20%"
+        width="20%"
+      />
       <figcaption>Figure 4.2 - Edge filter label and color</figcaption>
     </figure>
     <br />

@@ -112,9 +112,26 @@
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
-                <v-list-item-subtitle
-                  >Frequency: {{ value }}</v-list-item-subtitle
-                >
+                <v-list-item-subtitle>
+                  Frequency: {{ value }}
+                </v-list-item-subtitle>
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      class="mr-2"
+                      icon="$palette"
+                    ></v-icon>
+                  </template>
+                  <v-color-picker
+                    hide-canvas
+                    hide-inputs
+                    :model-value="getLabelColor(key)"
+                    @update:model-value="setLabelColor(key, $event)"
+                    width="200"
+                    height="50"
+                  ></v-color-picker>
+                </v-menu>
               </v-list-item-content>
             </v-list-item>
             <v-tooltip location="top">
@@ -133,7 +150,7 @@
             </v-tooltip>
 
             <v-list-item
-              v-for="target in getFrequentTargets()"
+              v-for="target in getFrequentTargets(frequencySlider)"
               :key="target.node"
               @click="highlightNodesByLabel(target.label)"
               :class="{
@@ -146,6 +163,23 @@
                 <v-list-item-title>
                   {{ target.label }}: {{ target.count }}
                 </v-list-item-title>
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      class="mr-2"
+                      icon="$palette"
+                    ></v-icon>
+                  </template>
+                  <v-color-picker
+                    hide-canvas
+                    hide-inputs
+                    :model-value="getLabelColor(target.label)"
+                    @update:model-value="setLabelColor(target.label, $event)"
+                    width="200"
+                    height="50"
+                  ></v-color-picker>
+                </v-menu>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -368,21 +402,21 @@ export default {
           selectable: true,
           normal: {
             color: (node) => node.color,
-            strokeWidth: 1,
-            strokeColor: "#000000",
+            strokeWidth: 3,
+            strokeColor: (node) => node.strokeColor, // use node.strokeColor
             width: "300",
             height: "50",
           },
           hover: {
             strokeWidth: 6,
             color: (node) => node.color,
-            strokeColor: "#000000",
+            strokeColor: (node) => node.strokeColor,
             width: "300",
             height: "50",
           },
           selected: {
             strokeWidth: 6,
-            strokeColor: "#000000",
+            strokeColor: (node) => node.strokeColor,
             color: (node) => node.color,
             width: "300",
             height: "50",
@@ -442,6 +476,7 @@ export default {
       physicsEnabled: true,
       savedLayout: null,
       selectedNodes: [],
+      labelColors: {}, // { [label]: color }
     };
   },
   name: "NetworkNewView",
@@ -496,7 +531,7 @@ export default {
       this.drawer = !this.drawer;
     },
 
-    getFrequentTargets() {
+    getFrequentTargets(target) {
       const edges = this.getEdges;
       const nodes = this.getNodes;
 
@@ -519,7 +554,7 @@ export default {
       });
 
       // Filter by count > 2 returning only nodes that are not trivial
-      const filtered = result.filter((entry) => entry.count > 2);
+      const filtered = result.filter((entry) => entry.count > target);
 
       // Sort descending
       filtered.sort((a, b) => b.count - a.count);
@@ -563,6 +598,11 @@ export default {
         node.fullLabel = node.label;
         node.name = node.label ? node.label.substring(0, 20) : "";
         node.color = node.meta.color;
+        node.strokeColor = "#000000"; // default border color
+        // Initialize labelColors if not set
+        if (!this.labelColors[node.label]) {
+          this.labelColors[node.label] = node.color || "#2196f3";
+        }
         node.meta = node.meta || {};
         node.selected = false;
       });
@@ -860,6 +900,18 @@ export default {
       }
       this.$forceUpdate(); // Force Vue to re-render
     },**/
+    getLabelColor(label) {
+      return this.labelColors[label] || "#2196f3";
+    },
+    setLabelColor(label, color) {
+      this.labelColors[label] = color;
+      // Update the strokeColor for all nodes with this label
+      Object.values(this.nodes).forEach((node) => {
+        if (node.label === label) {
+          node.strokeColor = color; // update border only
+        }
+      });
+    },
   },
 
   computed: {

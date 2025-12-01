@@ -55,7 +55,7 @@
         ></v-slider>
       </div>
 
-      <div class="renderer">
+      <div class="renderer" @click="handleRendererClick">
         <v-btn
           icon
           @click.stop="handleMetricsDrawer()"
@@ -106,12 +106,32 @@
               v-for="(value, key) in getFrequentNodes(frequencySlider)"
               :key="key"
               @click="highlightNodesByLabel(key)"
+              :class="{
+                'highlighted-entry': highlightedDrawerLabels.includes(key),
+              }"
             >
               <v-list-item-content>
                 <v-list-item-title>{{ key }}</v-list-item-title>
-                <v-list-item-subtitle
-                  >Frequency: {{ value }}</v-list-item-subtitle
-                >
+                <v-list-item-subtitle>
+                  Frequency: {{ value }}
+                </v-list-item-subtitle>
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      class="mr-2"
+                      icon="$palette"
+                    ></v-icon>
+                  </template>
+                  <v-color-picker
+                    hide-canvas
+                    hide-inputs
+                    :model-value="getLabelColor(key)"
+                    @update:model-value="setLabelColor(key, $event)"
+                    width="200"
+                    height="50"
+                  ></v-color-picker>
+                </v-menu>
               </v-list-item-content>
             </v-list-item>
             <v-tooltip location="top">
@@ -130,14 +150,36 @@
             </v-tooltip>
 
             <v-list-item
-              v-for="target in getFrequentTargets()"
+              v-for="target in getFrequentTargets(frequencySlider)"
               :key="target.node"
               @click="highlightNodesByLabel(target.label)"
+              :class="{
+                'highlighted-entry': highlightedDrawerLabels.includes(
+                  target.label
+                ),
+              }"
             >
               <v-list-item-content>
                 <v-list-item-title>
                   {{ target.label }}: {{ target.count }}
                 </v-list-item-title>
+                <v-menu>
+                  <template #activator="{ props }">
+                    <v-icon
+                      v-bind="props"
+                      class="mr-2"
+                      icon="$palette"
+                    ></v-icon>
+                  </template>
+                  <v-color-picker
+                    hide-canvas
+                    hide-inputs
+                    :model-value="getLabelColor(target.label)"
+                    @update:model-value="setLabelColor(target.label, $event)"
+                    width="200"
+                    height="50"
+                  ></v-color-picker>
+                </v-menu>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -274,10 +316,12 @@ const getForcedLayout = new ForceLayout({
       .forceSimulation(nodes)
       .force("edge", forceLink.distance(500).strength(5000))
       .force("charge", d3.forceManyBody().strength(-7000))
-      .force("collide", d3.forceCollide(5).iterations(10))
+      .force("collide", d3.forceCollide(5).iterations(2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .alphaMin(0.0001);
+      .alphaMin(0.01) // stop simulation sooner
+      .alphaDecay(0.05) // faster decay
+      .velocityDecay(0.9); // higher friction
   },
 });
 
@@ -296,11 +340,12 @@ export default {
           .forceSimulation(nodes)
           .force("edge", forceLink.distance(this.dist).strength(this.strength))
           .force("charge", d3.forceManyBody().strength(this.charge))
-          .force("collide", d3.forceCollide(5).iterations(10))
+          .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
           .force("x", d3.forceX())
           .force("y", d3.forceY())
-          .alphaMin(0.0001);
-        // Save reference for later updates
+          .alphaMin(0.01) // stop simulation sooner
+          .alphaDecay(0.05) // faster decay
+          .velocityDecay(0.9); // higher friction
         this.simulation = sim;
         return sim;
       },
@@ -313,6 +358,7 @@ export default {
     return {
       frequencySlider: 2,
       drawer: null,
+      highlightedDrawerLabels: [],
       eventHandlers: {
         // wildcard: capture all events
         "*": (type, event) => {
@@ -359,21 +405,21 @@ export default {
           selectable: true,
           normal: {
             color: (node) => node.color,
-            strokeWidth: 1,
-            strokeColor: "#000000",
+            strokeWidth: 3,
+            strokeColor: (node) => node.strokeColor, // use node.strokeColor
             width: "300",
             height: "50",
           },
           hover: {
             strokeWidth: 6,
             color: (node) => node.color,
-            strokeColor: "#000000",
+            strokeColor: (node) => node.strokeColor,
             width: "300",
             height: "50",
           },
           selected: {
             strokeWidth: 6,
-            strokeColor: "#000000", // highlight color
+            strokeColor: (node) => node.strokeColor,
             color: (node) => node.color,
             width: "300",
             height: "50",
@@ -381,7 +427,6 @@ export default {
           focusring: {
             visible: false,
           },
-          // Add this to tell v-network-graph which nodes are selected
         },
         edge: {
           normal: {
@@ -434,6 +479,7 @@ export default {
       physicsEnabled: true,
       savedLayout: null,
       selectedNodes: [],
+      labelColors: {}, // { [label]: color }
     };
   },
   name: "NetworkNewView",
@@ -448,6 +494,20 @@ export default {
       "addEdgeFilter",
       "addFilter",
     ]),
+
+    handleRendererClick(event) {
+      if (event.target.classList.contains("v-ng-canvas")) {
+        console.log("Renderer background clicked, clearing selection");
+        this.selectedNodes = [];
+        this.highlightedDrawerLabels = [];
+        // Set isActive to false for all nodes
+        Object.values(this.nodes).forEach((node) => {
+          if (node.meta) node.meta.active = false;
+        });
+      } else {
+        console.log("Clicked on graph element:", event.target);
+      }
+    },
 
     makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
@@ -474,7 +534,7 @@ export default {
       this.drawer = !this.drawer;
     },
 
-    getFrequentTargets() {
+    getFrequentTargets(target) {
       const edges = this.getEdges;
       const nodes = this.getNodes;
 
@@ -497,7 +557,7 @@ export default {
       });
 
       // Filter by count > 2 returning only nodes that are not trivial
-      const filtered = result.filter((entry) => entry.count > 2);
+      const filtered = result.filter((entry) => entry.count > target);
 
       // Sort descending
       filtered.sort((a, b) => b.count - a.count);
@@ -541,6 +601,11 @@ export default {
         node.fullLabel = node.label;
         node.name = node.label ? node.label.substring(0, 20) : "";
         node.color = node.meta.color;
+        node.strokeColor = "#000000"; // default border color
+        // Initialize labelColors if not set
+        if (!this.labelColors[node.label]) {
+          this.labelColors[node.label] = node.color || "#2196f3";
+        }
         node.meta = node.meta || {};
         node.selected = false;
       });
@@ -631,6 +696,12 @@ export default {
       }
     },
     highlightNodesByLabel(label) {
+      const idx = this.highlightedDrawerLabels.indexOf(label);
+      if (idx === -1) {
+        this.highlightedDrawerLabels.push(label);
+      } else {
+        this.highlightedDrawerLabels.splice(idx, 1);
+      }
       // Find matching nodes
       const nodeIds = Object.keys(this.nodes);
       const matchingNodeIds = nodeIds.filter((nodeId) => {
@@ -775,10 +846,12 @@ export default {
                 forceLink.distance(this.dist).strength(this.strength)
               )
               .force("charge", d3.forceManyBody().strength(this.charge))
-              .force("collide", d3.forceCollide(5).iterations(10))
+              .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
               .force("x", d3.forceX())
               .force("y", d3.forceY())
-              .alphaMin(0.0001);
+              .alphaMin(0.01) // stop simulation sooner
+              .alphaDecay(0.05) // faster decay
+              .velocityDecay(0.9); // higher friction
             this.simulation = sim; // update reference
             return sim;
           },
@@ -832,6 +905,18 @@ export default {
       }
       this.$forceUpdate(); // Force Vue to re-render
     },**/
+    getLabelColor(label) {
+      return this.labelColors[label] || "#2196f3";
+    },
+    setLabelColor(label, color) {
+      this.labelColors[label] = color;
+      // Update the strokeColor for all nodes with this label
+      Object.values(this.nodes).forEach((node) => {
+        if (node.label === label) {
+          node.strokeColor = color;
+        }
+      });
+    },
   },
 
   computed: {
@@ -950,5 +1035,9 @@ export default {
 
 .slider {
   margin-left: 100px;
+}
+
+.highlighted-entry {
+  background-color: #f3f3f3 !important;
 }
 </style>

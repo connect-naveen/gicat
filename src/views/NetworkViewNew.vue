@@ -316,10 +316,12 @@ const getForcedLayout = new ForceLayout({
       .forceSimulation(nodes)
       .force("edge", forceLink.distance(500).strength(5000))
       .force("charge", d3.forceManyBody().strength(-7000))
-      .force("collide", d3.forceCollide(5).iterations(10))
+      .force("collide", d3.forceCollide(5).iterations(2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .alphaMin(0.0001);
+      .alphaMin(0.01) // stop simulation sooner
+      .alphaDecay(0.05) // faster decay
+      .velocityDecay(0.9); // higher friction
   },
 });
 
@@ -338,11 +340,12 @@ export default {
           .forceSimulation(nodes)
           .force("edge", forceLink.distance(this.dist).strength(this.strength))
           .force("charge", d3.forceManyBody().strength(this.charge))
-          .force("collide", d3.forceCollide(5).iterations(10))
+          .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
           .force("x", d3.forceX())
           .force("y", d3.forceY())
-          .alphaMin(0.0001);
-        // Save reference for later updates
+          .alphaMin(0.01) // stop simulation sooner
+          .alphaDecay(0.05) // faster decay
+          .velocityDecay(0.9); // higher friction
         this.simulation = sim;
         return sim;
       },
@@ -843,10 +846,12 @@ export default {
                 forceLink.distance(this.dist).strength(this.strength)
               )
               .force("charge", d3.forceManyBody().strength(this.charge))
-              .force("collide", d3.forceCollide(5).iterations(10))
+              .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
               .force("x", d3.forceX())
               .force("y", d3.forceY())
-              .alphaMin(0.0001);
+              .alphaMin(0.01) // stop simulation sooner
+              .alphaDecay(0.05) // faster decay
+              .velocityDecay(0.9); // higher friction
             this.simulation = sim; // update reference
             return sim;
           },
@@ -908,7 +913,7 @@ export default {
       // Update the strokeColor for all nodes with this label
       Object.values(this.nodes).forEach((node) => {
         if (node.label === label) {
-          node.strokeColor = color; // update border only
+          node.strokeColor = color;
         }
       });
     },

@@ -29,7 +29,8 @@ import {
   mdiTagEditOutline,
   mdiFormatHorizontalAlignLeft,
   mdiFormatHorizontalAlignRight,
-  mdiPalette,
+  mdiChevronDown,
+  mdiArrowULeftTop,
 } from "@mdi/js";
 
 // create Vuetify
@@ -73,7 +74,8 @@ const vuetify = createVuetify({
       edit: mdiTagEditOutline,
       outLeft: mdiFormatHorizontalAlignLeft,
       outRight: mdiFormatHorizontalAlignRight,
-      palette: mdiPalette,
+      chevronDown: mdiChevronDown,
+      undo: mdiArrowULeftTop,
     },
     sets: {
       mdi,

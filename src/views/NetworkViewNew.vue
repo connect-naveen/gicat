@@ -120,7 +120,7 @@
                     <v-icon
                       v-bind="props"
                       class="mr-2"
-                      icon="$palette"
+                      icon="$chevronDown"
                     ></v-icon>
                   </template>
                   <v-color-picker
@@ -129,8 +129,21 @@
                     :model-value="getLabelColor(key)"
                     @update:model-value="setLabelColor(key, $event)"
                     width="200"
-                    height="50"
-                  ></v-color-picker>
+                    height="150"
+                  >
+                    <template #actions>
+                      <v-tooltip text="reset" location="top">
+                        <template #activator="{ props }">
+                          <v-icon
+                            v-bind="props"
+                            @click="setLabelColor(key, '#000000')"
+                            icon="$undo"
+                            style="cursor: pointer"
+                          ></v-icon>
+                        </template>
+                      </v-tooltip>
+                    </template>
+                  </v-color-picker>
                 </v-menu>
               </v-list-item-content>
             </v-list-item>
@@ -168,7 +181,7 @@
                     <v-icon
                       v-bind="props"
                       class="mr-2"
-                      icon="$palette"
+                      icon="$chevronDown"
                     ></v-icon>
                   </template>
                   <v-color-picker
@@ -177,8 +190,29 @@
                     :model-value="getLabelColor(target.label)"
                     @update:model-value="setLabelColor(target.label, $event)"
                     width="200"
-                    height="50"
-                  ></v-color-picker>
+                    height="150"
+                  >
+                    <template #actions>
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        "
+                      >
+                        <v-tooltip text="reset" location="top">
+                          <template #activator="{ props }">
+                            <v-icon
+                              v-bind="props"
+                              @click="setLabelColor(target.label, '#000000')"
+                              icon="$undo"
+                              style="cursor: pointer"
+                            ></v-icon>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </template>
+                  </v-color-picker>
                 </v-menu>
               </v-list-item-content>
             </v-list-item>
@@ -914,6 +948,12 @@ export default {
       Object.values(this.nodes).forEach((node) => {
         if (node.label === label) {
           node.strokeColor = color;
+        }
+      });
+      // Also update the strokeColor for nodes that are frequent targets
+      this.getFrequentTargets(this.frequencySlider).forEach((target) => {
+        if (target.label === label && this.nodes[target.node]) {
+          this.nodes[target.node].strokeColor = color;
         }
       });
     },

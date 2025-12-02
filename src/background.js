@@ -140,20 +140,10 @@ if (isDevelopment) {
 
 app.on("web-contents-created", (event, contents) => {
   contents.setWindowOpenHandler(({ url }) => {
-    // ask the operating system to open this event's url in the default browser.
-    //
-    // See the following for considerations regarding what URLs should be allowed
-    // Only open trusted contend through shell!
-    if (
-      url == "https://www.css-lab.rwth-aachen.de/tools/manuals" ||
-      url ==
-        "https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
-    ) {
-      setImmediate(() => {
-        shell.openExternal(url);
-      });
-    }
-
+    // Open all URLs in the user's default browser
+    setImmediate(() => {
+      shell.openExternal(url);
+    });
     return { action: "deny" };
   });
 });

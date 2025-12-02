@@ -37,7 +37,7 @@
         >
         using our basic filter package for python which can be found
         <a
-          href="https://github.com/davh-hub/gicat-filter-collection"
+          href="https://github.com/css-lab-rwth/gicat-filter-collection"
           target="_blank"
           >here
         </a>
@@ -149,8 +149,8 @@
         <img
           src="../assets/class_extension.png"
           alt="Figure 2.1"
-          height="50%"
-          width="50%"
+          height="30%"
+          width="30%"
         />
         <figcaption>
           Figure 2.1 analysis_tools class after edge and node filter application
@@ -264,7 +264,7 @@
     </p>
     <br />
     <video width="600px" height="400px" controls>
-      <source src="local-video://regex_generation_example.mp4" />
+      <source src="/regex_generation_example.mp4" type="video/mp4" />
     </video>
     <br />
     <br />

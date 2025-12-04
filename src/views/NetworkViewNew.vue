@@ -602,13 +602,14 @@ export default {
     getFrequentNodes(i) {
       const occ = {};
       for (let node of this.getNodes) {
-        //console.log(node.meta.filterID);
         occ[node.label] = (occ[node.label] || 0) + 1;
       }
 
       const filteredOcc = {};
       for (let el in occ) {
-        if (occ[el] > i) {
+        // Find a node with this label
+        const nodeObj = this.getNodes.find((n) => n.label === el);
+        if (occ[el] > i && nodeObj && this.isFilterSelected(nodeObj)) {
           filteredOcc[el] = occ[el];
         }
       }

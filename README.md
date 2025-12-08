@@ -20,8 +20,3 @@ yarn electron:serve
 ```
 yarn electron:build
 ```
-
-### Lints and fixes files
-```
-yarn lint
-```

@@ -558,37 +558,49 @@ export default {
     },
 
     getFrequentTargets(threshold) {
-      const edges = this.getEdges;
-      const nodes = this.getNodes;
+      const nodes = Object.values(this.nodes);
+      const edges = this.edges;
 
+      const nodeMap = {};
+      nodes.forEach((n) => (nodeMap[n.id] = n));
+
+      // Count incoming edges for each target node, and also count how many are from active filter nodes
       const counts = {};
+      const filteredCounts = {};
 
-      // Count each target node
       edges.forEach((edge) => {
         const target = edge.to;
+        const sourceNode = nodeMap[edge.from];
         counts[target] = (counts[target] || 0) + 1;
+        if (sourceNode && this.isFilterSelected(sourceNode)) {
+          filteredCounts[target] = (filteredCounts[target] || 0) + 1;
+        }
       });
 
       // Map counts to objects with node ID, label, and count
       const result = Object.entries(counts).map(([nodeId, count]) => {
-        const match = nodes.find((n) => n.id === nodeId);
+        const match = nodeMap[nodeId];
         return {
           node: nodeId,
           label: match ? match.label : nodeId,
           count: count,
           nodeObj: match,
+          filteredCount: filteredCounts[nodeId] || 0,
         };
       });
 
-      // Filter by count > threshold and node is in active filter
-      const filtered = result.filter(
-        (entry) =>
-          entry.count >= threshold &&
-          entry.nodeObj &&
-          this.isFilterSelected(entry.nodeObj)
-      );
-
-      // Sort descending
+      // For file nodes: show only if filteredCount >= threshold
+      // For non-file nodes: show if count >= threshold and node is in active filter
+      const filtered = result.filter((entry) => {
+        if (!entry.nodeObj) return false;
+        if (this.isFile(entry.nodeObj)) {
+          return entry.filteredCount >= threshold;
+        } else {
+          return (
+            entry.count >= threshold && this.isFilterSelected(entry.nodeObj)
+          );
+        }
+      });
       filtered.sort((a, b) => b.count - a.count);
       return filtered;
     },
@@ -605,9 +617,8 @@ export default {
           const nodeObj = this.getNodes.find((n) => n.label === label);
           return freq > i && nodeObj && this.isFilterSelected(nodeObj);
         })
-        .sort((a, b) => b[1] - a[1]); // Sort descending by frequency
+        .sort((a, b) => b[1] - a[1]);
 
-      // Convert back to object if needed for v-for
       const sortedObj = Object.fromEntries(filteredArr);
       return sortedObj;
     },

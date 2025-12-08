@@ -174,8 +174,11 @@
             >
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ target.label }}: {{ target.count }}
+                  {{ target.label }}
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  Target of {{ target.count }} nodes
+                </v-list-item-subtitle>
                 <v-menu>
                   <template #activator="{ props }">
                     <v-icon
@@ -353,9 +356,9 @@ const getForcedLayout = new ForceLayout({
       .force("collide", d3.forceCollide(5).iterations(2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .alphaMin(0.01) // stop simulation sooner
-      .alphaDecay(0.05) // faster decay
-      .velocityDecay(0.9); // higher friction
+      .alphaMin(0.1) // stop simulation sooner with higher alphaMin
+      .alphaDecay(0.05) // faster decay with higher alphaDecay
+      .velocityDecay(0.9); // higher friction with higher velocityDecay
   },
 });
 
@@ -374,12 +377,10 @@ export default {
           .forceSimulation(nodes)
           .force("edge", forceLink.distance(this.dist).strength(this.strength))
           .force("charge", d3.forceManyBody().strength(this.charge))
-          .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
+          .force("collide", d3.forceCollide(5).iterations(4))
           .force("x", d3.forceX())
           .force("y", d3.forceY())
-          .alphaMin(0.01) // stop simulation sooner
-          .alphaDecay(0.05) // faster decay
-          .velocityDecay(0.9); // higher friction
+          .alphaMin(0.0001);
         this.simulation = sim;
         return sim;
       },
@@ -410,18 +411,6 @@ export default {
         },
       },
       playPause: "Pause",
-      nod: {
-        node1: { name: "Node 1" },
-        node2: { name: "Node 2" },
-        node3: { name: "Node 3" },
-        node4: { name: "Node 4" },
-      },
-      edg: {
-        edge1: { source: "node1", target: "node2" },
-        edge2: { source: "node2", target: "node3" },
-        edge3: { source: "node3", target: "node4" },
-      },
-      test: ["a", "b", "c"],
       nodes: [],
       edges: [],
       filters: [],
@@ -568,7 +557,7 @@ export default {
       this.drawer = !this.drawer;
     },
 
-    getFrequentTargets(target) {
+    getFrequentTargets(threshold) {
       const edges = this.getEdges;
       const nodes = this.getNodes;
 
@@ -587,15 +576,20 @@ export default {
           node: nodeId,
           label: match ? match.label : nodeId,
           count: count,
+          nodeObj: match,
         };
       });
 
-      // Filter by count > 2 returning only nodes that are not trivial
-      const filtered = result.filter((entry) => entry.count > target);
+      // Filter by count > threshold and node is in active filter
+      const filtered = result.filter(
+        (entry) =>
+          entry.count >= threshold &&
+          entry.nodeObj &&
+          this.isFilterSelected(entry.nodeObj)
+      );
 
       // Sort descending
       filtered.sort((a, b) => b.count - a.count);
-
       return filtered;
     },
 
@@ -605,15 +599,17 @@ export default {
         occ[node.label] = (occ[node.label] || 0) + 1;
       }
 
-      const filteredOcc = {};
-      for (let el in occ) {
-        // Find a node with this label
-        const nodeObj = this.getNodes.find((n) => n.label === el);
-        if (occ[el] > i && nodeObj && this.isFilterSelected(nodeObj)) {
-          filteredOcc[el] = occ[el];
-        }
-      }
-      return filteredOcc;
+      // Filter and create array of [label, frequency]
+      const filteredArr = Object.entries(occ)
+        .filter(([label, freq]) => {
+          const nodeObj = this.getNodes.find((n) => n.label === label);
+          return freq > i && nodeObj && this.isFilterSelected(nodeObj);
+        })
+        .sort((a, b) => b[1] - a[1]); // Sort descending by frequency
+
+      // Convert back to object if needed for v-for
+      const sortedObj = Object.fromEntries(filteredArr);
+      return sortedObj;
     },
     getNodeFilterNumbers(i) {
       var j = 0;
@@ -958,6 +954,31 @@ export default {
         }
       });
     },
+    recreateSimulationPerformance() {
+      this.layoutHandler = new ForceLayout({
+        positionFixedByDrag: true,
+        positionFixedByClickWithAltKey: true,
+        createSimulation: (d3, nodes, edges) => {
+          const forceLink = d3.forceLink(edges).id((d) => d.id);
+          const sim = d3
+            .forceSimulation(nodes)
+            .force(
+              "edge",
+              forceLink.distance(this.dist).strength(this.strength)
+            )
+            .force("charge", d3.forceManyBody().strength(this.charge))
+            .force("collide", d3.forceCollide(5).iterations(2))
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
+            .alphaMin(0.01)
+            .alphaDecay(0.05)
+            .velocityDecay(0.9);
+          this.simulation = sim;
+          return sim;
+        },
+      });
+      this.configs.view.layoutHandler = this.layoutHandler;
+    },
   },
 
   computed: {
@@ -1010,26 +1031,17 @@ export default {
   },
   watch: {
     dist() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     strength() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     charge() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },

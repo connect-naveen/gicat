@@ -36,6 +36,7 @@
           :max="2000"
           class="slider"
           label="Edge distance:"
+          rounded="0"
         ></v-slider>
         <v-slider
           v-model="strength"
@@ -44,6 +45,7 @@
           :max="2"
           class="slider"
           label="Edge strength:"
+          rounded="0"
         ></v-slider>
         <v-slider
           v-model="charge"
@@ -52,6 +54,7 @@
           :max="0"
           class="slider"
           label="Graph strength:"
+          rounded="0"
         ></v-slider>
       </div>
 
@@ -99,6 +102,7 @@
                 step="1"
                 :max="25"
                 :min="2"
+                rounded="0"
                 @update:model-value="getFrequentNodes(frequencySlider)"
               ></v-slider>
             </v-list-item>
@@ -938,15 +942,6 @@ export default {
       this.simulation.force("charge")?.strength(this.charge);
       this.simulation.alpha(1).restart();
     },
-    /** highlightNodeByLabel(label) {
-      const nodes = this.getNodes;
-      for (const node of nodes) {
-        if (node.label === label) {
-          this.selectedNodes.push(node);
-        }
-      }
-      this.$forceUpdate(); // Force Vue to re-render
-    },**/
     getLabelColor(label) {
       return this.labelColors[label] || "#2196f3";
     },
@@ -1103,5 +1098,35 @@ export default {
 
 .highlighted-entry {
   background-color: #f3f3f3 !important;
+}
+
+.v-slider-thumb {
+  width: 2px !important;
+  height: 1em !important;
+  border-radius: none !important;
+  background: #000 !important;
+  box-shadow: none !important;
+  display: flex !important;
+  left: var(--v-slider-thumb-position) !important;
+}
+
+.v-slider-thumb--active,
+.v-slider-thumb--focused,
+.v-slider-thumb__surface {
+  width: 2px !important;
+  height: 1em !important;
+  border-radius: none !important;
+  background: #000 !important;
+  box-shadow: none !important;
+}
+
+.v-slider-thumb__ripple {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+.v-slider-track {
+  height: 0.2em !important;
 }
 </style>

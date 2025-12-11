@@ -36,6 +36,7 @@
           :max="2000"
           class="slider"
           label="Edge distance:"
+          rounded="0"
         ></v-slider>
         <v-slider
           v-model="strength"
@@ -44,6 +45,7 @@
           :max="2"
           class="slider"
           label="Edge strength:"
+          rounded="0"
         ></v-slider>
         <v-slider
           v-model="charge"
@@ -52,6 +54,7 @@
           :max="0"
           class="slider"
           label="Graph strength:"
+          rounded="0"
         ></v-slider>
       </div>
 
@@ -99,6 +102,7 @@
                 step="1"
                 :max="25"
                 :min="2"
+                rounded="0"
                 @update:model-value="getFrequentNodes(frequencySlider)"
               ></v-slider>
             </v-list-item>
@@ -120,7 +124,7 @@
                     <v-icon
                       v-bind="props"
                       class="mr-2"
-                      icon="$palette"
+                      icon="$chevronDown"
                     ></v-icon>
                   </template>
                   <v-color-picker
@@ -129,8 +133,21 @@
                     :model-value="getLabelColor(key)"
                     @update:model-value="setLabelColor(key, $event)"
                     width="200"
-                    height="50"
-                  ></v-color-picker>
+                    height="150"
+                  >
+                    <template #actions>
+                      <v-tooltip text="reset" location="top">
+                        <template #activator="{ props }">
+                          <v-icon
+                            v-bind="props"
+                            @click="setLabelColor(key, '#000000')"
+                            icon="$undo"
+                            style="cursor: pointer"
+                          ></v-icon>
+                        </template>
+                      </v-tooltip>
+                    </template>
+                  </v-color-picker>
                 </v-menu>
               </v-list-item-content>
             </v-list-item>
@@ -161,14 +178,17 @@
             >
               <v-list-item-content>
                 <v-list-item-title>
-                  {{ target.label }}: {{ target.count }}
+                  {{ target.label }}
                 </v-list-item-title>
+                <v-list-item-subtitle>
+                  Target of {{ target.count }} nodes
+                </v-list-item-subtitle>
                 <v-menu>
                   <template #activator="{ props }">
                     <v-icon
                       v-bind="props"
                       class="mr-2"
-                      icon="$palette"
+                      icon="$chevronDown"
                     ></v-icon>
                   </template>
                   <v-color-picker
@@ -177,8 +197,29 @@
                     :model-value="getLabelColor(target.label)"
                     @update:model-value="setLabelColor(target.label, $event)"
                     width="200"
-                    height="50"
-                  ></v-color-picker>
+                    height="150"
+                  >
+                    <template #actions>
+                      <div
+                        style="
+                          display: flex;
+                          justify-content: center;
+                          align-items: center;
+                        "
+                      >
+                        <v-tooltip text="reset" location="top">
+                          <template #activator="{ props }">
+                            <v-icon
+                              v-bind="props"
+                              @click="setLabelColor(target.label, '#000000')"
+                              icon="$undo"
+                              style="cursor: pointer"
+                            ></v-icon>
+                          </template>
+                        </v-tooltip>
+                      </div>
+                    </template>
+                  </v-color-picker>
                 </v-menu>
               </v-list-item-content>
             </v-list-item>
@@ -319,9 +360,9 @@ const getForcedLayout = new ForceLayout({
       .force("collide", d3.forceCollide(5).iterations(2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .alphaMin(0.01) // stop simulation sooner
-      .alphaDecay(0.05) // faster decay
-      .velocityDecay(0.9); // higher friction
+      .alphaMin(0.1) // stop simulation sooner with higher alphaMin
+      .alphaDecay(0.05) // faster decay with higher alphaDecay
+      .velocityDecay(0.9); // higher friction with higher velocityDecay
   },
 });
 
@@ -340,12 +381,10 @@ export default {
           .forceSimulation(nodes)
           .force("edge", forceLink.distance(this.dist).strength(this.strength))
           .force("charge", d3.forceManyBody().strength(this.charge))
-          .force("collide", d3.forceCollide(5).iterations(2)) // 2-3 iterations max
+          .force("collide", d3.forceCollide(5).iterations(4))
           .force("x", d3.forceX())
           .force("y", d3.forceY())
-          .alphaMin(0.01) // stop simulation sooner
-          .alphaDecay(0.05) // faster decay
-          .velocityDecay(0.9); // higher friction
+          .alphaMin(0.0001);
         this.simulation = sim;
         return sim;
       },
@@ -376,18 +415,6 @@ export default {
         },
       },
       playPause: "Pause",
-      nod: {
-        node1: { name: "Node 1" },
-        node2: { name: "Node 2" },
-        node3: { name: "Node 3" },
-        node4: { name: "Node 4" },
-      },
-      edg: {
-        edge1: { source: "node1", target: "node2" },
-        edge2: { source: "node2", target: "node3" },
-        edge3: { source: "node3", target: "node4" },
-      },
-      test: ["a", "b", "c"],
       nodes: [],
       edges: [],
       filters: [],
@@ -534,51 +561,70 @@ export default {
       this.drawer = !this.drawer;
     },
 
-    getFrequentTargets(target) {
-      const edges = this.getEdges;
-      const nodes = this.getNodes;
+    getFrequentTargets(threshold) {
+      const nodes = Object.values(this.nodes);
+      const edges = this.edges;
 
+      const nodeMap = {};
+      nodes.forEach((n) => (nodeMap[n.id] = n));
+
+      // Count incoming edges for each target node, and also count how many are from active filter nodes
       const counts = {};
+      const filteredCounts = {};
 
-      // Count each target node
       edges.forEach((edge) => {
         const target = edge.to;
+        const sourceNode = nodeMap[edge.from];
         counts[target] = (counts[target] || 0) + 1;
+        if (sourceNode && this.isFilterSelected(sourceNode)) {
+          filteredCounts[target] = (filteredCounts[target] || 0) + 1;
+        }
       });
 
       // Map counts to objects with node ID, label, and count
       const result = Object.entries(counts).map(([nodeId, count]) => {
-        const match = nodes.find((n) => n.id === nodeId);
+        const match = nodeMap[nodeId];
         return {
           node: nodeId,
           label: match ? match.label : nodeId,
           count: count,
+          nodeObj: match,
+          filteredCount: filteredCounts[nodeId] || 0,
         };
       });
 
-      // Filter by count > 2 returning only nodes that are not trivial
-      const filtered = result.filter((entry) => entry.count > target);
-
-      // Sort descending
+      // For file nodes: show only if filteredCount >= threshold
+      // For non-file nodes: show if count >= threshold and node is in active filter
+      const filtered = result.filter((entry) => {
+        if (!entry.nodeObj) return false;
+        if (this.isFile(entry.nodeObj)) {
+          return entry.filteredCount >= threshold;
+        } else {
+          return (
+            entry.count >= threshold && this.isFilterSelected(entry.nodeObj)
+          );
+        }
+      });
       filtered.sort((a, b) => b.count - a.count);
-
       return filtered;
     },
 
     getFrequentNodes(i) {
       const occ = {};
       for (let node of this.getNodes) {
-        //console.log(node.meta.filterID);
         occ[node.label] = (occ[node.label] || 0) + 1;
       }
 
-      const filteredOcc = {};
-      for (let el in occ) {
-        if (occ[el] > i) {
-          filteredOcc[el] = occ[el];
-        }
-      }
-      return filteredOcc;
+      // Filter and create array of [label, frequency]
+      const filteredArr = Object.entries(occ)
+        .filter(([label, freq]) => {
+          const nodeObj = this.getNodes.find((n) => n.label === label);
+          return freq > i && nodeObj && this.isFilterSelected(nodeObj);
+        })
+        .sort((a, b) => b[1] - a[1]);
+
+      const sortedObj = Object.fromEntries(filteredArr);
+      return sortedObj;
     },
     getNodeFilterNumbers(i) {
       var j = 0;
@@ -862,10 +908,23 @@ export default {
       }
     },
     async downloadSVG() {
-      // destructure proxy:
       const graph = { ...this.graph };
+      let text = await graph.exportAsSvgText();
 
-      const text = await graph.exportAsSvgText();
+      // Add meta data
+      const svgOpenTagMatch = text.match(/<svg[^>]*>/);
+      if (svgOpenTagMatch) {
+        const svgOpenTag = svgOpenTagMatch[0];
+        const meta = `
+  <metadata>
+    <creator>GICAT</creator>
+    <exported>${new Date().toISOString()}</exported>
+    <description>GRAPH EXPORTED USING GICAT - CSS Lab at RWTH Aachen University</description>
+  </metadata>
+  `;
+        text = text.replace(svgOpenTag, svgOpenTag + meta);
+      }
+
       const url = URL.createObjectURL(
         new Blob([text], { type: "octet/stream" })
       );
@@ -883,7 +942,7 @@ export default {
         date.getHours() +
         "-" +
         date.getMinutes();
-      a.download = filename + "_" + dateString + ".svg"; // filename to download
+      a.download = "gicat_" + filename + "_" + dateString + ".svg";
       a.click();
       window.URL.revokeObjectURL(url);
     },
@@ -896,15 +955,6 @@ export default {
       this.simulation.force("charge")?.strength(this.charge);
       this.simulation.alpha(1).restart();
     },
-    /** highlightNodeByLabel(label) {
-      const nodes = this.getNodes;
-      for (const node of nodes) {
-        if (node.label === label) {
-          this.selectedNodes.push(node);
-        }
-      }
-      this.$forceUpdate(); // Force Vue to re-render
-    },**/
     getLabelColor(label) {
       return this.labelColors[label] || "#2196f3";
     },
@@ -916,6 +966,37 @@ export default {
           node.strokeColor = color;
         }
       });
+      // Also update the strokeColor for nodes that are frequent targets
+      this.getFrequentTargets(this.frequencySlider).forEach((target) => {
+        if (target.label === label && this.nodes[target.node]) {
+          this.nodes[target.node].strokeColor = color;
+        }
+      });
+    },
+    recreateSimulationPerformance() {
+      this.layoutHandler = new ForceLayout({
+        positionFixedByDrag: true,
+        positionFixedByClickWithAltKey: true,
+        createSimulation: (d3, nodes, edges) => {
+          const forceLink = d3.forceLink(edges).id((d) => d.id);
+          const sim = d3
+            .forceSimulation(nodes)
+            .force(
+              "edge",
+              forceLink.distance(this.dist).strength(this.strength)
+            )
+            .force("charge", d3.forceManyBody().strength(this.charge))
+            .force("collide", d3.forceCollide(5).iterations(2))
+            .force("x", d3.forceX())
+            .force("y", d3.forceY())
+            .alphaMin(0.01)
+            .alphaDecay(0.05)
+            .velocityDecay(0.9);
+          this.simulation = sim;
+          return sim;
+        },
+      });
+      this.configs.view.layoutHandler = this.layoutHandler;
     },
   },
 
@@ -969,26 +1050,17 @@ export default {
   },
   watch: {
     dist() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     strength() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },
     charge() {
-      if (!this.physicsEnabled) {
-        this.toggleSimulation();
-      }
-      this.updatePhysicsForces();
+      this.recreateSimulationPerformance();
       this.physicsEnabled = true;
       this.playPause = "Pause";
     },

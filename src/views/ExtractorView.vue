@@ -60,6 +60,11 @@ export default {
     ]),
 
     // functions
+    /**
+     * Open a directory dialog and set the selected path as the repository path in the store.
+     * Also checks the number of files in the selected directory and sets a warning alert if it exceeds 200 files.
+     * @return {Promise<void>}
+     */
     async openDir() {
       let repoPath = await dialog.showOpenDialog({
         properties: ["openDirectory"],

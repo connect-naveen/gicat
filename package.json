@@ -16,7 +16,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "app:dir": "electron-builder --dir",
-    "app:dist": "electron-builder"
+    "app:dist": "electron-builder",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@electron/remote": "^2.0.10",

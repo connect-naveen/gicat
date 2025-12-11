@@ -908,10 +908,23 @@ export default {
       }
     },
     async downloadSVG() {
-      // destructure proxy:
       const graph = { ...this.graph };
+      let text = await graph.exportAsSvgText();
 
-      const text = await graph.exportAsSvgText();
+      // Add meta data
+      const svgOpenTagMatch = text.match(/<svg[^>]*>/);
+      if (svgOpenTagMatch) {
+        const svgOpenTag = svgOpenTagMatch[0];
+        const meta = `
+  <metadata>
+    <creator>GICAT</creator>
+    <exported>${new Date().toISOString()}</exported>
+    <description>GRAPH EXPORTED USING GICAT - CSS Lab at RWTH Aachen University</description>
+  </metadata>
+  `;
+        text = text.replace(svgOpenTag, svgOpenTag + meta);
+      }
+
       const url = URL.createObjectURL(
         new Blob([text], { type: "octet/stream" })
       );
@@ -929,7 +942,7 @@ export default {
         date.getHours() +
         "-" +
         date.getMinutes();
-      a.download = filename + "_" + dateString + ".svg"; // filename to download
+      a.download = "gicat_" + filename + "_" + dateString + ".svg";
       a.click();
       window.URL.revokeObjectURL(url);
     },
@@ -1098,35 +1111,5 @@ export default {
 
 .highlighted-entry {
   background-color: #f3f3f3 !important;
-}
-
-.v-slider-thumb {
-  width: 2px !important;
-  height: 1em !important;
-  border-radius: none !important;
-  background: #000 !important;
-  box-shadow: none !important;
-  display: flex !important;
-  left: var(--v-slider-thumb-position) !important;
-}
-
-.v-slider-thumb--active,
-.v-slider-thumb--focused,
-.v-slider-thumb__surface {
-  width: 2px !important;
-  height: 1em !important;
-  border-radius: none !important;
-  background: #000 !important;
-  box-shadow: none !important;
-}
-
-.v-slider-thumb__ripple {
-  display: none !important;
-  background: transparent !important;
-  opacity: 0 !important;
-}
-
-.v-slider-track {
-  height: 0.2em !important;
 }
 </style>

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: filter/helper/regExHelper.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,29 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: filter/helper/regExHelper.js</h1>
 
     
 
 
 
     
-
-
-    <h3> </h3>
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/* eslint-disable prettier/prettier */
+/**
+ * Creates a new Regular Expression Object from a given string (usually from a filter file).
+ * @param {string} str The string of a given RegEx from a filter file.
+ * @returns A new RegEx Object including the RegEx and its flags.
+ */
+RegExp.fromString = (str) =>
+    new RegExp(
+        str.slice(1, str.lastIndexOf("/")),
+        str.slice(str.lastIndexOf("/") + 1)
+    );
+</code></pre>
+        </article>
+    </section>
 
 
 

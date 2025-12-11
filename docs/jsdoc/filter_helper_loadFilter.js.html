@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Home</title>
+    <title>JSDoc: Source: filter/helper/loadFilter.js</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,32 +17,56 @@
 
 <div id="main">
 
-    <h1 class="page-title">Home</h1>
+    <h1 class="page-title">Source: filter/helper/loadFilter.js</h1>
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>const fs = require('fs')
 
+/**
+ * Function which takes a file path or a FileDescriptor of a JSON file and returns its content as a string.
+ * @param {PathOrFileDescriptor} filterFile Path to file or a FileDescriptor as a reference to an open file. 
+ * @returns {string}  The parsed string of a JSON File
+ */
+const loadNodeFilter = function (filterFile) {
+  return loadJSON(filterFile);
+}
 
-    <h3> </h3>
+/**
+ * Function which takes a file path or a FileDescriptor of a JSON file and returns its content as a string.
+ * @param {PathOrFileDescriptor} filterFile Path to file or a FileDescriptor as a reference to an open file.
+ * @returns {string}  The parsed string of a JSON File
+ */
+const loadEdgeFilter = function (filterFile) {
+  return loadJSON(filterFile);
+}
 
+/**
+ * Helper function which takes a file path or a FileDescriptor of a JSON file and returns its content as a string.
+ * @param {PathOrFileDescriptor} file Path to file or a FileDescriptor as a reference to an open file.
+ * @returns {string}  The parsed string of a JSON File
+ */
+const loadJSON = function (file) {
+  try {
+    return JSON.parse(fs.readFileSync(file))
+  } catch (e) {
+    console.error("The json could not be loaded")
+    throw e
+  }
+}
 
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
+export {
+  loadNodeFilter,
+  loadEdgeFilter,
+  loadJSON,
+}</code></pre>
+        </article>
+    </section>
 
 
 

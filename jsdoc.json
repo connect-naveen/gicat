@@ -1,9 +1,10 @@
 {
   "source": {
-    "include": ["src", "public"],
+    "include": ["./src", "./public"],
     "exclude": ["node_modules", "tests"]
   },
   "opts": {
-    "destination": "./docs/jsdoc"
+    "destination": "./docs/jsdoc",
+    "recurse": true
   }
 }

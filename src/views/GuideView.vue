@@ -493,7 +493,11 @@ export default {
   components: {},
   methods: {
     openNewWindow() {
-      window.open("https://www.css-lab.rwth-aachen.de/tools/overview");
+      window.open(
+        "https://www.css-lab.rwth-aachen.de/tools/overview",
+        "_blank",
+        "noopener, noreferrer"
+      );
     },
   },
   beforeRouteLeave(to, from, next) {

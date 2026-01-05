@@ -12,6 +12,7 @@
           <a
             href="https://www.theoryofscience.rwth-aachen.de/cms/~qpmz/TheoryofScience/?lidx=1"
             target="_blank"
+            rel="noopener noreferrer"
           >
             <img
               alt="TST logo"

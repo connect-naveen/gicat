@@ -707,7 +707,7 @@ export default {
       this.$router.push("/extractor");
     },
     doubleClick(hitNodeIndex) {
-      console.warn("double click");
+      //console.warn("double click");
 
       let hitNode = this.nodes[hitNodeIndex];
       if (hitNode.hidden) return;
@@ -768,7 +768,7 @@ export default {
         hitNode.childrenCollapsed = true;
       }
       let isChildren = (e) => e.id.startsWith(hitNode.id) && e.id != hitNode.id;
-      let children = this.nodes.filter((e) => isChildren(e));
+      let children = Object.values(this.nodes).filter((e) => isChildren(e));
       children.forEach((element) => {
         if (hitNode.childrenCollapsed) {
           this.hideNode(element);

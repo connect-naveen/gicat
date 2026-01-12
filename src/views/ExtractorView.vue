@@ -34,9 +34,9 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-const { dialog } = require("@electron/remote");
 import { readdir } from "node:fs/promises";
 const ce = window.ce;
+const { dialog } = require("@electron/remote");
 
 export default {
   data() {
@@ -59,10 +59,10 @@ export default {
       "resetFilters",
     ]),
 
-    // functions
     /**
-     * Open a directory dialog and set the selected path as the repository path in the store.
+     * Opens a directory dialog and sets the selected path as the repository path in the store.
      * Also checks the number of files in the selected directory and sets a warning alert if it exceeds 200 files.
+     * If no directory is selected, it resets the repository path in the store to an empty string.
      * @return {Promise<void>}
      */
     async openDir() {
@@ -83,18 +83,16 @@ export default {
         } catch (err) {
           console.error(err);
         }
-        console.log(
-          "--------------- NUMBER OF FILES IN CHOSEN DIRECTORY: " +
-            fileList.length +
-            "--------------------------"
-        );
       } else {
         this.setRepoPath("");
       }
-      //console.log("repo:");
-      //console.log(this.getRepoPath);
     },
-    // -----
+
+    /**
+     *  Loads node and edge filters from selected files and adds them to the store.
+     *  Uses a file dialog to select multiple filter files.
+     *  @return {Promise<void>}
+     */
     async loadFilters() {
       let arr = await dialog.showOpenDialog({
         properties: ["openFile", "multiSelections"],
@@ -102,7 +100,6 @@ export default {
       if (!arr.canceled && arr.filePaths[0]) {
         for (const el of arr.filePaths) {
           // TODO check for existing filter id
-          //console.log(el);
           let filter = ce.loadNodeFilter(el);
           if (filter.spec === "node") {
             this.addNodeFilter(filter);
@@ -114,27 +111,32 @@ export default {
           }
         }
       }
-      //console.log(this.getFilters);
     },
+
+    /**
+     * Resets all node and edge filters in the store.
+     * @return {void}
+     */
     resetFiltersButton() {
       this.resetFilters();
     },
-    // -----
+
+    /**
+     * Starts the visualization process by generating a graph from the repository path.
+     * Applies node and edge filters, and navigates to the network view.
+     * @return {Promise<void>}
+     */
     async startVisualization() {
       if (this.getRepoPath != "") {
-        //console.log(`The Path of the repository is: ${this.getRepoPath}`);
-
         let graph = await ce.getGraph(this.getRepoPath);
         let nodeFilters = this.getNodeFilters;
         let edgeFilters = this.getEdgeFilters;
 
         for (const filter of nodeFilters) {
           await ce.filterNode(graph, filter);
-          //console.log(graph);
         }
         for (const filter of edgeFilters) {
           await ce.filterEdge(graph, filter);
-          //console.log(graph);
         }
         await this.setGraph(graph);
         this.$router.push({ path: "extractor/networkNew/" });
@@ -144,14 +146,9 @@ export default {
           message: "You have to have at least a repo.",
         });
       }
-      //let nodesTemp = JSON.parse(JSON.stringify(this.getNodes));
-      //let edgesTemp = JSON.parse(JSON.stringify(this.getEdges));
-      //console.log(nodesTemp[2]);
-      //console.log(edgesTemp[2]);
-      //let edgeFiltersTemp = JSON.parse(JSON.stringify(this.getNodeFilters));
-      //console.log(edgeFiltersTemp[0]);
     },
   },
+
   computed: {
     // store
     ...mapGetters([
@@ -163,8 +160,12 @@ export default {
       "getEdgeFilters",
       "getFilters",
     ]),
+
+    /**
+     * Checks if the repository path is not empty.
+     * @return {boolean} True if the repository path is not empty, false otherwise.
+     */
     isRepoPathEmpty() {
-      //console.log(this.getRepoPath);
       return this.getRepoPath != "";
     },
   },

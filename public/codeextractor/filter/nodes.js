@@ -11,11 +11,9 @@ let matchAll = require("string.prototype.matchall");
  * Then runs the addNodeToGraph function to resolve the Promise and add the data to the file-node.
  * @param {Object} graph The current graph Object.
  * @param {Object} filter The node filter Object.
- * @returns After the graph was generated
+ * @returns After all eligible file-nodes were processed.
  */
 exports.filterNode = async function (graph, filter) {
-  //console.log("node-filter starting (FilterID: " + filter.id + ")")
-  // Replace all exclude entries for better filter usage
   let filterRegExp = RegExp.fromString(filter.regex);
   // Set all file-nodes to be modified by the specific filter (for all eligible files)
   let eligibleFiles = graph.nodes.filter(
@@ -52,30 +50,7 @@ const replaceExcludes = function (excludes, data) {
 };
 
 /**
- * This function adds all nodes to the graph data by running though each line of code.
- * First, it handles the exclude RegEx by deleting all matches from the exclude RegEx in the data.
- * It then proceeds to split the data input into its lines of codes and checks for RegEx matches.
- * Those matches are then being pushed into the matchArr Array as follows:
- * The complete line in which the match was found followed by all matches belonging to a capture group. Example for a Python Regex checking for all classes and its class-extensions (class ([A-Za-z]+)\(?(.*)\)?\:):
- * * class ClassName(ExtendsClass.doSomething): resolves to
- * * class className(ExtendsClass.doSomething):,className,ExtendsClass.doSomething)
- * * or in case of a class with no match for the second capture group: class A: -> class A:,A,
- *
- *
- * Those matches are then being pushed into the matches list where each element contains a list of those matches and its line index.
- * It then proceeds as follows: for each match in the matches list the function checks for every capture group index of the node filter attributes attribute,
- * if there are one or more elements in its respective match array entry. It then inserts the match data into the attribute Object at the fitting index.
- * Last, it generates the node including its edges with the following node meta data:
- * * id: conjunction of file node id + | + all attributes
- * * label: the generated label as mentioned in the guide
- * * group: file node id
- * * color, filterID, matches(attributes) and line index
- *
- * and analogous the following edge meta data:
- * * source (from): node id
- * * target (to): file node
- *
- *
+ * Adds nodes to the graph based on the matches of the RegExp in the data of the file-node.
  * @param {Object} graph The current graph object.
  * @param {RegExp} regExp A Regular Expression.
  * @param {Object} filter A valid node filter.
@@ -99,7 +74,6 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
         lineIndex: index + 1,
       });
     });
-    //console.log("MATCH ARRAY: " + matchArr)
   });
   // for every match
   for (match of matches) {
@@ -108,11 +82,8 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
     for (a in filter.attributes) {
       // by trying to match the index to the attribute
       for (index of filter.attributes[a]) {
-        //console.log("FILTER ATTRIBUTE INDEX: " + filter.attributes[a])
         if (match.matchData[index]) {
-          //console.log("MATCH DATA AT [a] EXISTS: " + match.matchData[index])
           attributes[a] = match.matchData[index];
-          //console.log("ATTRIBUTES[a]: " + attributes[a])
           break;
         }
       }
@@ -122,7 +93,6 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
       let arr = Object.keys(obj).reduce(function (res, v) {
         return res.concat(obj[v]);
       }, []);
-      //console.log("ATTRIBUTES TO STRING: " + arr.toString())
       return arr.toString();
     };
     let idStringTemp = fileNode.id + "|" + attributesToString(attributes);
@@ -131,14 +101,11 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
       // console.warn("Duplicates where found. The Graph does not show duplicates at the moment")
       continue;
     }
-    // console.log(idStringTemp)
     // Actual generation of a node
     // If a label Attribute exists in the filter file: generate the label as expected
     let generatedLabel = filter.labelAttribute
       ? filter.label + ": " + attributes[filter.labelAttribute]
       : filter.label;
-    // Always substring to 16 chars
-    //generatedLabel = generatedLabel.substring(0, 20);
     //create new node
     let newNode = {
       id: idStringTemp,
@@ -152,12 +119,6 @@ const addNodeToGraph = function (graph, regExp, filter, fileNode, data) {
       },
     };
     //create edge
-    //console.log(
-    //  "CAPTURE GROUP MATCHES CLASSNAME: " + newNode.meta.matches["className"]
-    //);
-    //console.log(
-    //  "CAPTURE GROUP MATCHES EXTENDS: " + newNode.meta.matches["extends"]
-    //);
     graph.nodes.push(newNode);
     let newEdge = {
       from: idStringTemp,

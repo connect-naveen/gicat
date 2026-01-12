@@ -360,7 +360,7 @@ const getForcedLayout = new ForceLayout({
       .force("collide", d3.forceCollide(5).iterations(2))
       .force("x", d3.forceX())
       .force("y", d3.forceY())
-      .alphaMin(0.1) // stop simulation sooner with higher alphaMin
+      .alphaMin(0.05) // stop simulation sooner with higher alphaMin
       .alphaDecay(0.05) // faster decay with higher alphaDecay
       .velocityDecay(0.9); // higher friction with higher velocityDecay
   },

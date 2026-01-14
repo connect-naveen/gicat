@@ -752,6 +752,10 @@ export default {
       }
       return opt;
     },
+    /**
+     * Generates a list of attribute names for the source node filter selection.
+     * @return {Array} An array of attribute names for the selected source node filter.
+     */
     getFromAttributes() {
       const opt = [];
       let i = 0;
@@ -776,6 +780,10 @@ export default {
       //console.log(opt)
       return opt;
     },
+    /**
+     * Generates a list of attribute names for the target node filter selection.
+     * @return {Array} An array of attribute names for the selected target node filter.
+     */
     getToAttributes() {
       const opt = [];
       let i = 0;
@@ -803,35 +811,31 @@ export default {
   },
   props: {},
   methods: {
+    /**
+     * Enables edit mode for a specific node filter and populates the form fields with its data.
+     * @param filterName The name of the node filter to edit.
+     */
     nodeEditMode(filterName) {
       this.main.setInEditMode(true);
-      //console.log(filterName);
-      for (let i = 0; i < this.main.getJson.nodeFilterList.length; i++) {
-        if (this.main.getJson.nodeFilterList[i].name === filterName) {
-          //console.log(this.main.getJson.nodeFilterList[i]);
-          this.main.setEditModeScope(this.main.getJson.nodeFilterList[i].id);
-          this.generatedRegex = this.main.getJson.nodeFilterList[
-            i
-          ].regex.substr(
-            1,
-            this.main.getJson.nodeFilterList[i].regex.length - 4
-          );
-          this.fileExtension = this.main.getJson.nodeFilterList[i].extension;
-          this.regexName = this.main.getJson.nodeFilterList[i].name;
-          this.nodeLabel = this.main.getJson.nodeFilterList[i].label;
-          /*this.excludes = this.main.getJson.nodeFilterList[i].exclude[0].substr(
-            1,
-            this.main.getJson.nodeFilterList[i].exclude[0].length - 4
-          );*/
-          this.labelAttributeSelection =
-            this.main.getJson.nodeFilterList[i].labelAttribute; //???
-          this.nodeColor = this.main.getJson.nodeFilterList[i].style.color;
-          this.main.setAttributes(
-            this.main.getJson.nodeFilterList[i].attributes
-          );
-        }
-      }
+      const filter = this.main.getJson.nodeFilterList.find(
+        (f) => f.name === filterName
+      );
+      if (!filter) return;
+
+      this.main.setEditModeScope(filter.id);
+      this.generatedRegex = filter.regex?.replace(/^\/|\/gm$/g, "") || "";
+      this.fileExtension = filter.extension || "";
+      this.regexName = filter.name || "";
+      this.nodeLabel = filter.label || "";
+      this.labelAttributeSelection = filter.labelAttribute || "";
+      this.nodeColor = filter.style?.color || "#8ebae5";
+      this.main.setAttributes(filter.attributes || {});
     },
+
+    /**
+     * Enables edit mode for a specific edge filter and populates the form fields with its data.
+     * @param edgeFilterName The name of the edge filter to edit.
+     */
     edgeEditMode(edgeFilterName) {
       this.main.setInEditMode(true);
       for (let i = 0; i < this.main.getJson.edgeFilterList.length; i++) {

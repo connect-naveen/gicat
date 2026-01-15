@@ -34,9 +34,10 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { readdir } from "node:fs/promises";
+//import { readdir } from "node:fs/promises";
 const ce = window.ce;
 const { dialog } = require("@electron/remote");
+const { ipcRenderer } = window.require ? window.require("electron") : {};
 
 export default {
   data() {
@@ -72,9 +73,14 @@ export default {
       if (!repoPath.canceled && repoPath.filePaths[0]) {
         this.setRepoPath(repoPath.filePaths[0]);
         this.isDirEmpty = false;
-        let fileList;
+        let fileList = [];
         try {
-          fileList = await readdir(this.getRepoPath, { recursive: true });
+          if (ipcRenderer) {
+            fileList = await ipcRenderer.invoke(
+              "read-directory",
+              this.getRepoPath
+            );
+          }
           if (fileList.length > 200) {
             this.alertWarning = true;
           } else {

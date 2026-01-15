@@ -838,45 +838,37 @@ export default {
      */
     edgeEditMode(edgeFilterName) {
       this.main.setInEditMode(true);
-      for (let i = 0; i < this.main.getJson.edgeFilterList.length; i++) {
-        if (this.main.getJson.edgeFilterList[i].name === edgeFilterName) {
-          this.main.setEditModeScope(this.main.getJson.edgeFilterList[i].id);
-          this.edgeName = this.main.getJson.edgeFilterList[i].name;
-          this.fromAttributeSelection =
-            this.main.getJson.edgeFilterList[i].from.attribute;
-          this.toAttributeSelection =
-            this.main.getJson.edgeFilterList[i].to.attribute;
-          for (let j = 0; j < this.main.getJson.nodeFilterList.length; j++) {
-            if (
-              this.main.getJson.nodeFilterList[j].id ===
-              this.main.getJson.edgeFilterList[i].from.nodeFilterID
-            ) {
-              this.fromSelection = this.main.getJson.nodeFilterList[j].name;
-            }
-          }
-          for (let k = 0; k < this.main.getJson.nodeFilterList.length; k++) {
-            if (
-              this.main.getJson.nodeFilterList[k].id ===
-              this.main.getJson.edgeFilterList[i].to.nodeFilterID
-            ) {
-              this.toSelection = this.main.getJson.nodeFilterList[k].name;
-            }
-          }
-        }
-        this.edgeColorpicker = this.main.getJson.edgeFilterList[i].style.color;
-        this.edgeLabel = this.main.getJson.edgeFilterList[i].label;
-      }
+      const filter = this.main.getJson.edgeFilterList.find(
+        (f) => f.name === edgeFilterName
+      );
+      if (!filter) return;
+
+      this.main.setEditModeScope(filter.id);
+      this.edgeName = filter.name;
+      this.fromAttributeSelection = filter.from.attribute;
+      this.toAttributeSelection = filter.to.attribute;
+      this.edgeColorpicker = filter.style?.color || "#8ebae5";
+      this.edgeLabel = filter.label || "";
+
+      const fromNode = this.main.getJson.nodeFilterList.find(
+        (n) => n.id === filter.from.nodeFilterID
+      );
+      this.fromSelection = fromNode ? fromNode.name : "";
+
+      const toNode = this.main.getJson.nodeFilterList.find(
+        (n) => n.id === filter.to.nodeFilterID
+      );
+      this.toSelection = toNode ? toNode.name : "";
     },
-    nodeListDropdown() {
-      if (document.getElementById("filterElement").style.display == "none") {
-        document.getElementById("filterElement").style.display = "block";
-      } else {
-        document.getElementById("filterElement").style.display = "none";
-      }
-    },
+
+    /**
+     * Adds node attributes based on user input and updates the store accordingly.
+     * It adds indexes of capture groups to the specified attribute name by either
+     * creating a new attribute or updating an existing one.
+     * Shows a dialog to confirm the addition of capture groups.
+     */
     addNodeAttributes() {
       if (Object.keys(this.main.getAttributes).length === 0) {
-        console.log("Attributes leer");
         this.main.setAttributes({
           [this.main.getNodeAttributes]: this.main.getNodeCaptureGroups
             .split(",")
@@ -892,15 +884,25 @@ export default {
             .map((e) => Number(e))
         );
       }
-      //console.log("Node attributes: " + this.main.getNodeAttributes);
       this.main.setTemp(this.main.getNodeLabel);
       this.addNodeAttributesDialog = true;
       this.main.setNodeAttributes("");
       this.main.setNodeCaptureGroups("");
     },
+
+    /**
+     * Resets the generated regex in the store to an empty string.
+     */
     resetRegex() {
       this.main.setGeneratedRegex("");
     },
+
+    /**
+     * Adds a new node filter or updates an existing one based on the current state of the edit mode.
+     * If not in edit mode, it creates a new node filter and appends it to the node filter list.
+     * If in edit mode, it updates the existing node filter with the new data.
+     * Shows a dialog to confirm the addition or update of the node filter.
+     */
     addNodeFilter() {
       if (!this.main.getInEditMode) {
         this.main.setGeneratedRegex("/" + this.main.getGeneratedRegex + "/gm"),
@@ -924,7 +926,6 @@ export default {
         this.addNodeFilterDialog = true;
         this.main.setRegexName("");
         this.main.setGeneratedRegex("");
-        //this.main.setExcludes("");
         this.main.setFileExtension("");
         this.main.setLabelAttributeSelection("");
         this.main.setNodeLabel("");
@@ -943,7 +944,6 @@ export default {
             console.log(tempFilter[i]);
             tempFilter[i].name = this.regexName;
             tempFilter[i].regex = "/" + this.generatedRegex + "/gm";
-            //tempFilter[i].exclude = ["/" + this.excludes + "/gm"];
             tempFilter[i].extension = this.fileExtension;
             tempFilter[i].style.color = this.nodeColor;
             tempFilter[i].label = this.nodeLabel;
@@ -954,7 +954,6 @@ export default {
             this.addNodeFilterDialog = true;
             this.main.setRegexName("");
             this.main.setGeneratedRegex("");
-            //this.main.setExcludes("");
             this.main.setFileExtension("");
             this.main.setLabelAttributeSelection("");
             this.main.setNodeLabel("");
@@ -970,6 +969,13 @@ export default {
       this.main.setEditModeScope("");
       this.main.setInEditMode(false);
     },
+
+    /**
+     * Adds a new edge filter or updates an existing one based on the current state of the edit mode.
+     * If not in edit mode, it creates a new edge filter and appends it to the edge filter list.
+     * If in edit mode, it updates the existing edge filter with the new data.
+     * Shows a dialog to confirm the addition or update of the edge filter.
+     */
     addEdgeFilter() {
       if (!this.main.getInEditMode) {
         this.main.getJson["edgeFilterList"].push({
@@ -1036,6 +1042,13 @@ export default {
         }
       }
     },
+
+    /**
+     * Generates a regex snippet based on user selections and appends it to the existing regex in the store.
+     * It considers various options such as mandatory characters, arbitrary characters, whitespace,
+     * special characters, and exclusion patterns, along with quantifiers and capture groups.
+     * After generating the regex snippet, it resets the relevant input fields.
+     */
     generateRegex() {
       let snippetSelection = window.getSelection();
       if (
@@ -1106,16 +1119,24 @@ export default {
       this.selected = "";
       this.generatorSelection = "";
     },
+
+    /**
+     * Generates a package by setting the current date and updating the JSON data in the store.
+     */
     generatePackage() {
       const date = new Date();
       this.main.setDate(date);
       this.main.setJson(this.main.getFilterPackage);
     },
+
+    /**
+     * Imports a filter from a JSON file selected by the user.
+     * It reads the file, parses the JSON content, and updates the store with the imported filter data.
+     * After importing, it generates the package based on the imported data.
+     */
     importFilter() {
-      //var reader = new FileReader();
       this.importedFilter.text().then((value) => {
         const parsedInput = JSON.parse(value);
-        //console.log(parsedInput);
         this.main.setPackageName(parsedInput.packageName);
         this.main.setAuthors(parsedInput.authors);
         this.main.setDesc(parsedInput.desc);
@@ -1125,6 +1146,12 @@ export default {
         this.generatePackage();
       });
     },
+
+    /**
+     * Exports the current filter configuration as a JSON file.
+     * It creates a JSON representation of the filter and adds metadata if not already present.
+     * The JSON data is then converted to a downloadable file and downloaded by the user.
+     */
     exportFilter() {
       const exportJson = JSON.parse(JSON.stringify(this.main.getJson || {}));
       if (!exportJson.meta) {

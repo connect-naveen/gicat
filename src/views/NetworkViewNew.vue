@@ -344,6 +344,7 @@ import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
+const { ipcRenderer } = window.require ? window.require("electron") : {};
 import { persistentStore } from "../store/persistentStore";
 const os = require("node:os");
 
@@ -522,9 +523,13 @@ export default {
       "addFilter",
     ]),
 
+    /**
+     * Handle click events on the renderer.
+     * Clears selection if the background is clicked and empties the selectedNodes array.
+     * @param event - The click event object.
+     */
     handleRendererClick(event) {
       if (event.target.classList.contains("v-ng-canvas")) {
-        console.log("Renderer background clicked, clearing selection");
         this.selectedNodes = [];
         this.highlightedDrawerLabels = [];
         // Set isActive to false for all nodes
@@ -536,6 +541,14 @@ export default {
       }
     },
 
+    /**
+     * Creates a transform string for positioning and rotating an edge label (triangle).
+     * @param center - The center point of the edge.
+     * @param edgePos - The positions of the source and target nodes of the edge.
+     * @param scale - The scale factor for the label.
+     * @param hovered - Whether the edge is hovered.
+     * @param selected - Whether the edge is selected.
+     */
     makeTransform(center, edgePos, scale, hovered, selected) {
       const radian = Math.atan2(
         edgePos.target.y - edgePos.source.y,
@@ -557,10 +570,18 @@ export default {
       ].join(" ");
     },
 
+    /**
+     * Toggles the visibility of the metrics drawer.
+     */
     handleMetricsDrawer() {
       this.drawer = !this.drawer;
     },
 
+    /**
+     * Gets frequent target nodes based on a threshold.
+     * This is used by the metrics drawer to show nodes that are frequently targeted by edges.
+     * @param threshold - The minimum number of incoming edges to consider a target frequent.
+     */
     getFrequentTargets(threshold) {
       const nodes = Object.values(this.nodes);
       const edges = this.edges;
@@ -609,6 +630,11 @@ export default {
       return filtered;
     },
 
+    /**
+     * Gets frequent nodes based on a threshold.
+     * This is used by the metrics drawer to show nodes that appear frequently in the graph.
+     * @param i - The minimum frequency for a node to be considered frequent.
+     */
     getFrequentNodes(i) {
       const occ = {};
       for (let node of this.getNodes) {
@@ -626,6 +652,11 @@ export default {
       const sortedObj = Object.fromEntries(filteredArr);
       return sortedObj;
     },
+
+    /**
+     * Gets the number of nodes that belong to a specific filter.
+     * @param i - The filter ID to count nodes for.
+     */
     getNodeFilterNumbers(i) {
       var j = 0;
       for (let k = 0; k < this.getNodes.length; k++) {
@@ -635,6 +666,11 @@ export default {
       }
       return "Quantity: " + j;
     },
+
+    /**
+     * Initializes the graph by processing nodes and edges from the store.
+     * Sets up node and edge properties, colors, and filters.
+     */
     initGraph() {
       let inputNodes = JSON.parse(JSON.stringify(this.getNodes));
       let inputEdges = JSON.parse(JSON.stringify(this.getEdges));
@@ -673,6 +709,10 @@ export default {
       let appliedFilters = this.getFilterItems();
       this.filters = appliedFilters;
     },
+
+    /**
+     * Gets active filter items.
+     */
     getFilterItems() {
       return this.getFilters.map((filter) => {
         return {
@@ -681,18 +721,36 @@ export default {
         };
       });
     },
+
+    /**
+     * Checks if a node's filter is selected.
+     * @param node - The node to check.
+     * @returns True if the node's filter is selected, otherwise false.
+     */
     isFilterSelected(node) {
       if (node.meta?.filterID) {
         return this.filtersSelected.includes(node.meta.filterID);
       }
       return true;
     },
+
+    /**
+     * Checks if an edge's filter is selected.
+     * @param edge - The edge to check.
+     * @returns True if the edge's filter is selected, otherwise false.
+     */
     isEdgeFilterSelected(edge) {
       if (edge.meta?.filter) {
         return this.filtersSelected.includes(edge.meta.filter);
       }
       return true;
     },
+
+    /**
+     * Gets the color associated with a node label.
+     * @param label - The label of the node.
+     * @returns The color associated with the label, or black if not set.
+     */
     changeObjectKey(o, old_key, new_key) {
       if (old_key !== new_key) {
         Object.defineProperty(
@@ -706,6 +764,11 @@ export default {
     back() {
       this.$router.push("/extractor");
     },
+
+    /**
+     * Double click event handler for nodes.
+     * @param hitNodeIndex - The index of the node that was double clicked.
+     */
     doubleClick(hitNodeIndex) {
       //console.warn("double click");
 
@@ -718,12 +781,21 @@ export default {
         this.openFile(hitNodeIndex);
       }
     },
+
+    /**
+     * Right click event handler for nodes.
+     */
     rightClick() {
       console.log("collapse children of node: ");
       this.getNodes.forEach((node) => {
         console.log(node.label);
       });
     },
+
+    /**
+     * Left click event handler for nodes.
+     * @param nodeId - The ID of the node that was left clicked.
+     */
     leftClick(nodeId) {
       let selectedNode = this.nodes[nodeId];
       selectedNode.meta.active = !selectedNode.meta.active;
@@ -741,6 +813,12 @@ export default {
         this.selectedNodes = this.selectedNodes.filter((id) => id !== nodeId);
       }
     },
+
+    /**
+     * Highlights or unhighlights nodes by their label.
+     * This is used by the metrics drawer to highlight nodes when their label is clicked.
+     * @param label - The label of the nodes to highlight or unhighlight.
+     */
     highlightNodesByLabel(label) {
       const idx = this.highlightedDrawerLabels.indexOf(label);
       if (idx === -1) {
@@ -760,6 +838,12 @@ export default {
         this.leftClick(nodeId);
       });
     },
+
+    /**
+     * Toggles the collapsed state of a node's children.
+     * This is used when double-clicking on folder nodes.
+     * @param hitNode - The node whose children will be toggled.
+     */
     collapseChildren(hitNode) {
       console.warn("collapse children");
       if (hitNode.childrenCollapsed) {
@@ -777,11 +861,19 @@ export default {
         }
       });
     },
-
+    /**
+     * Hides a node by setting its hidden property to true and incrementing its hiddenCounter.
+     * @param node - The node to hide.
+     */
     hideNode(node) {
       node.hidden = true;
       node.hiddenCounter += 1;
     },
+
+    /**
+     * Shows a node by decrementing its hiddenCounter and setting its hidden property to false if the counter reaches zero.
+     * @param node - The node to show.
+     */
     showNode(node) {
       if (node.hiddenCounter > 0) {
         node.hiddenCounter -= 1;
@@ -790,6 +882,12 @@ export default {
         node.hidden = false;
       }
     },
+
+    /**
+     * Checks if an edge should be hidden based on the visibility and filter status of its source and target nodes.
+     * @param edge The edge to check.
+     * @returns True if the edge should be hidden, otherwise false.
+     */
     edgeHidden(edge) {
       return (
         this.nodes[edge.source].hidden |
@@ -798,6 +896,12 @@ export default {
         !this.isFilterSelected(this.nodes[edge.target])
       );
     },
+
+    /**
+     * Checks if an edge label should be hidden based on the visibility and filter status of its source and target nodes, as well as edge-specific filters.
+     * @param edge The edge to check.
+     * @returns True if the edge label should be hidden, otherwise false.
+     */
     edgeLabelHidden(edge) {
       return (
         this.nodes[edge.source].hidden |
@@ -807,69 +911,68 @@ export default {
         !this.isEdgeFilterSelected(edge)
       );
     },
+    /**
+     * Checks if a node is a folder based on its properties.
+     * @param node The node to check.
+     * @returns True if the node is a folder, otherwise false.
+     */
     isFolder(node) {
       return !this.isFile(node) && node.meta.filterID == null;
     },
+
+    /**
+     * Checks if a node is a file based on its meta properties.
+     * @param node The node to check.
+     * @returns True if the node is a file, otherwise false.
+     */
     isFile(node) {
       return node.meta.file === true;
     },
-    openFile(nodeIndex) {
-      console.warn("open file function");
 
-      const { spawn } = require("child_process");
-      const fs = require("fs");
+    /**
+     * Opens a file in the configured editor.
+     * Prefers VS Code if configured and available.
+     * @param nodeIndex The index of the node representing the file to open.
+     */
+    async openFile(nodeIndex) {
       const persStore = persistentStore();
-      console.log(persStore.getIsVsCode);
+      if (!persStore.getEditorPath) return;
 
-      if (persStore.getEditorPath === "") {
-        return;
-      }
-
-      let path = this.nodes[nodeIndex].id.split("|")[0];
-
-      const exists = fs.existsSync(path);
+      let filePath = this.nodes[nodeIndex].id.split("|")[0];
+      let exists = ipcRenderer
+        ? await ipcRenderer.invoke("check-file-exists", filePath)
+        : false;
       if (!exists) {
-        console.log("editor" + persStore.getEditorPath + " not found");
-        console.error("editor not found");
+        console.error("File not found:", filePath);
+        return;
       }
 
-      const opts = {
-        detached: true,
-      };
+      let isVsCode = persStore.getIsVsCode;
+      let platform = ipcRenderer
+        ? await ipcRenderer.invoke("get-platform")
+        : "";
+      let isMacApp =
+        !isVsCode &&
+        platform === "darwin" &&
+        persStore.getEditorPath.endsWith(".app");
+      let line = this.nodes[nodeIndex].meta?.line ?? 0;
 
-      try {
-        let platform = os.platform();
-        if (persStore.getIsVsCode && platform !== "darwin") {
-          path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
-          spawn(persStore.getEditorPath, ["--goto", path], opts);
-        } else if (persStore.getIsVsCode && platform === "darwin") {
-          console.log("VS Code erkannt:");
-          let ep = persStore.getEditorPath + "/Contents/MacOS/Electron";
-          path += ":" + (this.nodes[nodeIndex].meta.line ?? 0) + ":0";
-          console.log("Spawn VS Code path: " + ep);
-          spawn(ep, ["--goto", path], opts);
-          // trying to guess the name of the code editors exe file on MacOS.
-          // Won't work in most cases! Only VS Code has guaranteed support!
-        } else if (!this.getVsCode && platform === "darwin") {
-          let macOSPath = function (applicationPath) {
-            let regexp = /\/([aA-zZ +]*)\.app/g;
-            const array = [...applicationPath.matchAll(regexp)];
-            const appName = array[0][1];
-            return applicationPath + "/Contents/MacOS/" + appName;
-          };
-          console.log(macOSPath(persStore.getEditorPath));
-          //path += ":" + (this.nodes[nodeIndex].meta.line ?? 0);
-          console.log(path);
-          spawn(macOSPath(persStore.getEditorPath) + " " + path, [], opts);
-        } else {
-          spawn(persStore.getEditorPath, [path], opts);
-        }
-      } catch (error) {
-        console.log("editor" + persStore.getEditorPath + " not found");
-        console.error("editor not found");
-        return;
+      if (ipcRenderer) {
+        await ipcRenderer.invoke("open-file-in-editor", {
+          editorPath: persStore.getEditorPath,
+          filePath,
+          isVsCode,
+          line,
+          isMacApp,
+        });
       }
     },
+
+    /**
+     * Toggles the physics simulation on and off.
+     * When paused, switches to a simple layout.
+     * When resumed, restores the force layout and re-creates the simulation.
+     */
     toggleSimulation() {
       if (this.physicsEnabled) {
         // Pause: switch to SimpleLayout, simulation reference is now invalid
@@ -907,6 +1010,10 @@ export default {
         this.playPause = "Pause";
       }
     },
+
+    /**
+     * Downloads the current graph as an SVG file with metadata identifying the CSS-lab at RWTH Aachen University.
+     */
     async downloadSVG() {
       const graph = { ...this.graph };
       let text = await graph.exportAsSvgText();
@@ -946,6 +1053,10 @@ export default {
       a.click();
       window.URL.revokeObjectURL(url);
     },
+
+    /**
+     * Updates the physics forces in the simulation based on current parameters.
+     */
     updatePhysicsForces() {
       if (!this.simulation) return;
       this.simulation
@@ -955,9 +1066,20 @@ export default {
       this.simulation.force("charge")?.strength(this.charge);
       this.simulation.alpha(1).restart();
     },
+
+    /**
+     * Gets the color associated with a given label.
+     * @param label The label for which to get the color.
+     */
     getLabelColor(label) {
       return this.labelColors[label] || "#2196f3";
     },
+
+    /**
+     * Sets the color associated with a given label and updates the stroke color of all nodes with that label.
+     * @param label The label for which to set the color.
+     * @param color The color to set for the label.
+     */
     setLabelColor(label, color) {
       this.labelColors[label] = color;
       // Update the strokeColor for all nodes with this label
@@ -973,6 +1095,10 @@ export default {
         }
       });
     },
+
+    /**
+     * Recreates the simulation with updated performance settings.
+     */
     recreateSimulationPerformance() {
       this.layoutHandler = new ForceLayout({
         positionFixedByDrag: true,
@@ -1013,12 +1139,27 @@ export default {
       "getFilters",
       "getRepoPath",
     ]),
+
+    /**
+     * Gets the current options for the graph view.
+     * @returns The current options object.
+     */
     getOptions() {
       return this.options;
     },
+
+    /**
+     * Gets whether the physics simulation is currently enabled.
+     * @returns True if physics is enabled, otherwise false.
+     */
     getPhysicsEnabled() {
       return this.physicsEnabled;
     },
+
+    /**
+     * Computes a new ForceLayout instance with the current physics parameters.
+     * @returns A new ForceLayout instance.
+     */
     computePhysics() {
       let newForcedLayout = new ForceLayout({
         positionFixedByDrag: true,

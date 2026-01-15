@@ -5,6 +5,11 @@ import { createProtocol } from "vue-cli-plugin-electron-builder/lib";
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 import * as path from "path";
 
+//const { ipcMain } = require("electron");
+const fs = require("fs").promises;
+const os = require("os");
+const { spawn } = require("child_process");
+
 require("@electron/remote/main").initialize();
 
 // Scheme must be registered before the app is ready
@@ -37,8 +42,6 @@ async function createWindow() {
     height: 720,
     icon: "/buildResources/icon.png",
     webPreferences: {
-      // Use pluginOptions.nodeIntegration, leave this alone
-      // See nklayman.github.io/vue-cli-plugin-electron-builder/guide/security.html#node-integration for more info
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,
       //nodeIntegrationInWorker: true,
@@ -147,3 +150,47 @@ app.on("web-contents-created", (event, contents) => {
     return { action: "deny" };
   });
 });
+
+ipcMain.handle("read-directory", async (event, dirPath) => {
+  try {
+    const files = await fs.readdir(dirPath, { withFileTypes: true });
+    return files.map((f) => f.name);
+  } catch (err) {
+    return { error: err.message };
+  }
+});
+
+ipcMain.handle("get-platform", () => os.platform());
+ipcMain.handle("get-basename", (event, filePath) => path.basename(filePath));
+ipcMain.handle("check-file-exists", (event, filePath) => {
+  return fs.existsSync(filePath);
+});
+
+ipcMain.handle(
+  "open-file-in-editor",
+  (event, { editorPath, filePath, isVsCode, line, isMacApp }) => {
+    try {
+      let platform = os.platform();
+      let opts = { detached: true };
+      let pathToOpen = filePath;
+      let lineNumber = line !== undefined && line !== null ? line : 0;
+      if (isVsCode && platform !== "darwin") {
+        pathToOpen += ":" + lineNumber + ":0";
+        spawn(editorPath, ["--goto", pathToOpen], opts);
+      } else if (isVsCode && platform === "darwin") {
+        let ep = editorPath + "/Contents/MacOS/Electron";
+        pathToOpen += ":" + lineNumber + ":0";
+        spawn(ep, ["--goto", pathToOpen], opts);
+      } else if (isMacApp && platform === "darwin") {
+        let appName = path.basename(editorPath, ".app");
+        let macOSPath = `${editorPath}/Contents/MacOS/${appName}`;
+        spawn(macOSPath, [filePath], opts);
+      } else {
+        spawn(editorPath, [filePath], opts);
+      }
+      return true;
+    } catch (e) {
+      return { error: e.message };
+    }
+  }
+);

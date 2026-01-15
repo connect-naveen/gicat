@@ -1,6 +1,10 @@
 {
+  "plugins": [
+    "jsdoc-vuejs"
+  ],
   "source": {
     "include": ["./src", "./public"],
+    "includePattern": "\\.(vue|js)$",
     "exclude": ["node_modules", "tests"]
   },
   "opts": {

@@ -518,11 +518,26 @@ export default {
       );
     },
   },
+
+  /**
+   * Saves the current scroll position before navigating away from the route.
+   * Works as an Anchor to come back to the same position when returning to the GuideView.
+   * @param to The target Route Object being navigated to.
+   * @param from The current route being navigated away from.
+   * @param next This function must be called to resolve the hook.
+   */
   beforeRouteLeave(to, from, next) {
     // Save scroll position before leaving
     sessionStorage.setItem("guideScrollY", window.scrollY);
     next();
   },
+
+  /**
+   * Restores the scroll position after navigating to the route.
+   * @param to The target Route Object being navigated to.
+   * @param from The current route being navigated away from.
+   * @param next This function must be called to resolve the hook.
+   */
   beforeRouteEnter(to, from, next) {
     next((vm) => {
       // Restore scroll position after entering

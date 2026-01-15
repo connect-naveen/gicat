@@ -26,12 +26,8 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 const { dialog } = require("@electron/remote");
-const os = require("node:os");
-//const { app } = require("@electron/remote");
-//const fs = require("node:fs");
-import * as path from "path";
+const { ipcRenderer } = window.require ? window.require("electron") : {};
 import { persistentStore } from "../store/persistentStore";
-//const { systemPreferences } = require("@electron/remote");
 
 export default {
   setup() {
@@ -49,25 +45,31 @@ export default {
     // store
     ...mapActions(["setEditorPath", "setIsVsCode"]),
 
-    // functions
+    /**
+     * Opens a dialog to select the code editor path and updates the store accordingly.
+     * TODO: implement this more robustly for different code editors and add error handling.
+     * @return {Promise<void>}
+     */
     async openEditor() {
       let editorPath = await dialog.showOpenDialog({
         properties: ["openFile"],
       });
-      let platform = os.platform();
+      let platform = ipcRenderer
+        ? await ipcRenderer.invoke("get-platform")
+        : "";
       if (!editorPath.canceled && editorPath.filePaths[0]) {
-        //this.setEditorPath(editorPath.filePaths[0]);
         this.persStore.setEditorPath(editorPath.filePaths[0]);
-        // Editor Path for VS Code and Platform is not MacOS
-        if (
-          path.basename(this.persStore.getEditorPath).split(".")[0] === "code"
-        ) {
+        let baseName = ipcRenderer
+          ? await ipcRenderer.invoke(
+              "get-basename",
+              this.persStore.getEditorPath
+            )
+          : "";
+        if (baseName.split(".")[0] === "code") {
           this.persStore.setIsVsCode(true);
-          // Platform is Mac OS and VS Code is Editor
         } else if (
           platform === "darwin" &&
-          path.basename(this.persStore.getEditorPath).split(".")[0] ===
-            "Visual Studio Code"
+          baseName.split(".")[0] === "Visual Studio Code"
         ) {
           this.persStore.setIsVsCode(true);
         } else {
@@ -78,11 +80,9 @@ export default {
         this.persStore.setEditorPath("");
         this.persStore.setIsVsCode(false);
       }
-      //console.log(editorPath);
     },
   },
   computed: {
-    // store
     ...mapGetters(["getEditorPath", "getIsVsCode"]),
   },
   editorPath: {

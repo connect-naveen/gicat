@@ -27,7 +27,10 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-const { dialog } = require("@electron/remote");
+let dialog;
+if (typeof window !== "undefined" && window.require) {
+  dialog = window.require("@electron/remote").dialog;
+}
 const ce = window.ce;
 
 export default {

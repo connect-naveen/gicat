@@ -1,4 +1,7 @@
 <template>
+  <!--
+    Option View
+  -->
   <v-main>
     <div class="options">
       <h1>Option page</h1>
@@ -25,8 +28,11 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-const { dialog } = require("@electron/remote");
-const { ipcRenderer } = window.require ? window.require("electron") : {};
+let dialog, ipcRenderer;
+if (typeof window !== "undefined" && window.require) {
+  dialog = window.require("@electron/remote").dialog;
+  ipcRenderer = window.require("electron").ipcRenderer;
+}
 import { persistentStore } from "../store/persistentStore";
 
 export default {

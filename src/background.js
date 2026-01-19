@@ -40,7 +40,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
     height: 720,
-    icon: "/buildResources/icon.png",
+    icon: path.join(__dirname, "../build/icon.png"),
     webPreferences: {
       nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
       contextIsolation: !process.env.ELECTRON_NODE_INTEGRATION,

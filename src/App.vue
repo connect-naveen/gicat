@@ -6,6 +6,9 @@
     />-->
   </head>
   <v-app>
+    <!--
+    Navigation Bar
+    -->
     <v-app-bar elevation="4">
       <v-toolbar>
         <v-toolbar-items class="mx-auto">

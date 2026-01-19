@@ -36,8 +36,11 @@
 import { mapActions, mapGetters } from "vuex";
 //import { readdir } from "node:fs/promises";
 const ce = window.ce;
-const { dialog } = require("@electron/remote");
-const { ipcRenderer } = window.require ? window.require("electron") : {};
+let dialog, ipcRenderer;
+if (typeof window !== "undefined" && window.require) {
+  dialog = window.require("@electron/remote").dialog;
+  ipcRenderer = window.require("electron").ipcRenderer;
+}
 
 export default {
   data() {

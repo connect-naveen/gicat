@@ -203,35 +203,39 @@ export default {
       // console.log(this.nodes);
     },
     openFile(data) {
-      const { spawn } = require("child_process");
-      const fs = require("fs");
-      const editorPath = this.getEditorPath;
+      if (typeof window !== "undefined" && window.require) {
+        const { spawn } = window.require("child_process");
+        const fs = window.require("fs");
+        const editorPath = this.getEditorPath;
 
-      if (editorPath === "") {
-        return;
-      }
-
-      let path = data.fileName;
-
-      const exists = fs.existsSync(path);
-      if (!exists) {
-        console.error("editor not found");
-      }
-
-      const opts = {
-        detached: true,
-      };
-
-      try {
-        if (this.getIsVsCode) {
-          path += ":" + (data.line ?? 0) + ":0";
-          spawn(editorPath, ["--goto", path], opts);
-        } else {
-          spawn(editorPath, [path], opts);
+        if (editorPath === "") {
+          return;
         }
-      } catch (error) {
-        console.error("editor not found");
-        return;
+
+        let path = data.fileName;
+
+        const exists = fs.existsSync(path);
+        if (!exists) {
+          console.error("editor not found");
+        }
+
+        const opts = {
+          detached: true,
+        };
+
+        try {
+          if (this.getIsVsCode) {
+            path += ":" + (data.line ?? 0) + ":0";
+            spawn(editorPath, ["--goto", path], opts);
+          } else {
+            spawn(editorPath, [path], opts);
+          }
+        } catch (error) {
+          console.error("editor not found");
+          return;
+        }
+      } else {
+        console.warn("openFile is only available in Electron.");
       }
     },
     toggleSimulation() {

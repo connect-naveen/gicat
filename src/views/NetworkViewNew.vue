@@ -344,9 +344,15 @@ import { ref } from "vue";
 import { mapActions, mapGetters } from "vuex";
 import * as vNG from "v-network-graph";
 import { ForceLayout } from "v-network-graph/lib/force-layout";
-const { ipcRenderer } = window.require ? window.require("electron") : {};
+let ipcRenderer;
+if (typeof window !== "undefined" && window.require) {
+  ipcRenderer = window.require("electron").ipcRenderer;
+  var os = window.require("os");
+} else {
+  ipcRenderer = null;
+  var os = null;
+}
 import { persistentStore } from "../store/persistentStore";
-const os = require("node:os");
 
 const getForcedLayout = new ForceLayout({
   positionFixedByDrag: true,

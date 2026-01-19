@@ -2,6 +2,7 @@ const { defineConfig } = require("@vue/cli-service");
 module.exports = defineConfig({
   lintOnSave: false, //TODO: ONLY TEMPORARY
   transpileDependencies: true,
+  publicPath: "./",
   pluginOptions: {
     electronBuilder: {
       nodeIntegration: true,

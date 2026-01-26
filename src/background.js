@@ -29,9 +29,17 @@ function registerLocalVideoProtocol() {
     } catch (error) {
       console.error(
         "ERROR: registerLocalVideoProtocol: Could not get file path:",
-        error
+        error,
       );
     }
+  });
+}
+
+function registerAppProtocol() {
+  protocol.registerFileProtocol("app", (request, callback) => {
+    const url = request.url.substr(6);
+    const normalizedPath = path.normalize(`${__dirname}/${url}`);
+    callback({ path: normalizedPath });
   });
 }
 
@@ -83,8 +91,17 @@ async function createWindow() {
     if (!process.env.IS_TEST) win.webContents.openDevTools();
   } else {
     createProtocol("app");
+    registerAppProtocol();
     // Load the index.html when not in development
-    win.loadURL("app://./index.html");
+    try {
+      await win.loadURL("app://./index.html");
+    } catch (error) {
+      console.error("Failed to load app://./index.html:", error);
+      // Fallback
+      const indexPath = path.join(__dirname, "index.html");
+      console.log("Trying fallback path:", indexPath);
+      await win.loadFile(indexPath);
+    }
   }
 }
 
@@ -118,12 +135,39 @@ app.on("ready", async () => {
   ipcMain.handle("app:getPath", () => {
     return app.getPath("userData");
   });
+
+  //DEBUG
+  console.log("Platform:", process.platform);
+  console.log("App path:", app.getAppPath());
+  console.log("__dirname:", __dirname);
+
   createWindow();
   registerLocalVideoProtocol();
 });
 
 app.on("browser-window-created", (_, window) => {
   require("@electron/remote/main").enable(window.webContents);
+
+  // Add error handling for web contents
+  window.webContents.on(
+    "did-fail-load",
+    (event, errorCode, errorDescription, validatedURL) => {
+      console.error(
+        "Failed to load:",
+        validatedURL,
+        "Error:",
+        errorDescription,
+      );
+    },
+  );
+
+  window.webContents.on("crashed", () => {
+    console.error("Window contents crashed");
+  });
+
+  window.webContents.on("unresponsive", () => {
+    console.error("Window contents became unresponsive");
+  });
 });
 
 // Exit cleanly on request from parent process in development mode.
@@ -192,5 +236,5 @@ ipcMain.handle(
     } catch (e) {
       return { error: e.message };
     }
-  }
+  },
 );

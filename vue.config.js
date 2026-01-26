@@ -27,6 +27,7 @@ module.exports = defineConfig({
         },
         linux: {
           target: ["appImage"],
+          category: "Development",
         },
         appImage: {
           license: "license.md",

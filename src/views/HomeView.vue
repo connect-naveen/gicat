@@ -7,7 +7,7 @@
       <figure>
         <div id="zoomContainer">
           <div class="zoom-inner" :style="{ transform: `scale(${scale})` }">
-            <img id="zoomImage" src="../assets/gicat-views.svg" />
+            <img id="zoomImage" :src="gicatViews" />
           </div>
         </div>
         <figcaption>
@@ -24,6 +24,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import pack from "../../package.json";
+import gicatViews from "@/assets/gicat-views.svg";
 const scale = ref(0.6);
 const version = pack.version;
 

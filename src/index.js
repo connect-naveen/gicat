@@ -1,13 +1,10 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("path");
+const { createProtocol } = require("vue-cli-plugin-electron-builder/lib");
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
-  app.quit();
-}
+app.disableHardwareAcceleration();
 
 const createWindow = () => {
-  // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -20,27 +17,20 @@ const createWindow = () => {
     },
   });
 
-  // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "index.html"));
+  if (process.env.WEBPACK_DEV_SERVER_URL) {
+    mainWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL);
+    mainWindow.webContents.openDevTools();
+  } else {
+    createProtocol("app");
+    mainWindow.loadURL("app://./index.html");
+    // mainWindow.webContents.openDevTools(); // Remove for production
+  }
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-  // Close warning
   mainWindow.onbeforeunload = (e) => {
-    console.log("I do not want to be closed");
-
-    // Unlike usual browsers that a message box will be prompted to users, returning
-    // a non-void value will silently cancel the close.
-    // It is recommended to use the dialog API to let the user confirm closing the
-    // application.
     e.returnValue = false;
   };
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
 // Quit when all windows are closed, except on macOS. There, it's common

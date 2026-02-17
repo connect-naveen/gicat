@@ -9,7 +9,7 @@ require("@electron/remote/main").initialize();
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
-  { scheme: "app", privileges: { secure: true, standard: true } },
+  { scheme: "app", privileges: { secure: true, standard: true, stream: true } },
 ]);
 const isDevelopment = process.env.NODE_ENV !== "production";
 
@@ -20,11 +20,12 @@ function registerLocalVideoProtocol() {
     const decodedUrl = decodeURI(url); // Needed in case URL contains spaces
     try {
       // eslint-disable-next-line no-undef
+      console.log("Loading local video from:", path.join(__static, decodedUrl));
       return callback(path.join(__static, decodedUrl));
     } catch (error) {
       console.error(
         "ERROR: registerLocalVideoProtocol: Could not get file path:",
-        error
+        error,
       );
     }
   });
@@ -115,8 +116,8 @@ app.on("ready", async () => {
   ipcMain.handle("app:getPath", () => {
     return app.getPath("userData");
   });
-  createWindow();
   registerLocalVideoProtocol();
+  createWindow();
 });
 
 app.on("browser-window-created", (_, window) => {

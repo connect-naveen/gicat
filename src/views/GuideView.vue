@@ -514,7 +514,7 @@ export default {
       window.open(
         "https://www.css-lab.rwth-aachen.de/tools/overview",
         "_blank",
-        "noopener, noreferrer"
+        "noopener, noreferrer",
       );
     },
   },

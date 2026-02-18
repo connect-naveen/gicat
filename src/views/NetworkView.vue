@@ -1,3 +1,8 @@
+<!---
+ DEPRECATED. Use NetworkViewNew.vue instead.
+ DELETE THIS FILE IN THE FUTURE.
+ -->
+
 <template>
   <v-main>
     <div class="network">

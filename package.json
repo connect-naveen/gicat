@@ -1,6 +1,6 @@
 {
   "name": "GICAT",
-  "version": "0.9.5",
+  "version": "1.0.0",
   "description": "The GICAT visualizes the class structure of an object-oriented programmed software project. It shows the genealogy based on Git, as well as the software project's heredity of classes. For more information visit https://www.css-lab.rwth-aachen.de/tools/overview",
   "author": "CSS Lab RWTH Aachen",
   "private": true,
@@ -16,7 +16,8 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps",
     "app:dir": "electron-builder --dir",
-    "app:dist": "electron-builder"
+    "app:dist": "electron-builder",
+    "docs": "jsdoc -c jsdoc.json"
   },
   "dependencies": {
     "@electron/remote": "^2.0.10",

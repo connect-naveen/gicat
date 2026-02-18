@@ -9,7 +9,8 @@ const getBase = function (temp) {
   return temp.split("/").splice(-1)[0];
 };
 
-/** Generate the baseline graph (folders in the directory and all its files nested in them)
+/**
+ * Generate the baseline graph (folders in the directory and all its files nested in them)
  * by utilizing the dirTree library which creates a JavaScript object representing a directory tree.
  * Also adds the size of the Graph to the root nodes meta data.
  * @see {@link https://www.npmjs.com/package/directory-tree} Official dirTree Documentation.
@@ -43,10 +44,6 @@ const generateTree = function (dir, extensions, exclude, graph) {
 /**
  * Callback function used in generateTree() to add files found through dirTree to the graph.
  * Generates the label for a node and adds the node to the graph including some of the following meta information:
- * * id: Directory item path.
- * * label: The node label generated through getBase().
- * * shape: The .svg shape
- * * meta: JSON Object including the node background color as hexadecimal, the file extension, the directory item size and its filterID (null) among other things.
  * @param {any} item Directory item (has path, name, size, and extension)
  * @param {any} PATH Instance of node path (provides utilities for working with file and directory paths) @see {@link https://nodejs.org/api/path.html#path}
  * @param {any} stats Instance of node FS.stats (provides information about a file) @see {@link https://nodejs.org/api/fs.html#fs_class_fs_stats}
@@ -72,12 +69,6 @@ const addFile = function (item, PATH, stats, { nodes }) {
 
 /**
  * Callback function used in generateTree() to add directories found through dirTree to the graph.
- * Generates the label for a node and adds the node to the graph including some of the following meta information:
- * * id: Directory item path.
- * * label: The node label generated through getBase().
- * * shape: The .svg shape
- * * meta: JSON Object including the node background color as hexadecimal, the file extension, the directory item size and its filterID (null), and a flag for a file-node among other things.
- *
  *  Then, adds edges for each of its contained files from the directory node towards all of its file nodes with the default label:
  *
  * 'source' is a child of 'target'
@@ -117,7 +108,6 @@ const addDirectory = function (item, PATH, stats, { nodes, edges }) {
 
 // exported function
 module.exports.getGraph = function (dir, ext = [], exc = [".git"]) {
-  //console.log('loading directory: ' + "'" + dir + "'")
   if (!dir) console.error("No Path specified");
   let graph = {
     nodes: [],

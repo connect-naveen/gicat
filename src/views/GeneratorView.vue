@@ -511,7 +511,9 @@ export default {
       rules: [],
     };
   },
+
   computed: {
+    // store
     inEditMode: {
       get() {
         return this.main.getInEditMode;
@@ -712,6 +714,12 @@ export default {
         this.main.setDesc(payload);
       },
     },
+
+    /**
+     * Generates a list of label attributes from the current attributes in the store.
+     * This list is used to populate the label attribute selection dropdown.
+     * @return {Array} An array of label attribute names.
+     */
     labelSelection() {
       const opt = [];
       if (
@@ -725,6 +733,11 @@ export default {
       }
       return opt;
     },
+
+    /**
+     * Generates a list of node filter names from the current node filters in the store.
+     * @return {Array} An array of node filter names.
+     */
     getFromSelection() {
       const opt = [];
       let i = 0;
@@ -737,7 +750,6 @@ export default {
           i++;
         }
       }
-      //console.log(opt);
       return opt;
     },
     getFromAttributes() {

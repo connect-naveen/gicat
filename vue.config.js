@@ -10,6 +10,7 @@ module.exports = defineConfig({
       builderOptions: {
         win: {
           target: ["nsis"],
+          icon: "build/icon.png",
         },
         nsis: {
           allowToChangeInstallationDirectory: true,

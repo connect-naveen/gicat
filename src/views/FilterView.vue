@@ -60,6 +60,11 @@ export default {
       "addFilter",
       "resetFilters",
     ]),
+
+    /**
+     * Opens a dialog to select a filter package file and loads it.
+     * @returns {Promise<void>}
+     */
     async selectFilterPackage() {
       let dialogReturn = await dialog.showOpenDialog({
         properties: ["openFile"],
@@ -68,20 +73,27 @@ export default {
       if (path && path != "") {
         this.loadFilterPackage(path);
       }
-      //console.log(this.getFilters);
     },
+
+    /**
+     * Resets all applied filters by calling the resetFilters action.
+     * @return {void}
+     */
     resetFiltersButton() {
       this.resetFilters();
     },
-    // loadFilterPackage
+
+    /**
+     *  Loads a filter package from the specified path and adds its node and edge filters to the store.
+     * @param filterPackagePath {string} - The file path of the filter package to load.
+     * @returns {Promise<void>}
+     */
     async loadFilterPackage(filterPackagePath) {
       if (!filterPackagePath) {
         console.warn("No path assigned");
         return;
       }
-      //console.log("loading filter package");
       const filterPackage = await ce.loadJSON(filterPackagePath);
-      //console.log(filterPackage);
       for (const nodeFilter of filterPackage.nodeFilterList) {
         await this.addNodeFilter(nodeFilter);
       }

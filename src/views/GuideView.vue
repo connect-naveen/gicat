@@ -446,12 +446,9 @@
     <br />
     <h3>Metrics Section</h3>
     <p>
-      On the right side of the rendering page, you will find a metrics drawer.
-      Opening it provides you with helpful metrics about your generated graph,
-      designed to assist you in understanding its structure and connections. The
-      Node Frequency section (Fig. 5.1) displays node labels that appear most
-      often in the graph. You can use the slider to adjust the minimum frequency
-      threshold.
+      On the right side of the rendering page, you’ll find a metrics drawer.
+      Opening this drawer provides helpful insights into your generated graph,
+      making it easier to understand its structure and connections.
     </p>
     <div class="figures-row">
       <figure>
@@ -476,12 +473,33 @@
     <br />
     <br />
     <p>
-      The Frequent Target Nodes section (Fig. 5.2) on the other hand highlights
-      nodes that receive the most incoming connections (edges), helping to
-      identify central or heavily referenced elements.
+      The <b>Node Frequency</b> section (Fig. 5.1) displays node labels that
+      appear most frequently in the graph. You can use the slider to set the
+      minimum frequency threshold. The <b>Frequent Target Nodes</b> section
+      (Fig. 5.2) highlights nodes with the most incoming edges, helping you
+      identify central or heavily referenced elements. This drawer also lets you
+      change the color of specific nodes, making it easier to highlight
+      important ones and distinguish them from others. By activating nodes in
+      the metrics drawer, all occurrences of that node label will be highlighted
+      in the graph.
     </p>
-    <br />
-    <br />
+    <p>
+      <br />
+      Figure 5.3 shows an example where custom colors have been assigned to the
+      imported modules <i>numpy</i> and <i>os</i>, as well as highlighting the
+      <i>table_utils.py</i>
+      file. Clicking on an entry in the metrics drawer will highlight all nodes
+      with that label.
+    </p>
+    <figure>
+      <img
+        src="../assets/highlighted_nodes_by_metrics-drawer.png"
+        alt="Figure 5.3"
+        height="30%"
+        width="30%"
+      />
+      <figcaption>Figure 5.3 - Highlighted Nodes by Metric Drawer</figcaption>
+    </figure>
   </v-main>
 </template>
 <script>
@@ -493,7 +511,11 @@ export default {
   components: {},
   methods: {
     openNewWindow() {
-      window.open("https://www.css-lab.rwth-aachen.de/tools/overview");
+      window.open(
+        "https://www.css-lab.rwth-aachen.de/tools/overview",
+        "_blank",
+        "noopener, noreferrer",
+      );
     },
   },
   beforeRouteLeave(to, from, next) {

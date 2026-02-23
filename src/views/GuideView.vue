@@ -82,10 +82,10 @@
       <div class="images">
         <figure>
           <img
-            src="../assets/xgaltool_old.svg"
+            src="../assets/xgaltool_old.png"
             alt="Figure 1.1 old code base"
-            height="70%"
-            width="70%"
+            height="50%"
+            width="50%"
           />
           <figcaption>
             Fig.1.1 - GICAT view on xgaltool of June 10th 2021
@@ -94,10 +94,10 @@
         <br />
         <figure>
           <img
-            src="../assets/xgaltool_new.svg"
+            src="../assets/xgaltool_new.png"
             alt="Figure 1.2 new code base"
-            height="70%"
-            width="70%"
+            height="50%"
+            width="50%"
           />
           <figcaption>
             Fig.1.2 - GICAT view on xgaltool of June 19th 2023

@@ -76,7 +76,7 @@ async openDir() {
     this.isDirEmpty = false;
     
     // We remove the file counting logic to prevent Node.js crashes in the frontend.
-    // Your backend filter will handle heavy folders safely.
+    // Backend filter will handle heavy folders safely.
     this.alertWarning = false; 
   } else {
     this.setRepoPath("");

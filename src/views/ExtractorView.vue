@@ -34,7 +34,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { readdir } from "node:fs/promises";
+// import { readdir } from "node:fs/promises";
 const ce = window.ce;
 const { dialog } = require("@electron/remote");
 
@@ -65,28 +65,47 @@ export default {
      * If no directory is selected, it resets the repository path in the store to an empty string.
      * @return {Promise<void>}
      */
-    async openDir() {
-      let repoPath = await dialog.showOpenDialog({
-        properties: ["openDirectory"],
-      });
-      if (!repoPath.canceled && repoPath.filePaths[0]) {
-        this.setRepoPath(repoPath.filePaths[0]);
-        this.isDirEmpty = false;
-        let fileList;
-        try {
-          fileList = await readdir(this.getRepoPath, { recursive: true });
-          if (fileList.length > 200) {
-            this.alertWarning = true;
-          } else {
-            this.alertWarning = false;
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      } else {
-        this.setRepoPath("");
-      }
-    },
+
+async openDir() {
+  let repoPath = await dialog.showOpenDialog({
+    properties: ["openDirectory"],
+  });
+
+  if (!repoPath.canceled && repoPath.filePaths[0]) {
+    this.setRepoPath(repoPath.filePaths[0]);
+    this.isDirEmpty = false;
+    
+    // We remove the file counting logic to prevent Node.js crashes in the frontend.
+    // Your backend filter will handle heavy folders safely.
+    this.alertWarning = false; 
+  } else {
+    this.setRepoPath("");
+  }
+},
+
+
+    // async openDir() {
+    //   let repoPath = await dialog.showOpenDialog({
+    //     properties: ["openDirectory"],
+    //   });
+    //   if (!repoPath.canceled && repoPath.filePaths[0]) {
+    //     this.setRepoPath(repoPath.filePaths[0]);
+    //     this.isDirEmpty = false;
+    //     let fileList;
+    //     try {
+    //       fileList = await readdir(this.getRepoPath, { recursive: true });
+    //       if (fileList.length > 200) {
+    //         this.alertWarning = true;
+    //       } else {
+    //         this.alertWarning = false;
+    //       }
+    //     } catch (err) {
+    //       console.error(err);
+    //     }
+    //   } else {
+    //     this.setRepoPath("");
+    //   }
+    // },
 
     /**
      *  Loads node and edge filters from selected files and adds them to the store.

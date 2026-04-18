@@ -1,4 +1,4 @@
-const dirTree = require("directory-tree");
+  const dirTree = require("directory-tree");
 //const fs = require("fs");
 
 /** This function generates the node label of a file or directory from its file path.
@@ -122,11 +122,14 @@ module.exports.getGraph = function (dir, ext = [], exc = [".git"]) {
   } else {
     extensions = new RegExp("");
   }
-  let exclude;
-  if (exc.length > 0) {
-    exclude = new RegExp(exc.join("|"));
-  } else {
-    exclude = null;
-  }
+  
+const exclude = /[\\/](node_modules|\.git|\.vscode|\.idea|\.vs|\.settings|\.gradle|dist_electron|dist|build|out|bin|obj|target|vendor|pkg|__pycache__|venv|env|\.venv|\.tox|coverage|captures|Debug|Release)([\\/]|$)/i;
+
+  // let exclude;
+  // if (exc.length > 0) {
+  //   exclude = new RegExp(exc.join("|"));
+  // } else {
+  //   exclude = null;
+  // }
   return generateTree(dir, extensions, exclude, graph);
 };
